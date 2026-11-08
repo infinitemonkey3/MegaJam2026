@@ -1,0 +1,30 @@
+# --- UEFN / Unreal generated folders (any depth) ---
+Intermediate/
+Saved/
+DerivedDataCache/
+Binaries/
+Build/
+.vs/
+
+# UEFN built-in Unreal Revision Control metadata (we use git instead)
+.urc/
+
+# Verse / VS Code generated files
+*.code-workspace
+.vscode/
+!.vscode/extensions.json
+
+# Packaging / uploads
+*.zip
+Releases/
+
+# OS / editor junk
+Thumbs.db
+desktop.ini
+.DS_Store
+*.tmp
+*.bak
+*.log
+
+# Local Claude settings
+.claude/settings.local.json
