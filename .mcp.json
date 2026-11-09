@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "unreal-mcp": {
+      "type": "http",
+      "url": "http://127.0.0.1:8000/mcp"
+    },
+    "unreal-insights": {
+      "type": "stdio",
+      "command": "C:/Program Files/Epic Games/Fortnite/Engine/Binaries/Win64/UnrealInsightsMCP.exe"
+    }
+  }
+}

@@ -50,3 +50,12 @@ Open the project from the UEFN Project Browser (Browse → `MegaJam\MegaJam.uefn
 
 `.gitignore` excludes `Intermediate/`, `Saved/`, `.urc/` and the generated Verse workspace.
 `.gitattributes` sends `.uasset`, `.umap` and media files to Git LFS.
+
+## UEFN MCP (Claude Code)
+
+`.mcp.json` connects Claude Code started in this folder to UEFN's built-in MCP server.
+
+1. Open the project in UEFN. The server must be running (Edit → Editor Preferences → Agentic Workflows → Model Context Protocol, port 8000).
+2. Start Claude Code in this repo folder and approve the `unreal-mcp` server when asked.
+
+`unreal-insights` is Epic's profiling MCP server, which ships with the Fortnite install.
