@@ -29,12 +29,16 @@ Judging scores each criterion from 1 to 5: ambition and innovation, theme, fun, 
 MegaJam2026/              <- git repo root
   README.md
   docs/                   <- dev log, asset list, notes
-  <UEFN project folder>/  <- created by UEFN (see below)
-    <Project>.uefnproject
-    Plugins/<Project>/
-      <Project>.uplugin
-      Content/            <- maps, assets, *.verse
+  MegaJam/                <- UEFN project (Fortnite 43.00, Blank template)
+    MegaJam.uefnproject   <- open this in UEFN
+    <guid>.uplugin        <- root module, Verse + Scene Graph enabled
+    Content/              <- maps, assets, *.verse
+      MegaJam.umap
+      __ExternalActors__/ <- one file per placed actor (World Partition)
+    Resources/Icon128.png
 ```
+
+Open the project from the UEFN Project Browser (Browse → `MegaJam\MegaJam.uefnproject`).
 
 ## Creating the UEFN project
 

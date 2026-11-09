@@ -1,0 +1,65 @@
+{
+	"fileVersion": 15,
+	"title": "MegaJam",
+	"description": "",
+	"keyArt": "Resources/Icon128.png",
+	"docsUrl": "",
+	"apiAccess": "Private",
+	"bindings":
+	{
+		"projectId": "0b64fbec-1e28-4b54-aebd-8506c10c6bc4",
+		"modules":
+		{
+			"76e8e788-bf61-4537-8f86-b062e519fb2d": "76e8e788-bf61-4537-8f86-b062e519fb2d"
+		},
+		"bSuppressAutomaticVersePathAssignment": false,
+		"projectVersePath": ""
+	},
+	"compatibilityVersion": "43.00",
+	"requiredRedirectorStartingVersion": "43.00.59596594",
+	"editorPermissions": [],
+	"epicApp": "",
+	"sortPriority": 0,
+	"featureSet": "",
+	"plugins": [
+		{
+			"name": "76e8e788-bf61-4537-8f86-b062e519fb2d",
+			"bIsRoot": true,
+			"bIsPublic": false
+		}
+	],
+	"dataSets":
+	{
+		"matchmaking":
+		{
+			"maxPlayers": 16,
+			"maxTeamCount": 16,
+			"maxTeamSize": 16,
+			"maxSocialPartySize": 16,
+			"allowJoinInProgress": true,
+			"allowSquadFillOption": false,
+			"islandQueuePrivacy": "Public",
+			"minPlayers": 1,
+			"overtimePlayerTarget": 1,
+			"queueMainDuration": 0,
+			"queueOvertimeDuration": 0,
+			"useSkillBasedMatchmaking": false,
+			"ratingType": "",
+			"splitscreenDisabled": false,
+			"version": 1
+		},
+		"experimental":
+		{
+			"DefaultPawn":
+			{
+				"bUseDefaultCharacter": true
+			},
+			"sceneGraph":
+			{
+				"bIsSceneGraphSystemAllowed": true,
+				"bEnableOneFilePerEntity": false
+			},
+			"version": 1
+		}
+	}
+}
