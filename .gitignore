@@ -28,3 +28,6 @@ desktop.ini
 
 # Local Claude settings
 .claude/settings.local.json
+
+# Local test/scratch UEFN projects (not part of the jam entry)
+ConversationExploration/
