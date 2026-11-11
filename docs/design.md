@@ -52,25 +52,31 @@ The whole take is judged on these: who you enter as, how you direct the dream's 
 example "the class chants [their hero's catch phrase]" versus "the crowd cheers"), the
 adjectives and items you add, and what you say to the dreamer.
 
-## The critic
+## The dreamer's verdict
 
-You can't predict every avenue a player takes, so the scores can't be fixed in advance. **An LLM
-critic scores each take on the rubric, and the game advances on those scores.**
+You can't predict every avenue a player takes, so the scores can't be fixed in advance. **The
+dreamer (the LLM persona) judges the take on the rubric and gives its verdict in character.**
 
-- **Input:** the patient's case file, the dream's setting, the rubric, and a description of the
-  take (role, direction, adjectives, items, and what was said).
-- **Output:** a score for each criterion (for example 0-3 each).
-- **Verse uses the scores:** a low total loops the dream again, a middling total gets a partial
-  reaction and a hint aimed at the weakest criterion, and a high total resolves it.
-- **The critic is separate from the dreamer.** The dreamer stays in character and reacts. The
-  critic only judges, so the dreamer's acting doesn't distort the score.
+1. The scene plays out: the player's role, direction, adjectives and items, and the
+   conversation.
+2. Verse ends the scene and prompts the dreamer to weigh the take against the rubric and answer
+   with exactly one of three fixed lines:
 
-The critic can be a character too, which fits the theme: a voice in the hospital that reviews
-each take out loud like a film critic, scores included. That way the score being spoken isn't a
-problem, it's part of the game.
+   | Verdict | Line (example) | Result |
+   |---|---|---|
+   | Positive | "I'm feeling a bit better." | The dream resolves and you get the item |
+   | Mixed | "Something about this feels familiar..." | Partial reaction; the dream loops with a hint |
+   | Negative | "I'm confused." | The dream loops again |
+
+3. Verse listens for the line (`CommitSayEvent` converted with `Localize`) and advances.
+
+This keeps the judging in character, so the score feels like the dreamer's reaction rather than
+a grade. It also needs only one persona NPC and a phrase match, not number parsing. The dreamer
+can add a sentence after the fixed line ("...you sound like Mr. Hale, but he never shouted"),
+which works as the hint toward the weakest criterion.
 
 The direction menus can still offer many options, mostly generic or near-misses, so reading the
-case file closely is the puzzle. But the critic, not the menu, decides what a choice is worth.
+case file closely is the puzzle. But the dreamer, not the menu, decides what a take is worth.
 
 **Items are specific to the player too.** What a dreamer gives you isn't a generic key. It's
 something that belongs to the player's own story, and it connects to the clues found on
@@ -103,16 +109,15 @@ dreamer, the dream resolving, and the hospital turning darker.
 
 ## Technical risks (test these on Day 1 first)
 
-1. **Getting scores from the critic.** As far as I know, the only LLM a UEFN island can reach
-   is a persona NPC: Verse has no general web or LLM API. Plan: the critic is a second persona
-   NPC. Verse sends it the take with `PromptToTalk`, the critic's prompt tells it to always end
-   its review with a fixed format ("Backstory two. Personality three. Environment one. Common
-   sense three."), and Verse reads the line from `CommitSayEvent`, converts it with `Localize`,
-   and parses the four numbers. To check:
-   - whether the critic hears what the player said to the dreamer, or whether Verse has to pass
-     it along (and whether Verse can read the player's transcribed speech at all)
-   - whether the critic reliably keeps the format, and how long a review takes
-   - whether two persona NPCs can run on one island at the same time
+1. **Getting the verdict.** As far as I know, the only LLM a UEFN island can reach is a persona
+   NPC: Verse has no general web or LLM API. Plan: at the end of the scene, Verse sends the
+   dreamer a `PromptToTalk` asking for its verdict, and listens for one of the three lines. To
+   check:
+   - whether the dreamer says the fixed lines word for word, so the phrase match works
+   - whether it judges the take fairly against the rubric while staying in character, or is
+     too easily pleased
+   - whether Verse can tell the verdict line apart from normal dialogue (for example by only
+     listening right after the verdict prompt)
 2. **Giving the NPC context at runtime.** The role, adjectives and items have to reach the
    dreamer. Plan: `PromptToTalk` with a context line ("A storm rolls in. The visitor is your
    brother."). Need to check whether the NPC keeps that context for the rest of the
@@ -120,9 +125,9 @@ dreamer, the dream resolving, and the hospital turning darker.
 3. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
-Fallback if the critic can't hear what the player said: the critic scores only the setup
-choices and preset lines, which Verse can describe to it. Last resort if the critic can't score
-at all: fixed values per option, with the LLM only adding flavor.
+Fallback if the dreamer is too lenient: add a second, hidden judge persona that only gives the
+verdict. Last resort if the verdict can't be read reliably: fixed values per option, with the
+LLM only adding flavor.
 
 ## Open questions
 
