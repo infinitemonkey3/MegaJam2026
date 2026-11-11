@@ -16,19 +16,41 @@ learned about yourself to break free.
 ## Core loop (one patient)
 
 1. **Case file.** At the patient's bed, read their file: personality, likes, dislikes, key
-   moments.
-2. **Observe.** Watch the dream loop as an outside camera (Cinematic Sequence device). It always
-   ends the same way.
+   moments, and a medical note that hints at the dream.
+2. **Observe.** Right after the file, watch the dream loop as an outside camera (Cinematic
+   Sequence device). It always ends the same way. No step in between: the player forms their
+   own read on the dream as they watch.
 3. **Direct.** Before entering, set up the next take:
    - **Cast yourself** in one of 2-3 roles (stranger, old friend, doctor). Changes your costume
      and who the dreamer thinks you are.
-   - **Apply adjectives** from a fixed set per dream (for example stormy, warm, silent). Each
-     one is a prebuilt change: lighting, weather, props shown or hidden.
-   - **Bring in history items** from the case file (for example a music box, a dog).
-4. **Enter.** Play your role inside the dream and talk to the dreamer (an LLM persona NPC) by
-   voice, or with preset lines for players without a mic.
-5. **Resolve or retry.** If you get through to them, the dream resolves and you keep an item.
+   - **Apply adjectives** (up to 2) from a fixed set per dream element (for example the oven:
+     warm, roaring, patient). Each one is a prebuilt change: lighting, weather, props shown or
+     hidden.
+   - **Bring in history items** (up to 2) from the case file (for example a music box, a dog).
+4. **Enter.** The clock rewinds to the start of the dream with your changes in place. Play your
+   role and talk to the dreamer (an LLM persona NPC) by voice, or with preset lines for players
+   without a mic. The dialogue drives the take forward.
+5. **Last line.** The take runs toward the moment the dream always ends (the lights going out).
+   When it gets there, the player gets one last line or action before the take is judged.
+6. **Resolve or retry.** If you get through to them, the dream resolves and you keep an item.
    If not, the dream loops and you can direct a new take.
+
+### The dream fights back
+
+Setup choices don't just add or subtract points. A risky choice can bring the dreamer's trauma
+to the surface during the take, which becomes the take's crisis. In the demo, a *roaring* oven
+started burning the bread, echoing the morning of the funeral. The player recovered by pulling
+the loaf out, and the take was more dramatic for it. The dreamer's persona prompt should tell it
+to let the dream turn dark when the setup or the player pushes on a painful memory, and to give
+the player a moment to respond.
+
+### Extras are directed inside the dream
+
+Directing the dream's extras (the crowd, the class) works better as something the player does
+during the take than as a menu choice beforehand. In the demo the player skipped the extras
+step, then won over the waiting customers by talking to them at the door, and the faceless line
+turned into regulars with faces. The extras react to what the player says and does in the
+scene.
 
 ## Specificity is the score
 
@@ -48,9 +70,9 @@ A take is scored on four criteria:
 | **Environment** | Fitting the dream's setting, so the change belongs there | A classroom chant in a classroom dream, not a parade |
 | **Common sense** | Choices that make sense together and in the moment | Not a teacher cheering on a superhero in the middle of a fire drill |
 
-The whole take is judged on these: who you enter as, how you direct the dream's extras (for
-example "the class chants [their hero's catch phrase]" versus "the crowd cheers"), the
-adjectives and items you add, and what you say to the dreamer.
+The whole take is judged on these: who you enter as, the adjectives and items you add, what you
+say to the dreamer, and how you deal with the extras during the scene (for example getting the
+class to chant [their hero's catch phrase] versus telling a crowd to cheer).
 
 ## The dreamer's verdict
 
@@ -118,7 +140,8 @@ case file closely is the puzzle. But the dreamer, not the menu, decides what a t
 
 **Items are specific to the player too.** What a dreamer gives you isn't a generic key. It's
 something that belongs to the player's own story, and it connects to the clues found on
-yourself.
+yourself. In the demo, Nell gave the player a bakery order slip for a birthday cake that was
+never picked up, written in the player's own handwriting. Items tell the meta story.
 
 ## Meta story
 
@@ -134,6 +157,26 @@ yourself.
   devices.
 - **Escape.** The dream items combine with what you learned about yourself to open the way out.
   The ending is the player's own "director's cut": they finally face their own dream.
+
+## Paper demo: Nell (2026-11-11)
+
+We played one patient as text in chat, with the agent playing the game and the dreamer, to test
+the loop. A placeholder patient for testing, not necessarily one for the game.
+
+- **Case file:** Eleanor "Nell" Price, 71, a proud, dry-humored baker who softens when someone
+  needs her. She ran Price's Bakery with her late husband Walt, who whistled while he kneaded.
+  She taught his nephew Teddy to bake as a kid. The morning of Walt's funeral she opened alone,
+  burned every loaf, and never reopened. Her heart rate rises at 5 AM.
+- **Dream:** 5 AM at the bakery. The oven won't light, faceless customers press at the glass,
+  the dough won't hold, there's no whistling, and the lights go out.
+- **Take:** Teddy, with a roaring oven, rain, Walt's apron and cinnamon. Teddy asked Nell for a
+  favor (to teach him again), pulled out the burning loaf when the oven brought back the
+  funeral morning, put on Walt's apron, and asked the waiting customers to bear with them.
+- **Verdict:** Backstory 3, Personality 3, Environment 3, Common sense 2 (the roaring oven
+  nearly ended the take). 11/12, positive: "I'm feeling a bit better." Nell started whistling.
+
+What it showed: the four sections above on the dream fighting back, extras inside the dream,
+the last line, and items that belong to the player.
 
 ## Scope
 
