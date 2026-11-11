@@ -59,3 +59,22 @@ Open the project from the UEFN Project Browser (Browse → `MegaJam\MegaJam.uefn
 2. Start Claude Code in this repo folder and approve the `unreal-mcp` server when asked.
 
 `unreal-insights` is Epic's profiling MCP server, which ships with the Fortnite install.
+
+## Asset generation MCP (Meshy, fal)
+
+`.mcp.json` also connects two jam partner tools. No keys are stored in the repo.
+
+- **Meshy** (3D props): the official `@meshy-ai/meshy-mcp-server`, run with `npx` (Node 18+).
+  Needs a Meshy Pro plan or higher (the jam gives one free month). Create an API key at
+  [meshy.ai/developers/keys](https://www.meshy.ai/developers/keys) and set it as a user
+  environment variable, then restart Claude Code:
+
+  ```powershell
+  [Environment]::SetEnvironmentVariable("MESHY_API_KEY", "msy_...", "User")
+  ```
+
+- **fal** (images, music, audio): fal's hosted server at `https://mcp.fal.ai/mcp-relay`. It
+  signs in with OAuth, so there's no key: run `/mcp` in Claude Code, pick `fal`, and choose
+  Authenticate.
+
+Log every generated asset, with the tool, model and license, in `docs/assets.md`.
