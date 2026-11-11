@@ -40,6 +40,13 @@ used.
 ### Prompts
 
 - The Barnaby personality prompt was written for the test only and won't be used in the entry.
+
+### Design
+
+- **2026-11-11: Game design.** After the theme reveal ("Director's Cut"), wrote the game concept
+  and plan in [`design.md`](design.md) with the agent: a coma ward where the player directs
+  patients' recurring dreams and slowly uncovers their own nightmare. A plan only; no game
+  content was built before the jam.
 - No other prompts, scripts or assets were made for the game before the jam.
 
 ## Day 1 (Nov 12)
