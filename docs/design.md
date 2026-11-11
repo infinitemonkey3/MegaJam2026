@@ -58,9 +58,12 @@ You can't predict every avenue a player takes, so the scores can't be fixed in a
 dreamer (the LLM persona) judges the take on the rubric and gives its verdict in character.**
 
 1. The scene plays out: the player's role, direction, adjectives and items, and the
-   conversation.
-2. Verse ends the scene and prompts the dreamer to weigh the take against the rubric and answer
-   with exactly one of three fixed lines:
+   conversation. The persona's session records the conversation automatically.
+2. Verse ends the scene and asks the dreamer's session for a **structured verdict**
+   (`ai_session.Prompt` with a response type, see below). This is silent: nothing is spoken.
+   The model fills in a score per criterion, a verdict, and a hint.
+3. Verse acts on the verdict and has the dreamer say the matching line out loud
+   (`PromptToTalk`):
 
    | Verdict | Line (example) | Result |
    |---|---|---|
@@ -68,12 +71,47 @@ dreamer (the LLM persona) judges the take on the rubric and gives its verdict in
    | Mixed | "Something about this feels familiar..." | Partial reaction; the dream loops with a hint |
    | Negative | "I'm confused." | The dream loops again |
 
-3. Verse listens for the line (`CommitSayEvent` converted with `Localize`) and advances.
+The player only ever hears the dreamer's reaction, so the score feels like how the dreamer
+feels, not a grade. The dreamer can add a sentence after the line ("...you sound like Mr. Hale,
+but he never shouted"), built from the hint, which points at the weakest criterion.
 
-This keeps the judging in character, so the score feels like the dreamer's reaction rather than
-a grade. It also needs only one persona NPC and a phrase match, not number parsing. The dreamer
-can add a sentence after the fixed line ("...you sound like Mr. Hale, but he never shouted"),
-which works as the hint toward the weakest criterion.
+### How the rules reach the LLM
+
+The persona API (UEFN 43.00, `/UnrealEngine.com/Conversations`) gives us what we need:
+
+- **`ai_session.Prompt(Prompt, response_type)`** sends instructions with the session's full
+  context (personality, pinned facts, conversation history) and parses the reply into a Verse
+  struct of numbers, messages, booleans, enums and arrays. Field and type names guide the
+  model. Sketch:
+
+  ```verse
+  take_verdict := enum{Positive, Mixed, Negative}
+  take_score := struct:
+      BackstoryScore:int        # 0-3
+      PersonalityScore:int      # 0-3
+      EnvironmentScore:int      # 0-3
+      CommonSenseScore:int      # 0-3
+      Verdict:take_verdict
+      HintForWeakestCriterion:message
+  ```
+
+- **`persona_component.SetPersonality`** changes the personality at runtime, so one dreamer NPC
+  setup can load each patient's case file and dream setting.
+- **The rubric goes in the verdict prompt**, not the personality. The dreamer plays the scene
+  without thinking about scores, then judges it when asked. The prompt is short: the four
+  criteria with what earns 0-3, and the verdict thresholds.
+- **`RegisterAction`** lets the model emit a structured side-output with any reply. Could be
+  used for live reactions during the scene (warmer or colder). Not needed for the first version.
+
+**Context size:** no documented limit. Epic's docs say there's no limit on the number of facts,
+and the conversation history is compacted automatically. There is an `ai_character_limit_error`,
+so some limit exists. Keep each case file and the rubric to a few hundred words. The model is
+Gemini 3.1 Flash-Lite (Epic's FAQ), and the session clears after each round.
+
+**Fits Epic's own example.** Epic's persona docs describe a cosmic entity that tries to convince
+players to press a button. This flips it: the player convinces the NPC. Structured output "like
+when to end a game" is a use case Epic names. The jam also has a **Walkie-Talkie** prize for the
+best narrative UEFN game with LLM-powered NPCs, which this concept is aimed at.
 
 The direction menus can still offer many options, mostly generic or near-misses, so reading the
 case file closely is the puzzle. But the dreamer, not the menu, decides what a take is worth.
@@ -109,25 +147,24 @@ dreamer, the dream resolving, and the hospital turning darker.
 
 ## Technical risks (test these on Day 1 first)
 
-1. **Getting the verdict.** As far as I know, the only LLM a UEFN island can reach is a persona
-   NPC: Verse has no general web or LLM API. Plan: at the end of the scene, Verse sends the
-   dreamer a `PromptToTalk` asking for its verdict, and listens for one of the three lines. To
-   check:
-   - whether the dreamer says the fixed lines word for word, so the phrase match works
-   - whether it judges the take fairly against the rubric while staying in character, or is
-     too easily pleased
-   - whether Verse can tell the verdict line apart from normal dialogue (for example by only
-     listening right after the verdict prompt)
+1. **Getting the verdict.** Plan: `ai_session.Prompt` with the `take_score` struct. To check:
+   - that it returns a filled struct in a play session (it's marked available from 41.00)
+   - that the session's history includes what the player said by voice, so the verdict can
+     judge it
+   - whether it judges fairly against the rubric, or is too easily pleased
+   - how long the verdict takes, and how big a case file can get before
+     `ai_character_limit_error`
 2. **Giving the NPC context at runtime.** The role, adjectives and items have to reach the
-   dreamer. Plan: `PromptToTalk` with a context line ("A storm rolls in. The visitor is your
-   brother."). Need to check whether the NPC keeps that context for the rest of the
-   conversation.
+   dreamer. Plan: `SetPersonality` for the patient, then a `PromptToTalk` with a context line
+   ("A storm rolls in. The visitor is your brother."). Need to check that the context stays in
+   the session history for the rest of the conversation.
 3. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
-Fallback if the dreamer is too lenient: add a second, hidden judge persona that only gives the
-verdict. Last resort if the verdict can't be read reliably: fixed values per option, with the
-LLM only adding flavor.
+Fallback if the structured verdict doesn't work: prompt the dreamer to say one of three fixed
+lines and match the text from `CommitSayEvent` (converted with `Localize`). If the dreamer is
+too lenient: a second, hidden judge persona that only gives the verdict. Last resort: fixed
+values per option, with the LLM only adding flavor.
 
 ## Open questions
 
