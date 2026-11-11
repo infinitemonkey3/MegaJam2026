@@ -8,12 +8,6 @@
       "type": "stdio",
       "command": "C:/Program Files/Epic Games/Fortnite/Engine/Binaries/Win64/UnrealInsightsMCP.exe"
     },
-    "meshy": {
-      "type": "stdio",
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "@meshy-ai/meshy-mcp-server"],
-      "env": { "MESHY_API_KEY": "${MESHY_API_KEY}" }
-    },
     "fal": {
       "type": "http",
       "url": "https://mcp.fal.ai/mcp-relay"

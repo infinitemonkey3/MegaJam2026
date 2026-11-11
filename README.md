@@ -62,19 +62,23 @@ Open the project from the UEFN Project Browser (Browse → `MegaJam\MegaJam.uefn
 
 ## Asset generation MCP (Meshy, fal)
 
-`.mcp.json` also connects two jam partner tools. No keys are stored in the repo.
+Two jam partner tools also have MCP servers. No keys are stored in the repo.
 
 - **Meshy** (3D props): the official `@meshy-ai/meshy-mcp-server`, run with `npx` (Node 18+).
-  Needs a Meshy Pro plan or higher (the jam gives one free month). Create an API key at
-  [meshy.ai/developers/keys](https://www.meshy.ai/developers/keys) and set it as a user
-  environment variable, then restart Claude Code:
+  Needs a Meshy Pro plan or higher (the jam gives one free month). It's added at user scope,
+  as Meshy recommends, so the key stays in your own Claude Code config. Create an API key at
+  [meshy.ai/developers/keys](https://www.meshy.ai/developers/keys), then run this in
+  PowerShell with your key and restart Claude Code:
 
   ```powershell
-  [Environment]::SetEnvironmentVariable("MESHY_API_KEY", "msy_...", "User")
+  claude mcp add -s user meshy --env MESHY_API_KEY=msy_YOUR_KEY "--" cmd /c npx -y @meshy-ai/meshy-mcp-server
   ```
 
-- **fal** (images, music, audio): fal's hosted server at `https://mcp.fal.ai/mcp-relay`. It
-  signs in with OAuth, so there's no key: run `/mcp` in Claude Code, pick `fal`, and choose
-  Authenticate.
+  Don't add a `meshy` entry to `.mcp.json`: a project entry with the same name overrides the
+  user one.
+
+- **fal** (images, music, audio): in `.mcp.json`, fal's hosted server at
+  `https://mcp.fal.ai/mcp-relay`. It signs in with OAuth, so there's no key: run `/mcp` in
+  Claude Code, pick `fal`, and choose Authenticate.
 
 Log every generated asset, with the tool, model and license, in `docs/assets.md`.
