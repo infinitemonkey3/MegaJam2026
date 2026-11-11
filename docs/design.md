@@ -39,15 +39,22 @@ barely moves them, and details from their own life move them a lot.
 - **High:** you enter as their teacher and have the class chant the catch phrase of the
   superhero they love.
 
-What makes a take score:
+A take is scored on four criteria:
 
-- **Role:** someone who matters in their life (from the case file) beats a stranger.
-- **Direction of the dream's extras:** actions built from the case file, such as "the class
-  chants [their hero's catch phrase]", beat generic ones such as "the crowd cheers".
-- **Adjectives and items:** ones that match their likes, fears and key moments beat ones that
-  don't.
-- **What you say:** referring to real details from their life (names, places, moments, the
-  hero, the phrase) beats general reassurance.
+| Criterion | Rewards | Example |
+|---|---|---|
+| **Backstory** | Using elements from the case file: people, places, key moments, loved things | Entering as their teacher, not a stranger |
+| **Personality** | Appealing to who they are: what moves a shy kid differs from what moves a show-off | The class chants with them so they aren't singled out |
+| **Environment** | Fitting the dream's setting, so the change belongs there | A classroom chant in a classroom dream, not a parade |
+| **Common sense** | Choices that make sense together and in the moment | Not a teacher cheering on a superhero in the middle of a fire drill |
+
+Each choice in a take is judged on these:
+
+- **Role:** who you enter as.
+- **Direction of the dream's extras:** for example "the class chants [their hero's catch
+  phrase]" versus "the crowd cheers".
+- **Adjectives and items** you add to the scene.
+- **What you say** to the dreamer.
 
 The direction menus offer many options, mostly generic or near-misses, with only a few that
 match the case file. Reading the file closely is the puzzle. A low score means the dream loops
@@ -85,11 +92,13 @@ dreamer, the dream resolving, and the hospital turning darker.
 ## Technical risks (test these on Day 1 first)
 
 1. **Scoring and detecting the resolution.** Scoring has two parts:
-   - The setup (role, extras' actions, adjectives, items) is scored in Verse from fixed values
-     per option, so it's reliable.
-   - Scoring what the player says needs the LLM to judge it. Plan: the persona prompt lists the
-     dreamer's key details and tells them to reply with a fixed phrase that shows how moved they
-     are (unmoved, stirring, ready to wake). Verse reads each line from `CommitSayEvent`,
+   - The setup (role, extras' actions, adjectives, items) is scored in Verse: each option has a
+     fixed value per criterion, and combinations that break common sense take a penalty. This
+     part is reliable.
+   - Scoring what the player says needs the LLM to judge it on the same four criteria. Plan:
+     the persona prompt lists the dreamer's backstory, personality and dream setting, and tells
+     them to reply with a fixed phrase that shows how moved they are (unmoved, stirring, ready
+     to wake). Verse reads each line from `CommitSayEvent`,
      converts it with `Localize`, and checks for those phrases.
 
    Not yet tested. Also check whether Verse can read the player's transcribed speech at all.
