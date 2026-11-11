@@ -7,6 +7,10 @@
     "unreal-insights": {
       "type": "stdio",
       "command": "C:/Program Files/Epic Games/Fortnite/Engine/Binaries/Win64/UnrealInsightsMCP.exe"
+    },
+    "fal": {
+      "type": "http",
+      "url": "https://mcp.fal.ai/mcp-relay"
     }
   }
 }
