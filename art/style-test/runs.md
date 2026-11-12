@@ -273,3 +273,17 @@ kept for a wider street shot.
 
 `mockup-coldopen.jpg` is now at real scale (3.2 px per cm): wall 400 x 225, poster 120 x 180,
 flyer about 45, sign about 40. The layout is a guess.
+
+## Revised cold-open sizes (Chip, no new images)
+
+Smaller poster, bigger flyer and sign. These replace the plane sizes given in rounds 3 to 5:
+
+| Piece | Plane | Texture detail |
+|---|---|---|
+| Wonderwell poster (two stacked planes) | 90 x 135 cm in total, each half 90 x 67.5 | about 30 texels per cm |
+| Flyer | about 70 x 70 cm plane (the flyer itself about 54 x 70), overlapping the poster's lower right corner | about 29 texels per cm |
+| Help Wanted sign | about 60 x 60 cm plane (the sign itself about 60 x 46), below the poster at the end of the pan | about 34 texels per cm |
+| Wall | unchanged, 400 x 225 cm | about 5 texels per cm |
+
+All three still have far more detail than the wall behind them, so the push-in onto the sign
+stays sharp. `mockup-coldopen.jpg` is rebuilt at these sizes; the layout is still a guess.
