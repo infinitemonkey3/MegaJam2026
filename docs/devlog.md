@@ -70,3 +70,14 @@ used.
   `scene_update` action. It compiled on the first build. The voice-channel setup and the menu
   pattern are adapted from the two pre-jam Verse templates declared above. Results need a play
   session with a microphone.
+- **First launch.** The agent started the play session itself. One spoken exchange showed the
+  client answering in about 1.6 seconds and the `scene_update` action arriving with the reply.
+  It also showed that anything the model writes is redacted in the Verse log, so the agent can
+  read scores but not wording; the spike now puts results on screen for the human tester.
+- **Spike 4 built: the in-world screen.** The agent made a UMG widget with Verse fields, placed
+  it in the level as a Scene Graph entity, and wrote a device that updates it and listens for
+  key input. Finding from Epic's docs: in-world widgets can't be clicked, so the debug screen
+  will be display only, with input coming from keys or a screen-space menu. Getting the
+  widget's fields to show up in Verse took some trial and error, recorded in `docs/spikes.md`.
+- **Usage limit.** The first five-hour usage window ran out mid-morning and cut off the writing
+  and Verse sessions partway through, with their files written but not committed.
