@@ -324,3 +324,16 @@ around the title only, laid over the top half.
 
 This replaces the hard cut on "That's not me" in `docs/design.md` (cold open, step 2) with a
 track; the design doc is the orchestrator's to update.
+
+---
+
+# Final art pass list
+
+Held for a texture-upgrade pass at the end of the jam (Chip, 2026-11-12). Add to it as things
+come up.
+
+| Item | Why | Fix | Cost |
+|---|---|---|---|
+| Title crop for the cold-open fade-in | "MAKE DREAMS HAPPEN" gets about 0.85 texels per screen pixel at 1080p in the opening crop, so it is very slightly soft | Crop the title from `raw/Wonderwell_A_fixed_s4101.png` (4K) into its own 2048-wide texture, laid over the poster's top half | Free, local |
+| Wonderwell poster option B | Still has the turned-up corner with the W drawn over it | Same edit as option A (round 4); only needed if B is used | About $0.14 |
+| Credit lines on two posters | `T_Poster_SciFi` and `T_Poster_Musical` have tiny, partly readable made-up credits (invented names, and "Lorem ipsum" on the musical) | Crop or paint over the bottom strip locally; only needed if a close-up shows them | Free, local |
