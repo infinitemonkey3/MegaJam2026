@@ -33,4 +33,4 @@ desktop.ini
 ConversationExploration/
 
 # Worktrees of side sessions
-.claude/worktrees/
+**/.claude/worktrees/
