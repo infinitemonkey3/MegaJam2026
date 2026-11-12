@@ -246,3 +246,30 @@ in. The camera can end on it and push in.
   of the pan. At 2048 across 40 cm it holds up for a close push-in.
 - The flyer is unchanged.
 - `mockup-coldopen.jpg` now shows the three pieces in pan order on the wall; the layout is a guess.
+
+---
+
+# Round 5: street wall at poster scale, and a cable cutout
+
+Run 2026-11-12 after Chip noted that the first street wall was drawn too wide a view (the
+posters would use only a small, soft slice of it) and that its cables ran behind the poster.
+Approved "Go" at about $0.20 (cap $0.50). 2 calls on `google/nano-banana-2.1/edit`, no reruns.
+**About $0.20 estimated** (1 x $0.138 at 4K + 1 x $0.063 at 2K). All rounds: about $2.31.
+
+| ID | Seed | Size | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|
+| Street wall, about 4 m wide, clear middle | 5101 | 4K 16:9 (5504x3072) | raw/StreetWallScaled_s5101.png | 0.138 | **yes** |
+| Cable bundle | 5201 | 2K 4:1 (4128x1024) | raw/Cables_s5201.png | 0.063 | **yes** |
+
+| Final | Texture | Plane |
+|---|---|---|
+| T_ColdOpen_StreetWallScaled_Left.png, `_Right.png` | 2048x2048 RGB each (left and right halves) | Two planes side by side, each 200 x 225 cm, making a 400 x 225 cm wall. About 5 texels per cm. |
+| T_ColdOpen_Cables_A.png | 2048x512 RGBA | About 400 x 100 cm, a few cm in front of the poster, with its sag above the poster's top edge. |
+
+At this scale a 120 x 180 cm poster covers about 30% of the wall's width, and the middle 60% of
+the wall is plain for the poster, flyer and sign. The cables hang in front, so nothing is cut
+off, and they slide past the poster in the pan. The first wall (`T_ColdOpen_StreetWall_A`) is
+kept for a wider street shot.
+
+`mockup-coldopen.jpg` is now at real scale (3.2 px per cm): wall 400 x 225, poster 120 x 180,
+flyer about 45, sign about 40. The layout is a guess.
