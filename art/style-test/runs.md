@@ -196,3 +196,25 @@ asset.
 - The street wall is only 2K, so it will soften if the camera pushes far into it. The poster is
   the piece built for the close-up.
 - Not tested: anything in UEFN.
+
+---
+
+# Dream transition masks (no generation, no cost)
+
+The take start is a nod to movie night, not a literal projector: house lights down, a projector
+click (audio), a light flickering up on the client, and a colour wash that tracks the take.
+Since the room is 2D, "light" is a blended overlay, not a UEFN light. Made locally by
+`art/tools/fx_masks.py`; import both with **sRGB off**.
+
+| Final | Texture | Use |
+|---|---|---|
+| T_FX_Spot_Recliner.png | 1024x1024 greyscale | Soft glow in the recliner's shape, brightest on her face and chest. Put it on a plane the same size and position as the recliner plane, just in front, as the mask of an **additive** (or modulate) material tinted by the take's colour. Fade it up for "light on the patient"; flicker its intensity for the projector start. |
+| T_FX_Vignette.png | 1024x512 greyscale | White centre falling to black edges, for a 16:9 plane close to the camera with a **modulate** (multiply) material. Fade it in for "house lights down". |
+
+`mockup-fx.jpg` shows the mask, then a warm and a cold wash composited in Python (a stand-in for
+the material, not a render).
+
+To check in the editor: whether UEFN materials allow the Additive and Modulate blend modes on a
+plane, and how to change the tint at runtime. The research notes found Verse material parameters
+unreliable, so the safe fallback is one overlay plane (or material) per colour, shown and hidden
+with `creative_prop.Show`/`Hide`, or swapped with `SetMaterial`.
