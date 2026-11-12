@@ -4,6 +4,14 @@ Researched 2026-11-11, before the jam started, for the coma-ward concept in `doc
 is a plan, not game content. Every claim links to its source. **Unverified** means I could not
 confirm it from a primary source and it should be tested in the editor on Day 1.
 
+> **Update 2026-11-11: the frame changed.** `design.md` now sets the game in a noir, cyberpunk
+> back room (rain, neon through blinds, a client in a recliner, a glowing monitor), not a
+> hospital ward, and the dream is shown only as a debug log, not as props. What still applies:
+> the light-and-color-first approach, the 3-stage escalation with lights, post process and
+> props, the Post Process device notes (use them for the "take starting" look: dim, grain,
+> letterbox), the asset library checks, the lying-NPC options, and the partner tool and import
+> rules. What no longer applies: the pale clinic palette and the dream prop swap.
+
 ## Recommendation (read this first)
 
 **Primary style: "soft liminal clinic", a near-monochrome room with one accent color.**
