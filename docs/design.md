@@ -552,9 +552,61 @@ What it showed: the sections above on the dream fighting back, extras inside the
 line, and items that belong to the story. It also showed that text and voice alone carry a take,
 which the debug-tool presentation relies on.
 
+## The slice's client: Des (decided 2026-11-12)
+
+Nell was the paper-demo test case. The slice's client is **Des** instead, because his loop is
+caused by the implant itself: the studios sell blending in, and his implant is that promise at
+the cheapest price. Nell stays in this doc as the worked example of the loop. The names below
+are working names.
+
+- **Who:** Dessen "Des" Varro, 13, eighth grade at an upper-layer school on an assistance
+  placement. Often mocked and left out. From a poor family.
+- **Home:** the Footings, a foundation layer of the city with no sky and its own speech
+  ("footing talk"). Invented for the game; it stands in for no real community.
+- **The implant:** a cheap translator, a gift from his father so Des would "sound like them".
+  Des heard: the way we talk is wrong. It glitches and makes him stutter, mostly on footing
+  words, because he fights his own home speech. The stutter rises with distress, so the player
+  hears the danger before the haze shows it.
+- **The hero:** he uses the implant to be the hero of a little kids' superhero show, and is
+  ashamed of liking it at 13. The show's name is still open: "Miracle Man" is too close to an
+  existing comic, so pick an invented name and search it.
+- **His father:** his hero, mostly absent, working a string of dead-end jobs up-layer to keep
+  the house. Leaves before Des wakes, with the same line every morning.
+- **His mother:** keeps the Footings' traditions (suggested: lamp nights, where families hang
+  hand-made lamps and tell who carried the light down). Des loved them and now won't let her
+  mention them near school.
+
+**His three dreams:**
+
+| Layer | The loop | What it reveals |
+|---|---|---|
+| **1. Surface** | As the hero, he lands in front of the whole year at an assembly, opens his mouth for the catchphrase, stutters, and the laughter puts the lights out. | His catchphrase isn't the show's. It's his father's line leaving for work. The hero is his dad. |
+| **2. Under it** | The day he got the implant. His father, proud, fitting it: "Now you'll sound like them." | The stutter makes sense: the implant chokes on the words his family gave him. |
+| **3. Core** | The school gate. His mother calls to him in footing talk, holding a lamp, and he walks past as if he doesn't know her. | What he's never faced is what he did to her, not what the class did to him. |
+
+**Planted oddities for the case file:** speech faults cluster at dinner time; no faults at all
+during hero play; the cape is sewn from lamp-night cloth; the catchphrase isn't one the show
+ever used.
+
+**Directing him:** casting as a teacher (safe), a classmate (specific if it's the right one), his
+father (strongest and riskiest: promise what Dad can't keep and the dream turns), or the hero
+himself (a near-miss, because it feeds the escape). The year group is the crowd to win over
+inside the take, like Nell's customers. Low specificity: "Just be yourself, nobody's laughing."
+High: the year chants the catchphrase in footing talk, so he isn't the only one saying it.
+
+**Left behind for the director's story (suggested):** a paper lamp tag in the director's
+handwriting.
+
+**Care:** a mocked teenager in distress stays gentle on screen (laughter and lights out, nothing
+cruel), for Epic's content rules and the IARC rating.
+
+**To test (Day 1):** which persona voice passes for a 13-year-old, and how text-to-speech reads a
+written stutter ("M-m-mine").
+
 ## Jam slice
 
-What we ship for the jam: one client, three dreams, ending on a cliffhanger.
+What we ship for the jam: one client (Des, see above), three dreams, ending on a cliffhanger.
+The Nell examples in the steps below stand for Des's equivalents.
 
 1. **Cold open.** The "NO SIGNAL" pre-roll with the mic check, then the director's narration
    over the flyer, the hard cut, the street and his room. Lands in first person at the desk,
