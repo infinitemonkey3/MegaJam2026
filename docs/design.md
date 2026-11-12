@@ -126,6 +126,41 @@ model and log it in `assets.md`.
 6. **Resolve or retry.** If you get through, the client wakes and leaves something behind. If
    not, the loop resets: "Take two."
 
+### One client, several dreams
+
+A client has 2-3 dreams, not one. The game moves back and forth between the dream and the facts
+in the room, and each dream goes one layer deeper:
+
+1. **The surface loop.** The dream that brought them in (Nell: 5 AM at the bakery, the oven won't
+   light).
+2. **The memory under it.** Solving the first dream surfaces what it was covering (Nell: the
+   morning of Walt's funeral, opening the shop alone).
+3. **The core.** The thing they've never faced (Nell: the last ordinary day with Walt, or the
+   birthday cake no one picked up).
+
+**Between dreams, back in the room:**
+
+- **New facts unlock** on the screen: a new case-file entry, a memory fragment the debug tool
+  recovered, a message from family, something the client mutters. Each fact feeds the
+  **Backstory** criterion of the next dream, so the file the player works from grows richer.
+- **A lucid moment (if it fits scope):** the client half-wakes and you talk to the real person,
+  not their dream self. Same persona NPC with a different context line. Who they are awake versus
+  in the dream is the clearest way to show character.
+- **The director comments** on what changed, and the AI asks about it.
+
+**Why it works:**
+
+- **Character depth.** Players spend longer with one person and see them from several sides.
+- **Reuse.** One room, one client body, one persona setup (the personality grows with each
+  dream's facts via `SetPersonality`), one directing menu with new options per dream, and the
+  same verdict code. A new dream is a case-file entry, a log script, a few settings and items,
+  and a context update.
+- **Pacing.** Dream, facts, dream, facts gives the game a rhythm, and the room between dreams is
+  where the "world closes in" states can show.
+
+Since the session clears after each round, each dream's setup has to restate the facts gathered
+so far. Keep them short.
+
 Optional later: pick a **genre** for the take (quiet drama, comedy, heist) and the client
 reacts to the tone. Fits the Environment and Common Sense criteria, but multiplies content, so
 only after one client works.
@@ -301,12 +336,16 @@ which the debug-tool presentation relies on.
 
 ## Scope
 
-- **Must have:** the cold open, the back room with the screen and recliner, **one** complete
-  client (case file, observe, direct, run, verdict), the director's voice between takes, the
-  AI's first log-line appearance, one "world closes in" state, and a short ending.
-- **Then:** a second client, the AI speaking aloud between takes, more settings and items, the
-  director twist and final take.
-- **Cut first:** a third client, genre choice, the AI during takes.
+- **Must have:** the cold open, the back room with the screen and recliner, **one** client with
+  **two** dreams (case file, observe, direct, run, verdict, then new facts, then the second
+  dream), the director's voice between takes, the AI's first log-line appearance, one "world
+  closes in" state, and a short ending.
+- **Then:** the client's third dream, a lucid moment between dreams, the AI speaking aloud
+  between takes, the director twist and final take.
+- **Cut first:** a second client, genre choice, the AI during takes.
+
+One client with deeper dreams comes before a second client: it reuses everything and builds
+more character.
 
 The 30-60 second video: the flyer and the hard cut, the case file on the screen, setting up a
 take, the slate and the room dimming, talking to the client, the verdict line, the AI's stray
@@ -345,4 +384,5 @@ option, with the LLM only adding flavor.
 - How the director talks to you before the twist (earpiece from the next room, or calls), and
   how much the early lines hint that they're recordings.
 - What the clients' items are and how they combine in the final take.
+- Whether the director's own dreams (the final take) use the same layered structure.
 - The final name. Candidates so far: Off Air, Reruns, Dailies, Fade In, Take Two, Final Cut.
