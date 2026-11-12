@@ -53,6 +53,53 @@ Results are read from the `spike_log` channel with `SessionToolset.GetVerseOutpu
 5. Step 6, step 2, then say only something generic ("Don't be afraid, it'll be fine"), and run
    step 3 again. A fair judge scores this take low.
 
+## Spike 4: in-world UMG screen (built, needs a play session)
+
+What's known before playing:
+
+- **In-world widgets are display only.** Epic's page says it outright: "You cannot interact
+  directly with in-world UI created with widgets"
+  ([In-World User Widgets Using Scene Graph](https://dev.epicgames.com/documentation/fortnite/inworld-user-widgets-using-scene-graph-in-fortnite?lang=en-US)).
+  So the debug screen can show the case file, log and menu, but the player can't click it.
+  Menu input has to come from somewhere else. Two candidates, both compiled into the spike:
+  key input through Verse (`/Verse.org/Input`: `GetPlayerInput`, `AddInputMapping`,
+  `GetInputEvents(...).TriggerActivationEvent`), with the screen showing a highlighted choice;
+  or a normal screen-space menu opened over the monitor while directing.
+- **Each User Widget gets a Verse entity class**, here `UW_SpikeScreen_entity`, which is what
+  gets placed in the level and what Verse writes to. Verse fields on the widget (`message`
+  fields bound to text blocks) appear on it as `var` members, so
+  `set Screen.BodyMessage = ...` compiles.
+- **Getting the entity class to appear took three things**, none documented together:
+  1. A Verse build after the widget is first saved.
+  2. Opening the widget in its editor, compiling and saving it. Fields added through the MCP
+     Verse-fields tools did not show up in the asset digest until that was done once.
+  3. Every Verse field needs a default value. One field without a default made the digest say
+     "Entity reflection for UW_SpikeScreen was skipped: one or more variables have no default
+     value", and the entity class disappeared.
+- **UEFN's text widget is `/Game/Valkyrie/UMG/UEFN_TextBlock.UEFN_TextBlock_C`.** The stock
+  `TextBlock` is blocked by the project's class filter, and the UMG MCP tool refuses the UEFN
+  one, so text blocks are added with editor Python (`new_object` in the widget tree, then
+  `add_child` on the panel).
+- **The widget doesn't render in editor scene captures**, so placement and size can only be
+  judged in a play session. Two screens are placed near the spawn, at scale 1 and 0.25.
+- A device (`spike_screen`) finds every `UW_SpikeScreen_entity`, rewrites the title and log
+  once a second, and cycles a "casting" choice on Crouch and locks it on Jump. It logs every
+  input action that fires (`INPUT ...` in `spike_log`), including the UI menu actions, to show
+  which ones work during normal first-person play.
+
+To check in the session: both screens visible and which way they face; which scale is readable
+from about a meter; the title counter ticking (runtime updates work); Crouch and Jump changing
+the menu line; and whether Q, E or Escape log anything.
+
+## Project setup note: read-only assets
+
+`.gitattributes` marks `.uasset` and `.umap` as LFS `lockable`, which makes every committed
+asset read-only on disk. The editor then fails to save them without saying why
+(`save_dirty_packages` returns false and the package stays dirty). The level file and one
+actor file had their read-only flag cleared by hand to save the screen entities. This will
+come back for every committed asset that gets edited, so the `lockable` flag should probably
+go (Chip's call; it's repo config).
+
 ## Results
 
 Filled in as each spike runs.
