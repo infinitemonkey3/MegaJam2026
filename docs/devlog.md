@@ -80,4 +80,20 @@ used.
   will be display only, with input coming from keys or a screen-space menu. Getting the
   widget's fields to show up in Verse took some trial and error, recorded in `docs/spikes.md`.
 - **Usage limit.** The first five-hour usage window ran out mid-morning and cut off the writing
-  and Verse sessions partway through, with their files written but not committed.
+  and Verse sessions partway through, with their files written but not committed. It happened
+  again after they were resumed; the orchestrator opened the writing PR itself.
+- **Art: 2D style test planned.** An agent session wrote `art/style-test/plan.md`: a "two-ink
+  print" look with a fixed palette, fal models picked by price and license (Nano Banana 2.1 to
+  generate and edit, Bria RMBG 2.0 for cutout alpha), every prompt written out, and a checklist
+  for judging the result from the desk in UEFN. Nothing was generated until Chip approved the
+  cost.
+- **Art: style test generated.** After approval the agent ran the plan on fal: 3 style
+  references, then a back wall, the client in her recliner and desk clutter, each drawn with the
+  chosen reference fed in. 14 calls, about $0.74. Cutouts were made two ways (Bria, and a
+  magenta-key script the agent wrote); the script's were cleaner.
+- **Art: round 2 from Chip's notes.** Chip reviewed the images and asked for a monitor facing
+  the player, a talking mouth and breathing chest for the client, genre film posters with
+  invented titles, and more depth layers for the entry shot. The agent generated 14 more images
+  (about $0.77) and cut the mouth into a 4-frame flipbook and the chest into an overlay, so the
+  engine animates small pieces instead of swapping whole redrawn frames. All assets are logged
+  in `docs/assets.md`.
