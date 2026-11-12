@@ -218,3 +218,31 @@ To check in the editor: whether UEFN materials allow the Additive and Modulate b
 plane, and how to change the tint at runtime. The research notes found Verse material parameters
 unreliable, so the safe fallback is one overlay plane (or material) per colour, shown and hidden
 with `creative_prop.Show`/`Hide`, or swapped with `SetMaterial`.
+
+---
+
+# Round 4: poster corner fix and Help Wanted note
+
+Run 2026-11-12 from Chip's notes on the cold open, approved at about $0.20 (cap $0.50). 2 paid
+calls on `google/nano-banana-2.1/edit`, no reruns. **About $0.20 estimated** (1 x $0.138 at 4K +
+1 x $0.063 at 2K). All rounds: about $2.11.
+
+The pan now tells the story top to bottom: the Wonderwell dream, the back room's flyer for the
+people it fails, then a hand-made "HELP WANTED" sign at the end, which is where the player comes
+in. The camera can end on it and push in.
+
+| ID | Seed | Size | Input | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|---|
+| Poster A, corner fixed | 4101 | 4K 2:3 | raw/Wonderwell_s3102.png | raw/Wonderwell_A_fixed_s4101.png | 0.138 | **yes** |
+| Help Wanted sign | 4201 | 2K 4:3 (2400x1792) | style ref | raw/HelpWanted_s4201.png | 0.063 | **yes** |
+
+- **Poster A:** the turned-up bottom-left corner is gone and WONDERWELL is whole. About 5.6% of
+  pixels changed (mostly the corner and fine grime); the figures and lettering held.
+  `T_ColdOpen_Wonderwell_A_Top.png` and `_A_Bottom.png` were rebuilt from it. Option B still has
+  the broken corner.
+- **Help Wanted sign:** torn cardboard, one strip of tape, "HELP WANTED" in shaky marker and
+  nothing else. `T_ColdOpen_HelpWanted_A.png`, 2048x2048 RGBA, content box x=0 y=462 w=2048
+  h=1586. A plane of about 40 x 40 cm (the sign itself about 40 x 30), below the flyer at the end
+  of the pan. At 2048 across 40 cm it holds up for a close push-in.
+- The flyer is unchanged.
+- `mockup-coldopen.jpg` now shows the three pieces in pan order on the wall; the layout is a guess.
