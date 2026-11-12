@@ -77,6 +77,10 @@ def main(argv):
     elif cmd == "stretch":   # stretch <W> <H> <in.png> <out.png>: RGBA, no trim
         bleed(Image.open(argv[4]).convert("RGBA")).resize(
             (int(argv[2]), int(argv[3])), Image.Resampling.LANCZOS).save(argv[5])
+    elif cmd == "split":     # split <in.png> <out_top.png> <out_bottom.png>: tall image -> two 2048 squares
+        im = Image.open(argv[2]).convert("RGB").resize((2048, 4096), Image.Resampling.LANCZOS)
+        im.crop((0, 0, 2048, 2048)).save(argv[3])
+        im.crop((0, 2048, 2048, 4096)).save(argv[4])
     elif cmd == "opaque":
         Image.open(argv[4]).convert("RGB").resize((int(argv[2]), int(argv[3])), Image.Resampling.LANCZOS).save(argv[5])
     else:

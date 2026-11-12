@@ -146,3 +146,53 @@ Both overlays come from `art/tools/client_parts.py`.
   into real holes. That helps the parallax.
 - The first monitor was drawn at a slight angle; the redraw is square-on.
 - Not tested: anything in UEFN. The chest and mouth overlays have not been seen moving.
+
+---
+
+# Round 3: cold-open poster, flyer and street wall
+
+Run 2026-11-12 from Chip's brief for the cold open, approved at about $0.40 (cap $0.75).
+4 paid calls on `google/nano-banana-2.1/edit`, no reruns. **About $0.40 estimated**
+(2 x $0.138 at 4K + 2 x $0.063 at 2K). All three rounds: about $1.91.
+
+The company is **Wonderwell** (Chip's pick). Its poster uses colours found nowhere else in the
+game: cream white `#F4EEDC`, sky blue `#8EC5E8`, soft gold `#E9C46A`. The poster's system prompt
+swapped the house palette for these on clean areas; the flyer and wall used system prompt A.
+
+| ID | Seed | Size | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|
+| Wonderwell poster | 3101 | 4K 2:3 (3392x5056) | raw/Wonderwell_s3101.png | 0.138 | yes, as option B |
+| Wonderwell poster | 3102 | 4K 2:3 (3392x5056) | raw/Wonderwell_s3102.png | 0.138 | **yes, option A (my pick)** |
+| Flyer for the back room | 3201 | 2K 3:4 (1792x2400) | raw/Flyer_s3201.png | 0.063 | **yes** |
+| Street wall | 3301 | 2K 16:9 | raw/StreetWall_s3301.png | 0.063 | **yes** |
+
+Lettering, all spelled right on both posters and the flyer:
+
+- Poster: "MAKE DREAMS HAPPEN", "Accepting applications from exceptional candidates",
+  "WONDERWELL".
+- Flyer: "LOVED ONE LOOPING?", "DON'T WAIT FOR THE MANUFACTURER.", "CALL 555-0147", "DISCREET.
+  CASH ONLY.", and 555-0147 on each tear-off tab. 555-01xx numbers are reserved for fiction.
+
+## Finals
+
+| Final file | Texture | Plane |
+|---|---|---|
+| T_ColdOpen_Wonderwell_A_Top.png, `_A_Bottom.png` | 2048x2048 RGB each | Two planes stacked with no gap, each 4:3 (for a 120 x 180 cm poster, two planes of 120 x 90). Together they give 2048x4096 for the push-in and pan. |
+| T_ColdOpen_Wonderwell_B_Top.png, `_B_Bottom.png` | same | The other variation, cut the same way. Use A or B, not both. |
+| T_ColdOpen_Flyer_A.png | 2048x2048 RGBA, content box x=239 y=0 w=1570 h=2048 | About 45 x 45 cm plane (the flyer itself is about 34 x 45), just in front of the poster, tilted a few degrees, over the poster's lower left so WONDERWELL stays readable. |
+| T_ColdOpen_StreetWall_A.png | 2048x1024 RGB | 16:9 plane behind the poster, for example 640 x 360 cm. |
+
+The tall poster was resized from 2:3 to 1:2 before the split, so each half is stretched on its
+texture and the 4:3 planes restore it. `mockup-coldopen.jpg` is a flat paste-up, not a game
+asset.
+
+## What I saw
+
+- Option A has the lettering in dark ink on cream and the cleaner wizard pose; option B has
+  cream and gold lettering on a blue sky and stronger light rays. Both decay to slate and black
+  at the bottom as asked.
+- The flyer has six tabs with two torn gaps, not the eight and three I asked for. It reads the
+  same.
+- The street wall is only 2K, so it will soften if the camera pushes far into it. The poster is
+  the piece built for the close-up.
+- Not tested: anything in UEFN.
