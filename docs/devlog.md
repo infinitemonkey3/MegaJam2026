@@ -56,3 +56,17 @@ used.
 - No other prompts, scripts or assets were made for the game before the jam.
 
 ## Day 1 (Nov 12)
+
+- **How the day is run.** One Claude Code session acts as orchestrator: it drives the UEFN editor
+  through MCP, one job at a time, and starts separate agent sessions for work that only touches
+  files. Each of those works in its own git worktree and branch and opens a pull request, which
+  the orchestrator reviews and Chip merges. A hold system (agent-kit) stops two sessions from
+  using the editor or the same Verse files at once.
+- **Offline sessions started:** writing (Nell's case file, dream 1, persona prompts), a 2D art
+  style test plan (models, prompts and cost; nothing generated until Chip approves the spend),
+  and the Verse take-flow skeleton.
+- **Tech spikes 1 to 3 built** (`docs/spikes.md`): the agent wrote `spike_persona.verse`, a test
+  client NPC and a step menu to check the structured verdict, runtime context and the
+  `scene_update` action. It compiled on the first build. The voice-channel setup and the menu
+  pattern are adapted from the two pre-jam Verse templates declared above. Results need a play
+  session with a microphone.
