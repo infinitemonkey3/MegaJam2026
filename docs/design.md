@@ -1,10 +1,14 @@
-# Design: Spinners
+# Design: Dead Air
 
-Title: **Spinners**, street slang for the people stuck in a broken implant loop (see "World").
-Subtitle undecided; candidates: *Director's Cut* (names the jam theme), *Rough Cut*,
-*Unscripted*. Known overlap, accepted: *Blade Runner* calls its flying police cars "spinners";
-ours are people, not vehicles. Before locking it, search Fortnite Discover and itch.io for
-islands or games with the same name.
+Title: **Dead Air**, the broadcast term for silence where there should be a show. It fits the
+director (a TV and film lover), the noir tone, a loop that plays to no one, and the ending,
+where the AI cuts in over a take that should have ended. Subtitle undecided; candidates:
+*Director's Cut* (names the jam theme), *Rough Cut*, *Unscripted*. "Dead Air" is a common
+phrase, so search Fortnite Discover and itch.io for islands or games with the same name before
+locking it.
+
+The afflicted are **spinners** (see "World"). Known overlap, accepted: *Blade Runner* calls its
+flying police cars "spinners"; ours are people, not vehicles.
 
 Jam theme: **Director's Cut**. Written 2026-11-11, before the jam started. This is a plan, not
 game content; it's declared in `devlog.md`.
@@ -454,4 +458,4 @@ option, with the LLM only adding flavor.
   how much the early lines hint that they're recordings.
 - What the clients' items are and how they combine in the final take.
 - Whether the director's own dreams (the final take) use the same layered structure.
-- The subtitle for *Spinners*, if any.
+- The subtitle for *Dead Air*, if any.
