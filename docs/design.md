@@ -144,6 +144,21 @@ client. So narration and dialogue are split in what the model outputs, not in ho
 view. Film grain and a letterbox can come from the post-process devices planned in
 `research/art-style.md`. This replaces the old "dream fuzz": it's the implant syncing in.
 
+## Pre-roll: "NO SIGNAL"
+
+No title menu: Fortnite's loading screen and Discover tile already show the island's name. But
+the cinematic shouldn't start on spawn either, because players load in at different speeds and
+the game depends on their mic.
+
+So the player spawns into a black screen styled as a dead broadcast: a static test pattern, a
+faint hum, "NO SIGNAL". It holds:
+
+- a mic check: voice permission and a level meter ("Say something")
+- the choice of preset lines for players without a mic
+- a "Start" prompt
+
+It looks like the game, not a menu. Start cuts to black, then the cold open.
+
 ## Cold open (about 20 seconds)
 
 A Cinematic Sequence through a small street set and into the room, narrated by the director.
@@ -154,7 +169,12 @@ A Cinematic Sequence through a small street set and into the room, narrated by t
 3. **The truth.** A cheap implant ad peeling off the wall, a warning sticker, someone slumped
    in a doorway.
 4. **His place.** The camera pushes into the back room: posters, the recliner, cables, the
-   glowing monitor. It lands in first person at the desk, and the game starts.
+   glowing monitor. It lands in first person at the desk.
+5. **The title, on the monitor.** The monitor flickers on and **DEAD AIR** appears as the debug
+   software boots. The boot screen becomes the interface, and the tutorial starts. The title
+   after the cold open is a film convention, and it's cheap: a boot state of the same in-world
+   UMG screen. The first thing the player looks at in first person is the screen they'll use
+   all game.
 
 Draft narration:
 
@@ -441,8 +461,9 @@ which the debug-tool presentation relies on.
 
 What we ship for the jam: one client, three dreams, ending on a cliffhanger.
 
-1. **Cold open.** The director's narration over the flyer, the hard cut, the street and his
-   room. Lands in first person at the desk.
+1. **Cold open.** The "NO SIGNAL" pre-roll with the mic check, then the director's narration
+   over the flyer, the hard cut, the street and his room. Lands in first person at the desk,
+   and the title boots up on the monitor.
 2. **Tutorial.** The director instructs you, his assistant, on the screen: how to read a case
    file, how the dream debugger shows a loop, and how to set up and run a take. Short and in his
    voice; it can run alongside dream 1 rather than before it.
