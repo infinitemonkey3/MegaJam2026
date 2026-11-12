@@ -302,3 +302,25 @@ wall's left edge and up from its bottom edge (the pavement), plane centres:
 | Cables | 400 x 100 cm | 200, 210 cm | in front of everything, sag above the poster |
 
 `mockup-coldopen.jpg` shows this layout.
+
+## Cold-open camera path (Chip)
+
+Fade in from black on a tight crop of "MAKE DREAMS HAPPEN", drift down until WONDERWELL is in
+frame, then on the narration's "That's not me" track right past the flyer to the Help Wanted
+sign. Framing targets on the wall, using the layout above (frame width is what the screen shows,
+16:9):
+
+| Beat | Frame centre (across, up) | Frame width | What's in shot |
+|---|---|---|---|
+| 1. Fade in | 125, 186 cm | about 85 cm | the title only |
+| 2. Drift down (end) | 125, 95 cm | about 100 cm | the two figures' lower half, "Accepting applications...", WONDERWELL |
+| 3. "That's not me", track right | through 209, 105 cm | about 100 cm | the flyer |
+| 4. End | 273, 94 cm | about 80 cm, or push in to about 60 | the Help Wanted sign |
+
+Resolution: in beat 1 the title is about 72 cm wide on the top poster texture (2048 texels for
+90 cm), so it gets about 0.85 texels per screen pixel at 1080p, very slightly soft. Grain or a
+slow fade hides that. If it shows, a free fix is a third texture cropped from the 4K source
+around the title only, laid over the top half.
+
+This replaces the hard cut on "That's not me" in `docs/design.md` (cold open, step 2) with a
+track; the design doc is the orchestrator's to update.
