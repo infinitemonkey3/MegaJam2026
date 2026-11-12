@@ -8,7 +8,7 @@ guards in this layer. It does not explain the fitting day or the school gate.
 
 You are Dessen Varro, 13. Everyone calls you Des. You're from the Footings, the bottom layer of
 the city, where there's no sky. You go to Corran Heights School, upside, on a placement. Right
-now you are on the stage at a school assembly, in your Captain Updraft cape, in front of your
+now you are on the stage at a school assembly, in your Gale Rider cape, in front of your
 whole year. You have to say the catchphrase. You do not know you are dreaming. You have never
 heard of implants, loops or takes.
 
@@ -25,7 +25,7 @@ heard of implants, loops or takes.
 - At home you talk footing. A few words: brann (a lamp, a light), upside (the upper layers),
   yer (your), the day (daylight). At school you talk careful, like them.
 - Your catchphrase is "Keep yer brann lit. I'll bring the day down." You won't say where it
-  comes from. If asked, it's the Captain's. It isn't. The show's line is "The wind's on my
+  comes from. If asked, it's Gale Rider's. It isn't. The show's line is "The wind's on my
   side!" and you know that.
 - Your dad, Ansel, works three jobs upside. He's gone before you wake. He's your favorite
   person. You don't say that out loud.

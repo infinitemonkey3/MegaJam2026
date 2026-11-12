@@ -14,7 +14,7 @@ a context line or a crowd line.
 
 The loop is four minutes of dream time.
 
-1. **08:40** Des, in the Captain Updraft cape, lands on the assembly stage. The whole year is
+1. **08:40** Des, in the Gale Rider cape, lands on the assembly stage. The whole year is
    in the hall.
 2. **08:41** A spotlight finds him. The hall goes quiet. They are waiting.
 3. **08:42** He opens his mouth for the catchphrase. He stutters on the first word.
@@ -161,14 +161,14 @@ element, and at most two items. Starting haze is the sum of `Haze`, capped at 2.
 - Context: `The visitor is Ms. Adeyemi-Ross, head of year. She's kind. She calls you Dessen.`
 - Why: safe. She can quiet the hall, but a teacher stepping in singles him out (`P-04`).
 
-#### cast_captain
+#### cast_gale_rider
 
-- Label: `Captain Updraft / the hero`
+- Label: `Gale Rider / the hero`
 - Class: near-miss
 - Risky: no
 - Haze: 0
-- Log: `CAST visitor=captain_updraft role=hero`
-- Context: `The visitor is Captain Updraft, the real one from the show. He says "The wind's on my side!"`
+- Log: `CAST visitor=gale_rider role=hero`
+- Context: `The visitor is Gale Rider, the real one from the show. He says "The wind's on my side!"`
 - Why: `L-01`. He loves it, but it feeds the escape, and it's the wrong catchphrase.
 
 ### Scene Settings
@@ -387,5 +387,5 @@ Prerecorded. The design's "her" lines become "him".
   explains it.
 - The hand-dyed cape (`K-07`), the brann (`item_brann`, `C2`) and his dislike of footing at the
   gate (`D-03`): dream 3.
-- The Captain carries a lamp in Des's drawings (`F0-05`) and not on the show: dream 3.
+- Gale Rider carries a lamp in Des's drawings (`F0-05`) and not on the show: dream 3.
 - Dream 1's log stays clean of the AI.

@@ -30,7 +30,7 @@ SUBJECT    VARRO, DESSEN   AKA "DES"
 AGE        13
 IMPLANT    VOXA CLEAR / SPEECH ASSIST / 2ND-HAND / WARRANTY NONE
 FAULT      PERSISTENT SESSION FAULT / 11 NIGHTS
-PACKAGE    HERO HOUR (KIDS) / LICENSED: CAPTAIN UPDRAFT
+PACKAGE    HERO HOUR (KIDS) / LICENSED: GALE RIDER
 BROUGHT IN VARRO, MAREN (MOTHER)
 ```
 
@@ -44,8 +44,8 @@ BROUGHT IN VARRO, MAREN (MOTHER)
 
 ### Likes
 
-- `L-01` Captain Updraft. A kids' show. Ages 5 to 8 on the box. He is 13.
-- `L-02` Drawing the Captain, in the margins of every school book.
+- `L-01` Gale Rider. A kids' show. Ages 5 to 8 on the box. He is 13.
+- `L-02` Drawing Gale Rider, in the margins of every school book.
 - `L-03` Being in on a joke. Not being the joke.
 - `L-04` His father. Listed by subject as "favorite person". Same answer since age 6.
 - `L-05` Flying, in the hero package. Logged hours: 214.
@@ -105,13 +105,13 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 
 ### Stage 0: Available From The Start
 
-- `F0-01` Captain Updraft. Kids' show. A boy from under the clouds who learns to fly. Show
+- `F0-01` Gale Rider. Kids' show. A boy from under the clouds who learns to fly. Show
   catchphrase: "The wind's on my side!"
 - `F0-02` Classmate on record: PELL, JUNO. Sat next to subject in year 7. Asked what "brann"
   meant. Did not laugh. Moved sets in year 8.
 - `F0-03` Assembly teacher: MS. ADEYEMI-ROSS. Head of year. Kind on record. Says "Dessen".
 - `F0-04` Subject's school speech: careful, upside accent. Home speech: footing.
-- `F0-05` Subject draws the Captain with a lamp in one hand. The show's Captain carries nothing.
+- `F0-05` Subject draws Gale Rider with a lamp in one hand. The show's Gale Rider carries nothing.
 - `F0-06` Mother: VARRO, MAREN. Night cleaner. Keeps the brann-hang every winter.
 
 ### Stage 1: Unlocked By Dream 1
@@ -119,7 +119,7 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 - `F1-01` Ansel Varro says it at the door every morning, to a sleeping house: "Keep yer brann
   lit. I'll bring the day down."
 - `F1-02` Des wakes up early most days to hear it. He keeps his eyes shut.
-- `F1-03` In hero play, Des is the Captain, but he says his father's line. The hero is his dad.
+- `F1-03` In hero play, Des is Gale Rider, but he says his father's line. The hero is his dad.
 
 ### Stage 2: Unlocked By Dream 2
 
@@ -156,7 +156,7 @@ What he's never faced is what he did to his mother at the gate, not what the cla
 
 ### Layer 1: The Surface Loop
 
-The assembly. As the Captain, he lands in front of the whole year, opens his mouth for the
+The assembly. As Gale Rider, he lands in front of the whole year, opens his mouth for the
 catchphrase, stutters, and the laughter puts the lights out. Written in `dream-1.md`.
 
 ### Layer 2: The Memory Under It
