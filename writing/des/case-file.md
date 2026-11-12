@@ -76,6 +76,7 @@ BROUGHT IN VARRO, MAREN (MOTHER)
   inside out. Embroidery on the hidden face, not read. Not licensed merchandise.
   → Pays off in dream 1 (whose it is) and dream 3 (why it's inside out).
 - `K-08` Father works upside. Three jobs on record. Leaves home 05:10, before subject wakes.
+  Brann-hang attendance, last 2 winters: 0.
 - `K-09` `ANOMALY` Brann-hang, last winter: household Varro hung 3 lamps. One tag reads
   "DESSEN". Subject not present. → Pays off in dream 3.
 
@@ -123,6 +124,9 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 - `F0-05` Subject draws Gale Rider climbing out of the top of the page. Never the ground under
   him.
 - `F0-06` Mother: VARRO, MAREN. Night cleaner. Keeps the brann-hang every winter.
+- `F0-07` Father: VARRO, ANSEL. Moved the household up for the school placement and a flat
+  with a window. Works three jobs to keep it. Missed the last two brann-hangs: shifts. Wants
+  more for them than he had, and says so.
 
 ### Stage 1: Unlocked By Dream 1
 
@@ -140,6 +144,8 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 - `F2-02` Des heard: the way we talk is wrong.
 - `F2-03` The implant tries to replace footing words. Des fights it. The fight is the stutter.
   Dinner is when the house talks footing.
+- `F2-04` Ansel saved four months for the implant. He meant it as the best thing he could give.
+  He thinks footing talk is part of what kept him on the bottom layer.
 
 ### Stage 3: Unlocked By Dream 3
 

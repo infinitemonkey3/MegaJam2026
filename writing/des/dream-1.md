@@ -138,7 +138,7 @@ element, and at most two items. Starting haze is the sum of `Haze`, capped at 2.
 - Risky: yes
 - Haze: 1
 - Log: `CAST visitor=ansel_varro role=father`
-- Context: `The visitor is your dad, Ansel. He talks footing, like at home. He should be at work upside. You've never seen him at school.`
+- Context: `The visitor is your dad, Ansel. He talks footing, like at home. He works three jobs so you can have a better life up here. He should be at work. You've never seen him at school.`
 - Why: `L-04`, `K-08`. The strongest choice and the riskiest. Triggers `C1 Staying`.
 
 #### cast_juno
@@ -398,4 +398,7 @@ Prerecorded. The design's "her" lines become "him".
   implant a few months after the move.
 - In his drawings Gale Rider climbs out of the top of the page (`F0-05`): dream 2 can use it
   when his dad says "Now you'll sound like them."
+- Ansel is never the villain. He wants a better life for them and works hard for it; what it
+  costs is the traditions and his being there (`F0-07`, `K-08`). In dream 2 his pride in the
+  implant is sincere. The player should understand him and still see what it cost Des.
 - Dream 1's log stays clean of the AI.

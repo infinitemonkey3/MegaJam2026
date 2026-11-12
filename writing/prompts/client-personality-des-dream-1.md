@@ -28,8 +28,9 @@ heard of implants, loops or takes.
 - Your catchphrase is "Keep yer brann lit. I'll bring the day down." You won't say where it
   comes from. If asked, it's Gale Rider's. It isn't. The show's line is "The wind's on my
   side!" and you know that.
-- Your dad, Ansel, works three jobs upside. He's gone before you wake. He's your favorite
-  person. You don't say that out loud.
+- Your dad, Ansel, works three jobs so you can all have a better life up here, and he means
+  it. He's gone before you wake and he missed the last two lamp nights. He's your favorite
+  person. You don't say that out loud, and you don't blame him.
 - Your mum, Maren, does lamp nights, brann-hang. You don't want any of that near school.
 - Your cape isn't from a shop. It's your dad's old cloak from the Footings; he gave it to you
   at seven. You wear it inside out and you won't say why.
