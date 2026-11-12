@@ -91,9 +91,37 @@ on purpose with what it describes:
 SCENE bakery_interior / T 05:00 / OVEN state=cold / CUSTOMERS count=11 faces=null
 ```
 
-Setup choices show up as log edits (`OVEN state=roaring`, `INJECT item=walt_apron`). The log
-lines are prewritten per setup choice and per beat. Only the client (and the AI) are LLM-driven.
-The paper demo with Nell was pure text and voice, and it worked.
+Setup choices show up as log edits (`OVEN state=roaring`, `INJECT item=walt_apron`). The paper
+demo with Nell was pure text and voice, and it worked.
+
+### Narration and voice
+
+A persona has one voice: anything it says aloud, scene description included, is spoken as the
+client. So narration and dialogue are split in what the model outputs, not in how it's voiced.
+
+- **The client speaks only dialogue.** Its personality says: never describe actions or the scene
+  aloud; put any action in the log line instead. (LLMs like to narrate, *\*she sighs\**, so this
+  has to be explicit.)
+- **The log is text on the screen, not spoken.** Two sources:
+  - *Prewritten lines* for the fixed beats: the loop's opening, setup edits, the moment the loop
+    always ends.
+  - *Live lines* from the client's `RegisterAction` side-output, which isn't spoken. The same
+    action carries the distress score for the haze:
+
+    ```verse
+    scene_update := struct:
+        Distress:int          # 0-3, drives the haze
+        LogLine:message       # one terse debug-log line, e.g. "LOAF removed / SMOKE clearing"
+    ```
+
+    If the model fills `LogLine` badly, drop to prewritten lines only.
+- **Voicing the log is for later.** UEFN 43.00 has no plain text-to-speech call; `PromptToTalk`
+  speaks the model's own reply, not a given string. If we voice it later:
+  - prewritten lines as audio recorded ahead of time (fal text-to-speech, logged in `assets.md`),
+    played with an `audio_player_device`
+  - live lines through a silent narrator persona told to read a line exactly (usually works, not
+    guaranteed, and adds a round trip per line)
+  - story bonus: the AI takes over the narrator voice and reads a line that isn't in the log
 
 **Starting a take:** the room dims, a slate shows "Take 2", and the debug readout takes over the
 view. Film grain and a letterbox can come from the post-process devices planned in
@@ -460,9 +488,11 @@ breaking in.
 4. **A lying-down client.** Persona NPCs are spawned characters, and a still, lying pose isn't
    guaranteed. Fallback: a static posed body in the recliner, with the talking persona NPC hidden
    nearby. Voice and subtitles still work, and a sedated client shouldn't move much anyway.
-5. **Live danger signal.** Check that `RegisterAction` fires reliably with each client reply,
-   how fast, and whether the distress values track the take sensibly. Fallback: drive the haze
-   from setup choices and the clock only, plus scripted crisis beats.
+5. **Live danger signal and log lines.** Check that `RegisterAction` fires reliably with each
+   client reply, how fast, whether the distress values track the take sensibly, that its payload
+   can carry a `message` (`LogLine`), and that the client stops narrating aloud once it has the
+   log line. Fallback: drive the haze from setup choices and the clock only, plus scripted crisis
+   beats, and use prewritten log lines only.
 6. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
