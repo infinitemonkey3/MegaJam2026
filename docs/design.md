@@ -1,4 +1,9 @@
-# Design (working title: Director's Cut)
+# Design: Loopers
+
+Title: **Loopers**, street slang for the people stuck in a broken implant loop (see "World").
+Subtitle undecided; candidates: *Director's Cut* (names the jam theme), *Rough Cut*,
+*Unscripted*. Before locking it, search Fortnite Discover and itch.io for collisions. Known
+neighbors: the film *Looper* (2012) and, probably, Key's visual novel *LOOPERS* (2021).
 
 Jam theme: **Director's Cut**. Written 2026-11-11, before the jam started. This is a plan, not
 game content; it's declared in `devlog.md`.
@@ -26,6 +31,11 @@ brands), not echoing any specific film.
   joy, scripted wonder. Moments without stories.
 - **The cheap side.** Low-end implants are known to break. Some percentage of users get stuck
   in a looping dream, sometimes a nightmare, and have to be pulled out.
+- **Loopers.** What the street calls the afflicted. It's slang, a little cruel, the way people
+  talk about a condition that only hits the poor ("Got a looper in the chair."). The studios and
+  implant makers never use it; their paperwork says something sanitized, like "persistent
+  session fault". The director uses "looper" but says it gently, and calls each one by name once
+  they're in his chair.
 - **The back room.** People who can't afford anything else come to hackers like the director.
   His tools are stolen debug software for the implants: made for engineers, not users, and far
   less capable than what the studios have.
@@ -93,6 +103,7 @@ Noir rules: short, flat sentences. He states things and doesn't explain his feel
 not cruel. Film references stay small, one aside now and then. He speaks between takes, never
 during one. Draft lines:
 
+- Tutorial opener: *"Got a looper in the chair. Sit down. Let's see where she's stuck."*
 - New client: *"Eleanor Price. Seventy-one. Bargain implant, three years past warranty. Same
   dream every night, and it ends the same way."*
 - Before a take: *"Every loop is a scene that forgot how to end. We just need to give it one."*
@@ -440,4 +451,4 @@ option, with the LLM only adding flavor.
   how much the early lines hint that they're recordings.
 - What the clients' items are and how they combine in the final take.
 - Whether the director's own dreams (the final take) use the same layered structure.
-- The final name. Candidates so far: Off Air, Reruns, Dailies, Fade In, Take Two, Final Cut.
+- The subtitle for *Loopers*, if any.
