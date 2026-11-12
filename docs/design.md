@@ -65,8 +65,23 @@ First person, one room, three things with one job each:
 - **You:** first person, no body to animate or dress. You can stand up and look around the room
   for lore (his posters, film cans, a projector, notes).
 - **The screen:** the stolen debug software. It shows case files, the directing menu, the loop
-  replay and the take log. It's the whole interface, in the world.
-- **The client:** lying in the recliner in front of the screen, cables taped down.
+  replay and the take log. It's the whole interface, in the world. Before a take, it dominates
+  the view.
+- **The client:** in the recliner, a bit further back in the scene, behind or beside the desk,
+  cables taped down. Present, but the screen is the focus until the take starts.
+
+**The room** is a low-rent space, not a clinic: discarded electronics piled around (gutted
+monitors, loose boards, tangled cable), paper case files on the desk, a cigarette stubbed out in
+a saucer, his movie posters on the walls. Cheap, cluttered, lived in. The clutter is good for
+the art budget: lots of small junk props that read fine without being detailed.
+
+**The screen is a UMG widget rendered in the world**, placed over the computer's monitor. We
+build the whole debug interface (case file, menu, log, vitals) as one UMG UI element, and it
+sits in the scene like a real screen rather than as a HUD overlay. UEFN supports this: Epic's
+v41.30 UI feature example places UMG widgets in the 3D world
+([forum post](https://forums.unrealengine.com/t/user-interfaces-uefn-feature-example-updated-in-v41-30/2739588)),
+and the docs have a page on in-world user widgets using Scene Graph. Details to confirm on Day 1
+are under "Technical risks".
 
 **The dream is never rendered.** The debug tool can't show it, only a readout: a scene log,
 vitals traces, a waveform when the client talks. The log is flat and technical, which clashes
@@ -432,9 +447,16 @@ breaking in.
    client. Plan: `SetPersonality` for the client, then a `PromptToTalk` with a context line ("A
    storm rolls in. The visitor is your nephew."). Check that the context stays in the session
    history for the rest of the conversation.
-3. **Text on the in-world screen.** Verse UI draws over the player's view, not on a prop. Plan:
-   sitting at the desk switches to a fixed camera framing the monitor, with the UI laid out to
-   sit over it; stand up to look around. Fallback: a full-screen UI styled as the monitor.
+3. **The in-world UMG screen.** Plan: one UMG widget placed in the world over the monitor
+   (Epic's v41.30 in-world UI example, and the Scene Graph in-world widget docs). To check:
+   - that the player can click or select on it in first person (input and focus on an
+     in-world widget)
+   - that Verse can update it at runtime: new case-file text, log lines, menu state, vitals
+   - that text stays readable at desk distance, and how it looks with the room's lighting and
+     the danger haze over it
+   - that it works in a private version, not only in the edit session
+   Fallback: a fixed camera framing the monitor with a screen-space UMG or Verse UI laid out
+   over it, or a full-screen UI styled as the monitor.
 4. **A lying-down client.** Persona NPCs are spawned characters, and a still, lying pose isn't
    guaranteed. Fallback: a static posed body in the recliner, with the talking persona NPC hidden
    nearby. Voice and subtitles still work, and a sedated client shouldn't move much anyway.
