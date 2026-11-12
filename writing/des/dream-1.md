@@ -220,6 +220,17 @@ element, and at most two items. Starting haze is the sum of `Haze`, capped at 2.
 
 ### Inject Items
 
+#### item_cape
+
+- Label: `The cape / home-made`
+- Class: specific
+- Risky: no
+- Haze: 0
+- Log: `INJECT item=cape detail=handcut`
+- Context: `Your cape is the one your dad made you, not a shop one. You've never told anyone at school what it's made from.`
+- Why: `K-07`. His dad's gift, so it backs up the dream 1 reveal. What it's made from, and what
+  his mother thought of it, is dream 2.
+
 #### item_work_cap
 
 - Label: `Dad's work cap`
@@ -375,10 +386,12 @@ Prerecorded. The design's "her" lines become "him".
 - The fault cluster at dinner (`K-04`) and "So he sounds like them" (`K-03`): dream 2.
 - Why the implant overrides only footing words: the player hears it in every take. Dream 2
   explains it.
-- The lamp hung for him at brann-hang (`K-07`), the brann (`item_brann`, `C2`) and his dislike of footing at the
+- The lamp hung for him at brann-hang (`K-09`), the brann (`item_brann`, `C2`) and his dislike of footing at the
   gate (`D-03`): dream 3.
 - Gale Rider and the brann stay apart. The hero is escape (up, away, his dad's road); the brann
-  is his mother and the ground. Don't let a hero item carry a footing thing, or the reverse.
+  is his mother and the ground. Only his father crosses them: he cut the cape from his carrier's
+  sash (`K-07`, `F2-04`), and his mother didn't like it (`F2-05`). Dream 2 plays that out at
+  the same dinner as the fitting. Nothing else mixes the two.
 - In his drawings Gale Rider climbs out of the top of the page (`F0-05`): dream 2 can use it
   when his dad says "Now you'll sound like them."
 - Dream 1's log stays clean of the AI.

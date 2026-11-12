@@ -20,6 +20,8 @@ no real community. Not shown as a list; the words appear in the file and in his 
 - `the day`: daylight, which the Footings never get. "Bring the day down" is what you say to
   someone going up-layer to work.
 - `brann-hang`: lamp night. Families hang hand-made lamps and tell who carried the light down.
+- `carrier's sash`: a long dark cloth worn at brann-hang by whoever carries the family's brann.
+  Handed down, father to son.
 
 ## Screen
 
@@ -68,9 +70,11 @@ BROUGHT IN VARRO, MAREN (MOTHER)
 - `K-05` `ANOMALY` Speech faults during hero play: 0. → Pays off in dream 1.
 - `K-06` `ANOMALY` Hero catchphrase, as spoken by subject: "Keep yer brann lit. I'll bring the
   day down." No match in show transcripts, 412 episodes. → Pays off in dream 1.
-- `K-07` `ANOMALY` Brann-hang, last winter: household Varro hung 3 lamps. One tag reads
-  "DESSEN". Subject not present. → Pays off in dream 3.
+- `K-07` `ANOMALY` Hero package costume: cape. Material: hand-cut dark cloth, old, not licensed
+  merchandise. Hero package license check: fail. → Pays off in dream 2.
 - `K-08` Father works upside. Three jobs on record. Leaves home 05:10, before subject wakes.
+- `K-09` `ANOMALY` Brann-hang, last winter: household Varro hung 3 lamps. One tag reads
+  "DESSEN". Subject not present. → Pays off in dream 3.
 
 ### Loop Note
 
@@ -95,11 +99,11 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 
 ### After Dream 2
 
-- To write Friday. Clears `K-04`. Unlocks layer 3.
+- To write Friday. Clears `K-04` and `K-07`. Unlocks layer 3.
 
 ### After Dream 3
 
-- To write Friday. Clears `D-03` and `K-07`.
+- To write Friday. Clears `D-03` and `K-09`.
 
 ## Full Fact Sheet
 
@@ -129,6 +133,10 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 - `F2-02` Des heard: the way we talk is wrong.
 - `F2-03` The implant tries to replace footing words. Des fights it. The fight is the stutter.
   Dinner is when the house talks footing.
+- `F2-04` Same night, Ansel gave him the cape. He had cut it from his carrier's sash, his
+  father's before him. "Every hero needs one."
+- `F2-05` Maren didn't like it. "That cloth carried the light down. Now it's for a show." She
+  said nothing else that night. Des wore it anyway.
 
 ### Stage 3: Unlocked By Dream 3
 
