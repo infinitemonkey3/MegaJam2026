@@ -223,7 +223,17 @@ spike_client_behavior := class(npc_behavior):
             for (Player : Playspace.GetPlayers()):
                 Player.ClearConversationTarget()
 
-spike_step := enum{LoadDream, StartTake, Verdict, Memory, Recall, ClearHistory}
+spike_step := enum{LoadDream, StartTake, Verdict, Memory, Recall, ClearHistory, VoiceTest}
+
+# Candidate voices for Des (13), from the digest's non-internal voices that aren't marked Low.
+VoiceCandidates()<transacts>:[]tuple(string, voice_model) =
+    array:
+        ("orin (Comic, High, Natural)", orin_voice{})
+        ("chase (Comic, High, Natural)", chase_voice{})
+        ("battle_gamer_mae (Whimsical, Med, Warm)", battle_gamer_mae_voice{})
+        ("sunspot (Whimsical, High, Warm)", sunspot_voice{})
+        ("halley (Tough, Med, Natural)", halley_voice{})
+        ("clover_swift (Cinematic, Med, Warm)", clover_swift_voice{})
 
 # Button-opened menu that runs each spike step against the player's conversation target and
 # logs the result to spike_log (read it with SessionToolset.GetVerseOutput).
@@ -241,6 +251,11 @@ spike_menu := class(creative_device):
     MemoryLabel<localizes>:message = "4. Take memory (take_memory)"
     RecallLabel<localizes>:message = "5. Recall check (what's in context)"
     ClearLabel<localizes>:message = "6. Clear history"
+    VoiceLabel<localizes>:message = "7. Voice test for Des (next voice each press)"
+    DesPersonality<localizes>:message = "# Identity\nYou are Des, a 13-year-old boy from the Footings, the city's bottom layer. You are dreaming you are a superhero about to speak in front of your whole school.\n\n# Rules\nSpeak only dialogue, as Des, in one or two short sentences. You stutter on the first sound of a word when nervous, written like 'I-I-I'm' or 'M-m-mine'. Never describe actions aloud."
+    DesLine<localizes>:message = "Say this line out loud, exactly, with the stutter as written: \"I-I-I'm not s-scared. Up we go. Up we g-go!\""
+    VoiceText<localizes>(N:int, Name:string):message = "VOICE {N}: {Name}"
+    var VoiceIndex:int = 0
 
     # Placeholder test text; the real prompts come from the writing stream.
     DreamPersonality<localizes>:message = "# Identity\nYou are Eleanor 'Nell' Price, 71, a proud, dry-humored baker. You are dreaming. In the dream it is 5 AM in Price's Bakery, the shop you ran with your late husband Walt, who whistled while he kneaded. The oven you call Gertie will not light, faceless customers press at the glass, and the dough will not hold.\n\n# Personality Traits\nProud, dry, practical. You soften when someone needs you. You do not like being comforted by strangers.\n\n# Knowledge\nYou taught Walt's nephew Teddy to bake when he was a boy. The morning of Walt's funeral you opened alone, burned every loaf, and never reopened. You do not know you are dreaming.\n\n# Rules\nSpeak only dialogue, as Nell, in one to three short sentences. Never describe actions or the scene aloud; put any action or scene change in the scene_update LogLine instead. If the visitor or the scene pushes on a painful memory, let the dream turn darker, then give the visitor a moment to respond. Stay in character."
@@ -271,6 +286,7 @@ spike_menu := class(creative_device):
             spike_step.Memory => MemoryLabel
             spike_step.Recall => RecallLabel
             spike_step.ClearHistory => ClearLabel
+            spike_step.VoiceTest => VoiceLabel
 
     OnMenuButton(Agent:agent):void =
         if (Player := player[Agent]):
@@ -281,7 +297,7 @@ spike_menu := class(creative_device):
         if (PlayerUI := GetPlayerUI[Player]):
             Stack := stack_box{Orientation := orientation.Vertical}
             Stack.AddWidget(stack_box_slot{Widget := text_block{DefaultText := TitleText}, HorizontalAlignment := horizontal_alignment.Center, Padding := margin{Bottom := 12.0}})
-            Steps:[]spike_step = array{spike_step.LoadDream, spike_step.StartTake, spike_step.Verdict, spike_step.Memory, spike_step.Recall, spike_step.ClearHistory}
+            Steps:[]spike_step = array{spike_step.LoadDream, spike_step.StartTake, spike_step.Verdict, spike_step.Memory, spike_step.Recall, spike_step.ClearHistory, spike_step.VoiceTest}
             for (Step : Steps):
                 Button := button_regular{DefaultText := Label(Step)}
                 Button.OnClick().Subscribe(spike_step_handler{Menu := Self, Step := Step}.OnClick)
@@ -370,6 +386,18 @@ spike_menu := class(creative_device):
             spike_step.ClearHistory =>
                 Session.ClearHistory()
                 Logger.Print("STEP ClearHistory: done")
+            spike_step.VoiceTest =>
+                Candidates := VoiceCandidates()
+                if (Candidate := Candidates[Mod[VoiceIndex, Candidates.Length]]):
+                    Session.ClearHistory()
+                    if (Persona.SetVoice[Candidate(1)], Persona.SetPersonality[DesPersonality]):
+                        Logger.Print("STEP VoiceTest: voice {VoiceIndex} {Candidate(0)}")
+                        ShowResult(Player, VoiceText(VoiceIndex, Candidate(0)))
+                        if (not Persona.PromptToTalk[DesLine, Channel]):
+                            Logger.Print("STEP VoiceTest: PromptToTalk FAILED", ?Level := log_level.Warning)
+                    else:
+                        Logger.Print("STEP VoiceTest: SetVoice or SetPersonality FAILED for {Candidate(0)}", ?Level := log_level.Warning)
+                set VoiceIndex += 1
                 ShowResult(Player, PlainText("History cleared"))
 
     LogError(Player:player, StepName:string, Seconds:float, MaybeError:?ai_error):void =
