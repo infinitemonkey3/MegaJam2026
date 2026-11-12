@@ -30,6 +30,7 @@ art/
     final/             trimmed, power-of-two, ready to import: T_<Set>_<Layer>_<Variant>.png
   tools/
     cutout.py          magenta key, edge bleed, trim and fit to power-of-two (needs Pillow, numpy)
+    client_parts.py    cuts the client's mouth flipbook and chest overlay from the recliner drawing
   room/                production room layers (same refs/raw/cutout/final split), after the test
   client/              production client frames
   posters/             posters and wall dressing

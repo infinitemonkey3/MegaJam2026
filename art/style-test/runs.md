@@ -61,3 +61,88 @@ the desk top (clutter). Planes for the cutouts match the texture's proportions (
 - **Sizes confirmed.** 2K is 2048x2048 at 1:1 and 2752x1536 at 16:9.
 - **Ink wash (R-B1)** is moody but, as expected, soft-edged and lower contrast; nothing was made
   from it.
+
+---
+
+# Round 2: monitor, mouth, chest, posters, depth layers
+
+Run 2026-11-12 after Chip's feedback on round 1 and his approval ("Yes go for it", cap $2.00).
+14 paid calls, all on `google/nano-banana-2.1/edit`, one of them a redraw of the monitor.
+**About $0.77 estimated** (8 x $0.063 at 2K + 6 x $0.044 at 1K). Both rounds together: about
+$1.51. As before, the exact billed amount is only on the fal dashboard.
+
+Every call used system prompt A from `plan.md` and `refs/style-ref.png` as the reference,
+except the two mouth edits, which used `refs/client-face-crop.png` (the client's face from
+`raw/L2_s1211.png`, enlarged 2x) and a one-line style note. Alpha is the local magenta key only.
+
+| ID | Seed | Size | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|
+| Monitor | 2101 | 2K 1:1 | raw/Monitor_s2101.png | 0.063 | no, drawn at an angle |
+| Monitor (redraw, "flat head-on front elevation") | 2111 | 2K 1:1 | raw/Monitor_s2111.png | 0.063 | **yes** |
+| Back wall without posters | 2102 | 2K 16:9 | raw/WallClean_s2102.png | 0.063 | **yes** |
+| Junk pile, left | 2103 | 2K 1:1 | raw/JunkLeft_s2103.png | 0.063 | **yes** |
+| Film shelf, right | 2104 | 2K 1:1 | raw/ShelfRight_s2104.png | 0.063 | **yes** |
+| Desk top with lamp | 2105 | 2K 16:9 | raw/Desk_s2105.png | 0.063 | **yes** |
+| Doorway frame | 2106 | 2K 16:9 | raw/Doorway_s2106.png | 0.063 | **yes** |
+| Floor, top-down | 2107 | 2K 16:9 | raw/Floor_s2107.png | 0.063 | **yes** |
+| Poster, gangster: THE QUIET PARTNER | 2201 | 1K 2:3 | raw/PosterGangster_s2201.png | 0.044 | **yes** |
+| Poster, wartime romance: THE LAST PLANE OUT | 2202 | 1K 2:3 | raw/PosterRomance_s2202.png | 0.044 | **yes** |
+| Poster, dystopian sci-fi: TOMORROW IS RATIONED | 2203 | 1K 2:3 | raw/PosterSciFi_s2203.png | 0.044 | **yes** |
+| Poster, pastoral musical: SING, MEADOW, SING | 2204 | 1K 2:3 | raw/PosterMusical_s2204.png | 0.044 | **yes** |
+| Mouth, lips parted | 2301 | 1K 1:1 | raw/MouthHalf_s2301.png | 0.044 | **yes** |
+| Mouth, open | 2302 | 1K 1:1 | raw/MouthOpen_s2302.png | 0.044 | **yes** |
+
+The prompts for these are not in `plan.md`; fal keeps them with each request, and the poster
+scenes are described in the table. No prompt names a real film, actor or studio.
+
+## Depth stack (back to front)
+
+Distances are from the seated eye point, as in `plan.md` section 5. Sizes are starting values.
+
+| # | Layer | Final file | Texture | Plane (W x H cm) | Distance (cm) |
+|---|---|---|---|---|---|
+| 0 | Floor (horizontal) | T_Room_Floor_A.png | 2048x1024 RGB | 800 x 450, lying flat | under everything |
+| 1 | Back wall, no posters | T_Room_BackWallClean_A.png | 2048x1024 RGB | 800 x 450 | 420 |
+| 2 | Posters x4 | T_Poster_Gangster / Romance / SciFi / Musical.png | 512x1024 RGB | 60 x 90 each | 417, just off the wall |
+| 3 | Junk pile, left | T_Room_JunkLeft_A.png | 2048x2048 RGBA | 250 x 250 | 340 |
+| 4 | Film shelf, right | T_Room_ShelfRight_A.png | 2048x2048 RGBA | 250 x 250 | 330 |
+| 5 | Recliner and client | T_Room_ReclinerClient_Breath0_Key.png (round 1) | 2048x2048 RGBA | 230 x 230 | 260 |
+| 5a | Chest overlay | T_Client_Chest.png | 512x512 RGBA | 74 x 74 | 259.5 |
+| 5b | Mouth overlay | T_Client_Mouth_Atlas.png | 1024x256 RGBA, 4 cells | 23 x 23 | 259 |
+| 6 | Desk top with lamp | T_Room_Desk_A.png | 2048x1024 RGBA | 260 x 130 | 100 |
+| 7 | Monitor | T_Room_Monitor_A.png | 2048x2048 RGBA | 60 x 60, or larger | 85, free to move |
+| 8 | Desk clutter | T_Room_DeskClutter_A_Key.png (round 1) | 2048x1024 RGBA | 110 x 55 | 70 |
+| 9 | Doorway frame | T_Room_Doorway_A.png | 2048x1024 RGBA | 385 x 215 (16:9; the opening is about 100 x 200) | behind the seat; the entry camera starts outside it and passes through |
+
+Opaque 16:9 and 2:3 sources were resized straight to power-of-two, so the plane's proportions
+restore the picture. `mockup-round2.jpg` is a flat paste-up of the layers to show them together;
+it is not a game asset and its layout is only a guess.
+
+## Placing the moving parts
+
+- **Monitor screen.** On `T_Room_Monitor_A.png` the dark screen area is x=260, y=294, w=1527,
+  h=1172 (of 2048). On a 60 cm plane that is 44.7 x 34.3 cm, starting 7.6 cm from the left edge
+  and 8.6 cm from the top. Put the UMG screen there, just in front of the plane.
+- **Chest.** `T_Client_Chest.png` covers x=829, y=602, w=662, h=663 of the recliner texture: a
+  74 cm square whose centre is 130 cm from the plane's left edge and 105 cm from its top. It has
+  a soft edge, so scaling it about 2% up and down on a 4 second cycle should read as breathing
+  without a visible seam.
+- **Mouth.** Each 256 px cell of `T_Client_Mouth_Atlas.png` covers x=1243, y=613, w=207, h=207
+  of the recliner texture: a 23 cm square whose centre is 151 cm from the left and 80 cm from the
+  top. Cells left to right: closed, half, open, half. Play them as a flipbook while she talks and
+  hold cell 1 (or hide the plane) when she is silent.
+
+Both overlays come from `art/tools/client_parts.py`.
+
+## What I saw
+
+- The new layers match round 1's style, and all four poster titles are spelled right.
+- The mouth edits changed the mouth and left the rest of the face in place, so the frames line
+  up.
+- The sci-fi and musical posters have small made-up credit lines at the bottom that are partly
+  readable (invented names, and "Lorem ipsum" on the musical). They are tiny at wall distance;
+  crop or repaint the bottom strip if it shows in a close-up.
+- The shelf was asked for with solid black gaps but came out see-through, which the key turned
+  into real holes. That helps the parallax.
+- The first monitor was drawn at a slight angle; the redraw is square-on.
+- Not tested: anything in UEFN. The chest and mouth overlays have not been seen moving.

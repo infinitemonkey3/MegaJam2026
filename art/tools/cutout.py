@@ -74,6 +74,9 @@ def main(argv):
         key_magenta(argv[2], argv[3])
     elif cmd == "fit":
         fit(int(argv[2]), int(argv[3]), argv[4], [a.split("=", 1) for a in argv[5:]])
+    elif cmd == "stretch":   # stretch <W> <H> <in.png> <out.png>: RGBA, no trim
+        bleed(Image.open(argv[4]).convert("RGBA")).resize(
+            (int(argv[2]), int(argv[3])), Image.Resampling.LANCZOS).save(argv[5])
     elif cmd == "opaque":
         Image.open(argv[4]).convert("RGB").resize((int(argv[2]), int(argv[3])), Image.Resampling.LANCZOS).save(argv[5])
     else:
