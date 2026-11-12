@@ -59,6 +59,27 @@ VerdictName(Verdict:take_verdict):string =
         take_verdict.Mixed => "Mixed"
         take_verdict.Negative => "Negative"
 
+# Model-written messages show as "[Redacted]" in the Verse log, so results also go on screen.
+ActionText<localizes>(Distress:int, Line:message):message = "ACTION distress={Distress} / {Line}"
+VerdictText<localizes>(V:string, S:float, B:int, P:int, E:int, C:int, H:message):message = "VERDICT {V} ({S}s)\nBackstory {B} / Personality {P} / Environment {E} / CommonSense {C}\nHint: {H}"
+MemoryText<localizes>(S:float, Who:message, T:int, F:int, H:int, Mood:message):message = "MEMORY ({S}s)\nVisitor: {Who}\nTrust {T} / Fear {F} / Hope {H} / Mood: {Mood}"
+RecallText<localizes>(S:float, Who:message, W:message, O:message):message = "RECALL ({S}s)\nVisitor: {Who}\nWeather: {W}\nOven: {O}"
+JoinLine<localizes>(A:message, Label:string, B:message):message = "{A}\n{Label}: {B}"
+PlainText<localizes>(S:string):message = "{S}"
+
+MakeCornerBlock(Player:player, X:float, Y:float):text_block =
+    Block := text_block{DefaultJustification := text_justification.Left}
+    if (PlayerUI := GetPlayerUI[Player]):
+        Root := canvas:
+            Slots := array:
+                canvas_slot:
+                    Anchors := anchors{Minimum := vector2{X := X, Y := Y}, Maximum := vector2{X := X, Y := Y}}
+                    Alignment := vector2{X := 0.0, Y := 0.0}
+                    SizeToContent := true
+                    Widget := Block
+        PlayerUI.AddWidget(Root, player_ui_slot{InputMode := ui_input_mode.None})
+    Block
+
 spike_voice_member_info := class(has_voice_member_info):
     var CanBroadcast<override>:logic = true
 
@@ -77,6 +98,7 @@ spike_client_behavior := class(npc_behavior):
 
     var Subtitles:[player]text_block = map{}
     var SubtitleVersion:int = 0
+    var ActionBlocks:[player]text_block = map{}
 
     OnBegin<override>()<suspends>:void =
         if:
@@ -134,7 +156,18 @@ spike_client_behavior := class(npc_behavior):
             Logger.Print("Could not add player to voice group", ?Level := log_level.Warning)
 
     OnSceneUpdate(Update:scene_update):void =
-        Logger.Print("ACTION t={GetSimulationElapsedTime()} Distress={Update.Distress} LogLine={Localize(Update.LogLine)}")
+        Logger.Print("ACTION t={GetSimulationElapsedTime()} Distress={Update.Distress} LogLineLength={Localize(Update.LogLine).Length} LogLine={Localize(Update.LogLine)}")
+        if (Playspace := GetEntity[].GetPlayspaceForEntity[]):
+            for (Player : Playspace.GetPlayers()):
+                GetActionBlock(Player).SetText(ActionText(Update.Distress, Update.LogLine))
+
+    GetActionBlock(Player:player):text_block =
+        if (Existing := ActionBlocks[Player]):
+            Existing
+        else:
+            Block := MakeCornerBlock(Player, 0.03, 0.12)
+            if (set ActionBlocks[Player] = Block) {}
+            Block
 
     OnStartHear(Agent:agent):void =
         Logger.Print("HEAR start t={GetSimulationElapsedTime()}")
@@ -150,7 +183,7 @@ spike_client_behavior := class(npc_behavior):
         Logger.Print("PROMPT FAILURE ({Kind}) t={GetSimulationElapsedTime()}: {Localize(Error.Message)}", ?Level := log_level.Warning)
 
     OnPersonaSaid(Payload:tuple(?agent, message)):void =
-        Logger.Print("SAY commit t={GetSimulationElapsedTime()}: {Localize(Payload(1))}")
+        Logger.Print("SAY commit t={GetSimulationElapsedTime()} Length={Localize(Payload(1)).Length}: {Localize(Payload(1))}")
         spawn{ShowSubtitle(Payload(1))}
 
     ShowSubtitle(Text:message)<suspends>:void =
@@ -217,6 +250,15 @@ spike_menu := class(creative_device):
     RecallPrompt<localizes>:message = "Report exactly what you know from this conversation so far. WhoTheVisitorIs: who the visitor is, or 'unknown'. WeatherOutside: the weather, or 'unknown'. OvenState: the oven's name and state, or 'unknown'. ThingsTheVisitorSaidAloud: each thing the visitor has said to you, quoted as closely as you can; empty if they have said nothing."
 
     var OpenMenus:[player]canvas = map{}
+    var ResultBlocks:[player]text_block = map{}
+
+    ShowResult(Player:player, Text:message):void =
+        if (Existing := ResultBlocks[Player]):
+            Existing.SetText(Text)
+        else:
+            Block := MakeCornerBlock(Player, 0.03, 0.22)
+            Block.SetText(Text)
+            if (set ResultBlocks[Player] = Block) {}
 
     OnBegin<override>()<suspends>:void =
         MenuButton.InteractedWithEvent.Subscribe(OnMenuButton)
@@ -272,17 +314,18 @@ spike_menu := class(creative_device):
     OnStepClicked(Player:player, Step:spike_step):void =
         CloseMenu(Player)
         if (Target := Player.GetConversationTarget[]):
-            spawn{RunStep(Target(0), Target(1), Step)}
+            spawn{RunStep(Player, Target(0), Target(1), Step)}
         else:
             Logger.Print("Player has no conversation target yet", ?Level := log_level.Warning)
 
-    RunStep(Persona:persona_component, Channel:voice_channel(has_voice_member_info), Step:spike_step)<suspends>:void =
+    RunStep(Player:player, Persona:persona_component, Channel:voice_channel(has_voice_member_info), Step:spike_step)<suspends>:void =
         Session := Persona.GetAISession()
         Start := GetSimulationElapsedTime()
         case (Step):
             spike_step.LoadDream =>
                 if (Persona.SetPersonality[DreamPersonality]):
                     Logger.Print("STEP LoadDream: SetPersonality ok")
+                    ShowResult(Player, PlainText("Dream personality loaded"))
                 else:
                     Logger.Print("STEP LoadDream: SetPersonality FAILED", ?Level := log_level.Warning)
             spike_step.StartTake =>
@@ -295,36 +338,45 @@ spike_menu := class(creative_device):
                 Seconds := GetSimulationElapsedTime() - Start
                 if (Score := Result.GetSuccess[]):
                     Logger.Print("STEP Verdict ({Seconds}s): Backstory={Score.BackstoryScore} Personality={Score.PersonalityScore} Environment={Score.EnvironmentScore} CommonSense={Score.CommonSenseScore} Verdict={VerdictName(Score.Verdict)} Hint={Localize(Score.HintForWeakestCriterion)}")
+                    ShowResult(Player, VerdictText(VerdictName(Score.Verdict), Seconds, Score.BackstoryScore, Score.PersonalityScore, Score.EnvironmentScore, Score.CommonSenseScore, Score.HintForWeakestCriterion))
                 else:
-                    LogError("Verdict", Seconds, option{Result.GetError[]})
+                    LogError(Player, "Verdict", Seconds, option{Result.GetError[]})
             spike_step.Memory =>
                 Result := Session.Prompt(MemoryPrompt, take_memory)
                 Seconds := GetSimulationElapsedTime() - Start
                 if (Memory := Result.GetSuccess[]):
                     Logger.Print("STEP Memory ({Seconds}s): Who={Localize(Memory.WhoTheVisitorWas)} Trust={Memory.State.Trust} Fear={Memory.State.Fear} Hope={Memory.State.Hope} Mood={Localize(Memory.State.Mood)}")
-                    for (Index -> Moment : Memory.KeyMoments):
-                        Logger.Print("  KeyMoment {Index}: {Localize(Moment)}")
-                    for (Index -> Promise : Memory.PromisesOrRequests):
-                        Logger.Print("  Promise {Index}: {Localize(Promise)}")
+                    Logger.Print("  KeyMoments={Memory.KeyMoments.Length} Promises={Memory.PromisesOrRequests.Length}")
+                    var Text:message = MemoryText(Seconds, Memory.WhoTheVisitorWas, Memory.State.Trust, Memory.State.Fear, Memory.State.Hope, Memory.State.Mood)
+                    for (Moment : Memory.KeyMoments):
+                        set Text = JoinLine(Text, "Moment", Moment)
+                    for (Promise : Memory.PromisesOrRequests):
+                        set Text = JoinLine(Text, "Promise", Promise)
+                    ShowResult(Player, Text)
                 else:
-                    LogError("Memory", Seconds, option{Result.GetError[]})
+                    LogError(Player, "Memory", Seconds, option{Result.GetError[]})
             spike_step.Recall =>
                 Result := Session.Prompt(RecallPrompt, context_recall)
                 Seconds := GetSimulationElapsedTime() - Start
                 if (Recall := Result.GetSuccess[]):
                     Logger.Print("STEP Recall ({Seconds}s): Visitor={Localize(Recall.WhoTheVisitorIs)} Weather={Localize(Recall.WeatherOutside)} Oven={Localize(Recall.OvenState)}")
-                    for (Index -> Line : Recall.ThingsTheVisitorSaidAloud):
-                        Logger.Print("  VisitorSaid {Index}: {Localize(Line)}")
+                    Logger.Print("  VisitorSaid count={Recall.ThingsTheVisitorSaidAloud.Length}")
+                    var Text:message = RecallText(Seconds, Recall.WhoTheVisitorIs, Recall.WeatherOutside, Recall.OvenState)
+                    for (Line : Recall.ThingsTheVisitorSaidAloud):
+                        set Text = JoinLine(Text, "Said", Line)
+                    ShowResult(Player, Text)
                 else:
-                    LogError("Recall", Seconds, option{Result.GetError[]})
+                    LogError(Player, "Recall", Seconds, option{Result.GetError[]})
             spike_step.ClearHistory =>
                 Session.ClearHistory()
                 Logger.Print("STEP ClearHistory: done")
+                ShowResult(Player, PlainText("History cleared"))
 
-    LogError(StepName:string, Seconds:float, MaybeError:?ai_error):void =
+    LogError(Player:player, StepName:string, Seconds:float, MaybeError:?ai_error):void =
         if (Error := MaybeError?):
             Kind := if (ai_character_limit_error[Error]) then "character limit" else if (ai_timeout_error[Error]) then "timeout" else if (ai_throttled_error[Error]) then "throttled" else if (ai_moderated_error[Error]) then "moderated" else "other"
             Logger.Print("STEP {StepName} FAILED ({Seconds}s, {Kind}): {Localize(Error.Message)}", ?Level := log_level.Warning)
+            ShowResult(Player, JoinLine(PlainText("{StepName} FAILED ({Kind})"), "Error", Error.Message))
         else:
             Logger.Print("STEP {StepName} FAILED ({Seconds}s): no error value", ?Level := log_level.Warning)
 

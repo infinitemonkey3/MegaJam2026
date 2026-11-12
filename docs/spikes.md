@@ -56,3 +56,24 @@ Results are read from the `spike_log` channel with `SessionToolset.GetVerseOutpu
 ## Results
 
 Filled in as each spike runs.
+
+### First launch (one voice exchange, before the scripted run)
+
+- The session launched from the agent (`StartSession`) and the client NPC set itself up: voice
+  group, channel, and the required `scene_update` action all registered.
+- **`RegisterAction` fires with a reply.** One spoken exchange produced one `ACTION` callback
+  (`Distress=0`), in the same tick as `CommitSayEvent`. One sample only; reliability and whether
+  distress tracks the scene still need the scripted run.
+- **Timing, one sample:** the player stopped talking, 1.6 s later the client started speaking,
+  and the line was committed 3.4 s after the player stopped.
+- **Model-written text is redacted in the Verse log.** `Localize()` on the spoken line and on
+  `LogLine` printed as `[Redacted] <number>`. Numbers and enums from the model print normally.
+  So the agent can read scores, verdicts and counts from the log, but not the wording. The
+  spike now shows the action line, verdict hint, memory and recall on screen (top left) for
+  whoever is playing, and logs each text's length to show whether the string Verse gets is the
+  real text or the redacted stand-in.
+- **Open, and it matters for a fallback:** if Verse only ever gets the stand-in string, the
+  "match the client's spoken line from `CommitSayEvent`" fallback for the verdict can't work,
+  and nothing in the game may depend on reading model text as a string. Passing the `message`
+  straight to UI (subtitles) did work in the pre-jam test, so showing `LogLine` on the screen
+  should be fine.
