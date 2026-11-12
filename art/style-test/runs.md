@@ -287,3 +287,18 @@ Smaller poster, bigger flyer and sign. These replace the plane sizes given in ro
 
 All three still have far more detail than the wall behind them, so the push-in onto the sign
 stays sharp. `mockup-coldopen.jpg` is rebuilt at these sizes; the layout is still a guess.
+
+## Cold-open layout: a row, read left to right (Chip)
+
+The camera now travels sideways: the poster, then the flyer to its right at the bottom, then the
+Help Wanted sign to the right of the flyer. Positions on the 400 x 225 cm wall, measured from the
+wall's left edge and up from its bottom edge (the pavement), plane centres:
+
+| Piece | Plane | Centre (across, up) | Notes |
+|---|---|---|---|
+| Wonderwell poster | 90 x 135 cm | 125, 139 cm | spans 80 to 170 across, 71 to 206 up |
+| Flyer | about 70 x 70 cm | 209, 105 cm | tilted about 3 degrees clockwise; its bottom lines up with the poster's bottom |
+| Help Wanted sign | about 60 x 60 cm | 273, 94 cm | tilted about 5 degrees anticlockwise; a little lower than the flyer, the end of the move |
+| Cables | 400 x 100 cm | 200, 210 cm | in front of everything, sag above the poster |
+
+`mockup-coldopen.jpg` shows this layout.
