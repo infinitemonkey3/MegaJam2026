@@ -25,6 +25,11 @@ designed. And the director himself is not where he seems to be.
 **Core idea:** a loop is a scene that forgot how to end. Movies have endings. He knows how to
 write one, and he's teaching you.
 
+**Design rule: the endings are fixed, the route is free.** Every dream has an authored
+destination (the fact it reveals, the way it resolves), and the story beats between dreams are
+written. The player's freedom is in how they get there: who they play, what they bring, what
+they say. The LLM makes the route feel open, and the writing keeps the story on track.
+
 Tone: noir. Low-life, high-tech cyberpunk, kept to our own look (our own signage, palette and
 brands), not echoing any specific film.
 
@@ -283,6 +288,35 @@ in the room, and each dream goes one layer deeper:
 Since the session clears after each round, each dream's setup has to restate the facts gathered
 so far. Keep them short.
 
+### Continuity: what the player made carries forward
+
+If the player invents something important in a take (a promise, a name, a joke, a gift, who
+they claimed to be), it should still be true in the next dream, so they can call back to it.
+"You promised me you'd come back for the cinnamon rolls" should land.
+
+1. **Extract after each take.** Right after the verdict, while the session still holds the
+   conversation, Verse asks for a structured summary with `ai_session.Prompt`:
+
+   ```verse
+   take_memory := struct:
+       WhoTheVisitorWas:message        # the role as the client understood it
+       KeyMoments:[]message            # at most 3, one sentence each
+       PromisesOrRequests:[]message    # things said that could be called back to
+   ```
+
+2. **Store it in Verse** as a running list per client. Cap it (for example the last 6 items) so
+   it stays under the character limit.
+3. **Feed it into the next dream.** It goes into the client's context with the authored facts,
+   framed as memories: "Earlier, in another dream, the visitor did this. It's true for you."
+   Authored facts win if the two conflict.
+4. **Make it findable.** The same list goes into the software's records (the bonus query
+   feature), so the player can ask "what did I say last time?" and get a session record.
+5. **Reward callbacks.** The verdict prompt counts a good callback to an earlier dream as
+   **Backstory**: the shared history between the player and the client is backstory too.
+
+The authored destination doesn't move: carried-forward moments change how a dream plays, not
+where it ends.
+
 Optional later: pick a **genre** for the take (quiet drama, comedy, heist) and the client
 reacts to the tone. Fits the Environment and Common Sense criteria, but multiplies content, so
 only after one client works.
@@ -516,6 +550,8 @@ What we ship for the jam: one client, three dreams, ending on a cliffhanger.
 - The AI's voice line can be prerecorded or generated (log it in `assets.md`); it doesn't need
   to be a live persona in the slice.
 - Only the client is a live LLM persona in the slice.
+- Continuity is in the slice: dreams 2 and 3 get the `take_memory` from earlier takes, so the
+  player's own moments can be called back to.
 - The three dreams reuse the same room, client body, persona setup, menu and verdict code.
 
 **After the jam (or if there's time):** asking the software about the client, a lucid moment
@@ -536,6 +572,8 @@ breaking in.
    - whether it judges fairly against the rubric, or is too easily pleased
    - how long the verdict takes, and how big a case file can get before
      `ai_character_limit_error`
+   - that a second `Prompt` after the verdict returns a usable `take_memory` (arrays of
+     messages), and that the next dream's client actually uses it when the player calls back
 2. **Giving the client context at runtime.** The role, settings and items have to reach the
    client. Plan: `SetPersonality` for the client, then a `PromptToTalk` with a context line ("A
    storm rolls in. The visitor is your nephew."). Check that the context stays in the session
