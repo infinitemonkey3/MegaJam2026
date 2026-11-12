@@ -218,3 +218,122 @@ To check in the editor: whether UEFN materials allow the Additive and Modulate b
 plane, and how to change the tint at runtime. The research notes found Verse material parameters
 unreliable, so the safe fallback is one overlay plane (or material) per colour, shown and hidden
 with `creative_prop.Show`/`Hide`, or swapped with `SetMaterial`.
+
+---
+
+# Round 4: poster corner fix and Help Wanted note
+
+Run 2026-11-12 from Chip's notes on the cold open, approved at about $0.20 (cap $0.50). 2 paid
+calls on `google/nano-banana-2.1/edit`, no reruns. **About $0.20 estimated** (1 x $0.138 at 4K +
+1 x $0.063 at 2K). All rounds: about $2.11.
+
+The pan now tells the story top to bottom: the Wonderwell dream, the back room's flyer for the
+people it fails, then a hand-made "HELP WANTED" sign at the end, which is where the player comes
+in. The camera can end on it and push in.
+
+| ID | Seed | Size | Input | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|---|
+| Poster A, corner fixed | 4101 | 4K 2:3 | raw/Wonderwell_s3102.png | raw/Wonderwell_A_fixed_s4101.png | 0.138 | **yes** |
+| Help Wanted sign | 4201 | 2K 4:3 (2400x1792) | style ref | raw/HelpWanted_s4201.png | 0.063 | **yes** |
+
+- **Poster A:** the turned-up bottom-left corner is gone and WONDERWELL is whole. About 5.6% of
+  pixels changed (mostly the corner and fine grime); the figures and lettering held.
+  `T_ColdOpen_Wonderwell_A_Top.png` and `_A_Bottom.png` were rebuilt from it. Option B still has
+  the broken corner.
+- **Help Wanted sign:** torn cardboard, one strip of tape, "HELP WANTED" in shaky marker and
+  nothing else. `T_ColdOpen_HelpWanted_A.png`, 2048x2048 RGBA, content box x=0 y=462 w=2048
+  h=1586. A plane of about 40 x 40 cm (the sign itself about 40 x 30), below the flyer at the end
+  of the pan. At 2048 across 40 cm it holds up for a close push-in.
+- The flyer is unchanged.
+- `mockup-coldopen.jpg` now shows the three pieces in pan order on the wall; the layout is a guess.
+
+---
+
+# Round 5: street wall at poster scale, and a cable cutout
+
+Run 2026-11-12 after Chip noted that the first street wall was drawn too wide a view (the
+posters would use only a small, soft slice of it) and that its cables ran behind the poster.
+Approved "Go" at about $0.20 (cap $0.50). 2 calls on `google/nano-banana-2.1/edit`, no reruns.
+**About $0.20 estimated** (1 x $0.138 at 4K + 1 x $0.063 at 2K). All rounds: about $2.31.
+
+| ID | Seed | Size | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|
+| Street wall, about 4 m wide, clear middle | 5101 | 4K 16:9 (5504x3072) | raw/StreetWallScaled_s5101.png | 0.138 | **yes** |
+| Cable bundle | 5201 | 2K 4:1 (4128x1024) | raw/Cables_s5201.png | 0.063 | **yes** |
+
+| Final | Texture | Plane |
+|---|---|---|
+| T_ColdOpen_StreetWallScaled_Left.png, `_Right.png` | 2048x2048 RGB each (left and right halves) | Two planes side by side, each 200 x 225 cm, making a 400 x 225 cm wall. About 5 texels per cm. |
+| T_ColdOpen_Cables_A.png | 2048x512 RGBA | About 400 x 100 cm, a few cm in front of the poster, with its sag above the poster's top edge. |
+
+At this scale a 120 x 180 cm poster covers about 30% of the wall's width, and the middle 60% of
+the wall is plain for the poster, flyer and sign. The cables hang in front, so nothing is cut
+off, and they slide past the poster in the pan. The first wall (`T_ColdOpen_StreetWall_A`) is
+kept for a wider street shot.
+
+`mockup-coldopen.jpg` is now at real scale (3.2 px per cm): wall 400 x 225, poster 120 x 180,
+flyer about 45, sign about 40. The layout is a guess.
+
+## Revised cold-open sizes (Chip, no new images)
+
+Smaller poster, bigger flyer and sign. These replace the plane sizes given in rounds 3 to 5:
+
+| Piece | Plane | Texture detail |
+|---|---|---|
+| Wonderwell poster (two stacked planes) | 90 x 135 cm in total, each half 90 x 67.5 | about 30 texels per cm |
+| Flyer | about 70 x 70 cm plane (the flyer itself about 54 x 70), overlapping the poster's lower right corner | about 29 texels per cm |
+| Help Wanted sign | about 60 x 60 cm plane (the sign itself about 60 x 46), below the poster at the end of the pan | about 34 texels per cm |
+| Wall | unchanged, 400 x 225 cm | about 5 texels per cm |
+
+All three still have far more detail than the wall behind them, so the push-in onto the sign
+stays sharp. `mockup-coldopen.jpg` is rebuilt at these sizes; the layout is still a guess.
+
+## Cold-open layout: a row, read left to right (Chip)
+
+The camera now travels sideways: the poster, then the flyer to its right at the bottom, then the
+Help Wanted sign to the right of the flyer. Positions on the 400 x 225 cm wall, measured from the
+wall's left edge and up from its bottom edge (the pavement), plane centres:
+
+| Piece | Plane | Centre (across, up) | Notes |
+|---|---|---|---|
+| Wonderwell poster | 90 x 135 cm | 125, 139 cm | spans 80 to 170 across, 71 to 206 up |
+| Flyer | about 70 x 70 cm | 209, 105 cm | tilted about 3 degrees clockwise; its bottom lines up with the poster's bottom |
+| Help Wanted sign | about 60 x 60 cm | 273, 94 cm | tilted about 5 degrees anticlockwise; a little lower than the flyer, the end of the move |
+| Cables | 400 x 100 cm | 200, 210 cm | in front of everything, sag above the poster |
+
+`mockup-coldopen.jpg` shows this layout.
+
+## Cold-open camera path (Chip)
+
+Fade in from black on a tight crop of "MAKE DREAMS HAPPEN", drift down until WONDERWELL is in
+frame, then on the narration's "That's not me" track right past the flyer to the Help Wanted
+sign. Framing targets on the wall, using the layout above (frame width is what the screen shows,
+16:9):
+
+| Beat | Frame centre (across, up) | Frame width | What's in shot |
+|---|---|---|---|
+| 1. Fade in | 125, 186 cm | about 85 cm | the title only |
+| 2. Drift down (end) | 125, 95 cm | about 100 cm | the two figures' lower half, "Accepting applications...", WONDERWELL |
+| 3. "That's not me", track right | through 209, 105 cm | about 100 cm | the flyer |
+| 4. End | 273, 94 cm | about 80 cm, or push in to about 60 | the Help Wanted sign |
+
+Resolution: in beat 1 the title is about 72 cm wide on the top poster texture (2048 texels for
+90 cm), so it gets about 0.85 texels per screen pixel at 1080p, very slightly soft. Grain or a
+slow fade hides that. If it shows, a free fix is a third texture cropped from the 4K source
+around the title only, laid over the top half.
+
+This replaces the hard cut on "That's not me" in `docs/design.md` (cold open, step 2) with a
+track; the design doc is the orchestrator's to update.
+
+---
+
+# Final art pass list
+
+Held for a texture-upgrade pass at the end of the jam (Chip, 2026-11-12). Add to it as things
+come up.
+
+| Item | Why | Fix | Cost |
+|---|---|---|---|
+| Title crop for the cold-open fade-in | "MAKE DREAMS HAPPEN" gets about 0.85 texels per screen pixel at 1080p in the opening crop, so it is very slightly soft | Crop the title from `raw/Wonderwell_A_fixed_s4101.png` (4K) into its own 2048-wide texture, laid over the poster's top half | Free, local |
+| Wonderwell poster option B | Still has the turned-up corner with the W drawn over it | Same edit as option A (round 4); only needed if B is used | About $0.14 |
+| Credit lines on two posters | `T_Poster_SciFi` and `T_Poster_Musical` have tiny, partly readable made-up credits (invented names, and "Lorem ipsum" on the musical) | Crop or paint over the bottom strip locally; only needed if a close-up shows them | Free, local |
