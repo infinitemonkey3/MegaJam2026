@@ -111,7 +111,7 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
   meant. Did not laugh. Moved sets in year 8.
 - `F0-03` Assembly teacher: MS. ADEYEMI-ROSS. Head of year. Kind on record. Says "Dessen".
 - `F0-04` Subject's school speech: careful, upside accent. Home speech: footing.
-- `F0-05` Subject draws Gale Rider with a lamp in one hand. The show's Gale Rider carries nothing.
+- `F0-05` Subject draws Gale Rider with a lamp in one hand. On the show, he carries nothing.
 - `F0-06` Mother: VARRO, MAREN. Night cleaner. Keeps the brann-hang every winter.
 
 ### Stage 1: Unlocked By Dream 1
