@@ -17,3 +17,4 @@ Notes:
   up in the island get removed before submission.
 - License lines are the badge shown on each fal model page on 2026-11-12; the providers' own
   terms were not read.
+| `audio/narration/VO_Director_ColdOpen_01.wav`, `_02.wav`, `_03.wav`, `VO_Director_Tutorial_01.wav` (director voice-over) | fal, `google/gemini-3.8-flash-tts`, voice `Orus` | fal model page: "Commercial use" (Google's own terms not read) | No, generated 2026-11-12 |
