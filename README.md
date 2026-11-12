@@ -60,6 +60,23 @@ Open the project from the UEFN Project Browser (Browse → `MegaJam\MegaJam.uefn
 
 `unreal-insights` is Epic's profiling MCP server, which ships with the Fortnite install.
 
+## Holds (several Claude sessions, one editor)
+
+The `MegaJam/` project is opted into agent-kit's hold system (`MegaJam/.claude/holds.json`,
+needs agent-kit 0.26.0 or later). A session must take a hold before it drives the editor, builds
+or pushes, or edits protected files (`*.uefnproject`, `*.uplugin`, `Content/**/*.verse`,
+`Plugins/**`). Read-only tools need no hold.
+
+- **Start Claude sessions inside `MegaJam/`**, not at the repo root. Hold checks only apply to
+  sessions started in `MegaJam/` or below. `MegaJam/.claude/settings.json` enables the agent-kit
+  plugin there too, and the repo-root `.mcp.json` servers are found from `MegaJam/`.
+- Each session is asked to load the `holds` skill on startup, which has the working agreement
+  and the CLI.
+- Dashboard: from `MegaJam/`, run
+  `node "<agent-kit install path>/holds/holds.js" serve`. `claude plugin list --json` shows the
+  install path.
+- To turn it off: delete `MegaJam/.claude/holds.json` and the `MegaJam/.claude/holds/` folder.
+
 ## Asset generation MCP (Meshy, fal)
 
 Two jam partner tools also have MCP servers. No keys are stored in the repo.
