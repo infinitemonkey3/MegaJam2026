@@ -41,6 +41,9 @@ A **mixed** verdict resets with a hint, without the full bad ending. More ending
 bittersweet one, an ending that changes the next dream) can come later; the verdict struct
 already has room to choose between them.
 
+A bad ending only resets. No fail-safe for players who keep failing (such as moving on at a
+cost) until playtests show players actually get stuck.
+
 Tone: noir. Low-life, high-tech cyberpunk, kept to our own look (our own signage, palette and
 brands), not echoing any specific film.
 
@@ -630,6 +633,3 @@ option, with the LLM only adding flavor.
 - What the clients' items are and how they combine in the final take.
 - Whether the director's own dreams (the final take) use the same layered structure.
 - The subtitle for *Dead Air*, if any.
-- Whether a bad ending only resets, or, after a few failed takes, can move the story on at a
-  cost (the fact comes out anyway, but the client is worse off). That would stop players from
-  getting stuck in a short slice.
