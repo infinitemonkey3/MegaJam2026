@@ -316,6 +316,13 @@ they claimed to be), it should still be true in the next dream, so they can call
        WhoTheVisitorWas:message        # the role as the client understood it
        KeyMoments:[]message            # at most 3, one sentence each
        PromisesOrRequests:[]message    # things said that could be called back to
+       State:client_state              # how the client feels at the end of this take
+
+   client_state := struct:
+       Trust:int                       # 0-3, in the visitor
+       Fear:int                        # 0-3
+       Hope:int                        # 0-3, that the loop can end
+       Mood:message                    # one short phrase, e.g. "wary but softening"
    ```
 
 2. **Store it in Verse** as a running list per client. Cap it (for example the last 6 items) so
@@ -328,8 +335,22 @@ they claimed to be), it should still be true in the next dream, so they can call
 5. **Reward callbacks.** The verdict prompt counts a good callback to an earlier dream as
    **Backstory**: the shared history between the player and the client is backstory too.
 
-The authored destination doesn't move: carried-forward moments change how a dream plays, not
-where it ends.
+**The client's emotional state carries forward too.** `client_state` is rated after every take,
+good or bad, and goes two places:
+
+- **Into the next dream.** The client starts in the state the last take left them in ("You
+  start this dream wary but softening: trust 2, fear 1, hope 2"). A client who trusts the
+  visitor opens up sooner; a frightened one is harder to reach. Fear also sets the haze's
+  starting level. A bad take costs something even though it only resets: the next try starts
+  from a worse place.
+- **Into the computer.** The debug screen shows the state as a readout that tracks across takes
+  (a small chart of trust, fear and hope per take), and the software can answer "how is she
+  doing?" from it. The player sees what their takes did to the person, not only the verdict.
+
+The rubric scores are about the take; `client_state` is about the person. Keep them separate.
+
+The authored destination doesn't move: carried-forward moments and state change how a dream
+plays, not where it ends.
 
 Optional later: pick a **genre** for the take (quiet drama, comedy, heist) and the client
 reacts to the tone. Fits the Environment and Common Sense criteria, but multiplies content, so
@@ -564,7 +585,8 @@ What we ship for the jam: one client, three dreams, ending on a cliffhanger.
 - The AI's voice line can be prerecorded or generated (log it in `assets.md`); it doesn't need
   to be a live persona in the slice.
 - Only the client is a live LLM persona in the slice.
-- Continuity is in the slice: dreams 2 and 3 get the `take_memory` from earlier takes, so the
+- Continuity is in the slice, including the client's emotional state on the screen: dreams 2
+  and 3 (and retries) get the `take_memory` from earlier takes, so the
   player's own moments can be called back to.
 - The three dreams reuse the same room, client body, persona setup, menu and verdict code.
 
