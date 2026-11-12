@@ -334,22 +334,47 @@ What it showed: the sections above on the dream fighting back, extras inside the
 line, and items that belong to the story. It also showed that text and voice alone carry a take,
 which the debug-tool presentation relies on.
 
-## Scope
+## Jam slice
 
-- **Must have:** the cold open, the back room with the screen and recliner, **one** client with
-  **two** dreams (case file, observe, direct, run, verdict, then new facts, then the second
-  dream), the director's voice between takes, the AI's first log-line appearance, one "world
-  closes in" state, and a short ending.
-- **Then:** the client's third dream, a lucid moment between dreams, the AI speaking aloud
-  between takes, the director twist and final take.
-- **Cut first:** a second client, genre choice, the AI during takes.
+What we ship for the jam: one client, three dreams, ending on a cliffhanger.
 
-One client with deeper dreams comes before a second client: it reuses everything and builds
-more character.
+1. **Cold open.** The director's narration over the flyer, the hard cut, the street and his
+   room. Lands in first person at the desk.
+2. **Tutorial.** The director instructs you, his assistant, on the screen: how to read a case
+   file, how the dream debugger shows a loop, and how to set up and run a take. Short and in his
+   voice; it can run alongside dream 1 rather than before it.
+3. **Dream 1: simple.** Few options, hard to fail, so it teaches the loop. When it resolves, it
+   gives up **a fact that makes more of the case file make sense.** The case file should have
+   entries that read as odd or unexplained at first and click into place with this fact. (Nell
+   example: the file says she orders a cake every March 3 and never lets it be picked up, and
+   she won't let anyone whistle in the shop. Dream 1 reveals March 3 was Walt's birthday.)
+4. **Dream 2: uses the fact.** The best options in this take depend on the new fact, so the
+   player sees their reading paying off. A possible foreshadow: one stray AI line in the log.
+5. **Dream 3: passed, then off the rails.** The player passes the take, the client says the
+   positive line, and then the loop doesn't end. The AI breaks in: log lines that aren't log
+   lines, the vitals spike, the screen glitches, then its voice. It wants to see more.
+6. **The director reacts.** For the first time he's not dry and in control ("That's not us.
+   Pull her out. Pull her out!").
+7. **Thank-you screen.** Cut to black, a thank-you and credits card, and a hint of more to come.
+
+**Build notes:**
+
+- The off-the-rails ending is **scripted**, not LLM-driven: after a positive verdict on dream 3,
+  Verse plays a fixed sequence (log lines, post-process glitch, the AI's voice line, the
+  director's reaction, end card). Reliable for the video and for judges. If dream 3 fails, it
+  loops like any other dream.
+- The AI's voice line can be prerecorded or generated (log it in `assets.md`); it doesn't need
+  to be a live persona in the slice.
+- Only the client is a live LLM persona in the slice.
+- The three dreams reuse the same room, client body, persona setup, menu and verdict code.
+
+**After the jam (or if there's time):** a lucid moment between dreams, the "world closes in"
+states, the AI as a speaking critic between takes, more clients, and the director twist with the
+final take. These stay in the design above as the full game.
 
 The 30-60 second video: the flyer and the hard cut, the case file on the screen, setting up a
-take, the slate and the room dimming, talking to the client, the verdict line, the AI's stray
-log line.
+take, the slate and the room dimming, talking to the client, the positive line, and the AI
+breaking in.
 
 ## Technical risks (test these on Day 1 first)
 
