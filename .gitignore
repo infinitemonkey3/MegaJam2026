@@ -31,3 +31,6 @@ desktop.ini
 
 # Local test/scratch UEFN projects (not part of the jam entry)
 ConversationExploration/
+
+# Worktrees of side sessions
+**/.claude/worktrees/

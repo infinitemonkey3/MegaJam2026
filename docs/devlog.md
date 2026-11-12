@@ -56,3 +56,44 @@ used.
 - No other prompts, scripts or assets were made for the game before the jam.
 
 ## Day 1 (Nov 12)
+
+- **How the day is run.** One Claude Code session acts as orchestrator: it drives the UEFN editor
+  through MCP, one job at a time, and starts separate agent sessions for work that only touches
+  files. Each of those works in its own git worktree and branch and opens a pull request, which
+  the orchestrator reviews and Chip merges. A hold system (agent-kit) stops two sessions from
+  using the editor or the same Verse files at once.
+- **Offline sessions started:** writing (Nell's case file, dream 1, persona prompts), a 2D art
+  style test plan (models, prompts and cost; nothing generated until Chip approves the spend),
+  and the Verse take-flow skeleton.
+- **Tech spikes 1 to 3 built** (`docs/spikes.md`): the agent wrote `spike_persona.verse`, a test
+  client NPC and a step menu to check the structured verdict, runtime context and the
+  `scene_update` action. It compiled on the first build. The voice-channel setup and the menu
+  pattern are adapted from the two pre-jam Verse templates declared above. Results need a play
+  session with a microphone.
+- **First launch.** The agent started the play session itself. One spoken exchange showed the
+  client answering in about 1.6 seconds and the `scene_update` action arriving with the reply.
+  It also showed that anything the model writes is redacted in the Verse log, so the agent can
+  read scores but not wording; the spike now puts results on screen for the human tester.
+- **Spike 4 built: the in-world screen.** The agent made a UMG widget with Verse fields, placed
+  it in the level as a Scene Graph entity, and wrote a device that updates it and listens for
+  key input. Finding from Epic's docs: in-world widgets can't be clicked, so the debug screen
+  will be display only, with input coming from keys or a screen-space menu. Getting the
+  widget's fields to show up in Verse took some trial and error, recorded in `docs/spikes.md`.
+- **Usage limit.** The first five-hour usage window ran out mid-morning and cut off the writing
+  and Verse sessions partway through, with their files written but not committed. It happened
+  again after they were resumed; the orchestrator opened the writing PR itself.
+- **Art: 2D style test planned.** An agent session wrote `art/style-test/plan.md`: a "two-ink
+  print" look with a fixed palette, fal models picked by price and license (Nano Banana 2.1 to
+  generate and edit, Bria RMBG 2.0 for cutout alpha), every prompt written out, and a checklist
+  for judging the result from the desk in UEFN. Nothing was generated until Chip approved the
+  cost.
+- **Art: style test generated.** After approval the agent ran the plan on fal: 3 style
+  references, then a back wall, the client in her recliner and desk clutter, each drawn with the
+  chosen reference fed in. 14 calls, about $0.74. Cutouts were made two ways (Bria, and a
+  magenta-key script the agent wrote); the script's were cleaner.
+- **Art: round 2 from Chip's notes.** Chip reviewed the images and asked for a monitor facing
+  the player, a talking mouth and breathing chest for the client, genre film posters with
+  invented titles, and more depth layers for the entry shot. The agent generated 14 more images
+  (about $0.77) and cut the mouth into a 4-frame flipbook and the chest into an overlay, so the
+  engine animates small pieces instead of swapping whole redrawn frames. All assets are logged
+  in `docs/assets.md`.
