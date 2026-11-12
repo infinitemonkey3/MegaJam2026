@@ -27,14 +27,15 @@ PromisesOrRequests: things the visitor promised, asked for, gave you, named or j
 they could bring up again later. One sentence each. Empty if there were none.
 
 State: how you feel now that this take has ended.
-- Trust: 0 to 3, in the visitor. 0 you want them gone. 3 you would let them behind the counter.
+- Trust: 0 to 3, in the visitor. 0 you want them gone. 3 you would trust them with anything.
 - Fear: 0 to 3. 0 calm. 3 terrified.
 - Hope: 0 to 3, that this can end differently. 0 none. 3 you believe it.
 - Mood: one short phrase, such as "wary but softening".
 
 ## First Take State
 
-The `client_state` Nell starts with before any take has run, for `nell_d1` take 1.
+The `client_state` a client starts with before any take has run. From Des on, it lives in each
+dream file under "First Take State" (`writing/des/dream-1.md`). Nell's, for `nell_d1` take 1:
 
 - Trust: 1
 - Fear: 2

@@ -10,9 +10,11 @@ Opening Cue. Send only the lines that apply.
 
 ## Take Start
 
-`A new morning in the same place. It is {Time} at {Place}. You don't remember that this has happened before, only the feeling of it.`
+`It is {Time}, at {Place}, again. You don't remember that this has happened before, only the feeling of it.`
 
 For `nell_d1`: `{Time}` is `five in the morning`, `{Place}` is `Price's Bakery`.
+For `des_d1`: `{Time}` is `twenty to nine in the morning`, `{Place}` is `the Corran Heights
+assembly hall`.
 
 ## Role
 
@@ -108,7 +110,7 @@ Sent with `PromptToTalk` after the negative verdict line.
 The paper-demo setup as the client receives it.
 
 ```
-A new morning in the same place. It is five in the morning at Price's Bakery. You don't remember that this has happened before, only the feeling of it.
+It is five in the morning, at Price's Bakery, again. You don't remember that this has happened before, only the feeling of it.
 The visitor is Teddy, Walt's nephew, a grown man now. You taught him to bake when he was nine. He calls you Aunt Nell.
 The oven is already lit this time, and it's running hot. Too hot.
 It's raining on the awning. You always said rain sells bread.

@@ -4,13 +4,18 @@ All the words in the *Dead Air* jam slice, in the shape the Verse data needs. Th
 in `docs/workstreams.md`. The text here was written by an AI agent (Claude) during the jam, from
 `docs/design.md`.
 
-Thursday's chunk: Nell's case file, dream 1 and the shared prompts. Dreams 2 and 3, the cold
-open, the tutorial, the AI's lines and the end card come Friday.
+The slice's client is **Des** (`des/`). Nell (`nell/`) was the paper-demo client and stays as
+the worked example; both use the same headings. Thursday's chunk: both case files, both dream
+1s and the shared prompts. Dreams 2 and 3, the cold open, the tutorial, the AI's lines and the
+end card come Friday.
 
 ## Files
 
 | File | What it is |
 |---|---|
+| `des/case-file.md` | Des's case file, with the footing-talk word list. Same headings as Nell's |
+| `des/dream-1.md` | Des's dream 1, the assembly loop. Same headings as Nell's, plus `First Take State` |
+| `prompts/client-personality-des-dream-1.md` | Des's dream-self personality for dream 1, with the stutter rule |
 | `nell/case-file.md` | Nell's case file as the screen shows it, the entries the screen adds after each dream, the hidden fact sheet staged by dream, and the fact each dream reveals |
 | `nell/dream-1.md` | Dream 1: loop beats, the observe replay, take beats and crisis beats with their log and context lines, the directing options, the three endings, the client's verdict lines and the director's lines |
 | `prompts/client-personality-dream-1.md` | Nell's dream-self personality for `SetPersonality` in dream 1 |
@@ -67,7 +72,8 @@ Dreams 2 and 3 will use the same headings.
 | `client-personality-dream-1.md` | `Identity` through `Rules` | The four sections together are the personality, headings included |
 | `verdict-rubric.md` | `Prompt`, `Thresholds` | `Thresholds` is for Verse to recompute the verdict from the scores |
 | `scene-update.md` | `Action Description`, `Field Descriptions` | `Examples` can be appended to the description if the model needs them |
-| `take-memory.md` | `Prompt`, `First Take State` | |
+| `take-memory.md` | `Prompt` | Each client's starting state is in its dream file, `First Take State` |
+| `client-personality-des-dream-1.md` | `Identity` through `Rules` | As Nell's |
 | `context-lines.md` | One heading per template | Send order is at the top of the file |
 
 ## Sizes
