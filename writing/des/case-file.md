@@ -68,8 +68,8 @@ BROUGHT IN VARRO, MAREN (MOTHER)
 - `K-05` `ANOMALY` Speech faults during hero play: 0. → Pays off in dream 1.
 - `K-06` `ANOMALY` Hero catchphrase, as spoken by subject: "Keep yer brann lit. I'll bring the
   day down." No match in show transcripts, 412 episodes. → Pays off in dream 1.
-- `K-07` `ANOMALY` Hero package costume: cape. Material: hand-dyed cloth, not licensed
-  merchandise. → Pays off in dream 3.
+- `K-07` `ANOMALY` Brann-hang, last winter: household Varro hung 3 lamps. One tag reads
+  "DESSEN". Subject not present. → Pays off in dream 3.
 - `K-08` Father works upside. Three jobs on record. Leaves home 05:10, before subject wakes.
 
 ### Loop Note
@@ -111,7 +111,8 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
   meant. Did not laugh. Moved sets in year 8.
 - `F0-03` Assembly teacher: MS. ADEYEMI-ROSS. Head of year. Kind on record. Says "Dessen".
 - `F0-04` Subject's school speech: careful, upside accent. Home speech: footing.
-- `F0-05` Subject draws Gale Rider with a lamp in one hand. On the show, he carries nothing.
+- `F0-05` Subject draws Gale Rider climbing out of the top of the page. Never the ground under
+  him.
 - `F0-06` Mother: VARRO, MAREN. Night cleaner. Keeps the brann-hang every winter.
 
 ### Stage 1: Unlocked By Dream 1
@@ -134,7 +135,7 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 - `F3-01` Last winter, the school gate. Maren came up-layer with a brann for brann-hang. She
   called to him in footing.
 - `F3-02` He walked past her as if he didn't know her. His year was watching.
-- `F3-03` She cut up the brann-hang cloth that night and sewed him the cape. She never
+- `F3-03` At brann-hang she hung a lamp for him anyway, with his name on the tag. She never
   mentioned the gate.
 
 ## Dream Reveals
