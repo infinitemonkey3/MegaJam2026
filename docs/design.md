@@ -30,6 +30,17 @@ destination (the fact it reveals, the way it resolves), and the story beats betw
 written. The player's freedom is in how they get there: who they play, what they bring, what
 they say. The LLM makes the route feel open, and the writing keeps the story on track.
 
+**Each dream has at least two authored endings:**
+
+| Ending | When | What happens |
+|---|---|---|
+| **Good** | Positive verdict | The loop resolves its authored way (Nell starts whistling), the client gives up the dream's fact, and the game moves on |
+| **Bad** | Negative verdict | The loop ends its authored bad way (the lights go out on the burning shop, the vitals spike), then resets: "Take two" |
+
+A **mixed** verdict resets with a hint, without the full bad ending. More endings per dream (a
+bittersweet one, an ending that changes the next dream) can come later; the verdict struct
+already has room to choose between them.
+
 Tone: noir. Low-life, high-tech cyberpunk, kept to our own look (our own signage, palette and
 brands), not echoing any specific film.
 
@@ -619,3 +630,6 @@ option, with the LLM only adding flavor.
 - What the clients' items are and how they combine in the final take.
 - Whether the director's own dreams (the final take) use the same layered structure.
 - The subtitle for *Dead Air*, if any.
+- Whether a bad ending only resets, or, after a few failed takes, can move the story on at a
+  cost (the fact comes out anyway, but the client is worse off). That would stop players from
+  getting stuck in a short slice.
