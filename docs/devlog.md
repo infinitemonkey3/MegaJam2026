@@ -47,6 +47,12 @@ used.
   and plan in [`design.md`](design.md) with the agent: a coma ward where the player directs
   patients' recurring dreams and slowly uncovers their own nightmare. A plan only; no game
   content was built before the jam.
+- **2026-11-11: New frame story.** Later the same day, reworked the frame in `design.md` with
+  the agent: a noir, cyberpunk back room where a failed dream designer and film lover hacks
+  people out of looping dreams on cheap brain implants, with stolen debug software. The player
+  is his assistant, and an AI from the premium world appears in the logs. Includes a draft
+  cold-open narration and draft director lines (prompts and text only). The core loop and
+  rubric didn't change.
 - No other prompts, scripts or assets were made for the game before the jam.
 
 ## Day 1 (Nov 12)
