@@ -175,6 +175,33 @@ recovered by pulling the loaf out, and the take was more dramatic for it. The cl
 prompt should tell it to let the dream turn dark when the setup or the player pushes on a
 painful memory, and to give the player a moment to respond.
 
+### The haze shows the danger
+
+During a take, the haze over the dream view tracks how close the take is to failing. Clear means
+the client is with you. Thick, desaturated and flickering means you're losing them. It's the
+only live feedback before the verdict: it tells the player they're in trouble, not what to do.
+
+**What drives it:**
+
+- **The client's distress, live.** The client's persona uses `RegisterAction` to emit a small
+  structured side-output with each reply (for example `Distress:int` 0-3, or
+  `Warmer`/`Colder`). Verse maps it to a haze level.
+- **Risky setup choices** start the take at a higher base level (a *roaring* oven starts hazier
+  than a *warm* one).
+- **The clock.** As the take nears the moment the loop always ends, the haze creeps up unless the
+  client is calm.
+- The haze level is the highest of the three.
+
+**How it looks (3 levels, all switchable from Verse):** one Post Process device per level (for
+example light *Vignette*, then *Desolate*, then *Horror Movie* plus *Simple Blur*), blended in
+and out with `BlendInForAll`/`BlendOutForAll`, since Verse can't set a device's strength. The
+room lamp dims with `customizable_light_device.DimLight`. The vitals trace on the screen speeds
+up, and the log text can start to corrupt at the top level. Room tone and the client's breathing
+can rise with it.
+
+**In the slice:** dream 3 subverts it. The take passes and the haze clears, then it floods back
+to maximum when the AI breaks in, even though the player did everything right.
+
 ### Extras are directed inside the dream
 
 Directing the dream's extras (the crowd, the class) works better as something the player does
@@ -254,8 +281,8 @@ The persona API (UEFN 43.00, `/UnrealEngine.com/Conversations`) gives us what we
 - **The rubric goes in the verdict prompt**, not the personality. The client plays the scene
   without thinking about scores, then judges it when asked. The prompt is short: the four
   criteria with what earns 0-3, and the verdict thresholds.
-- **`RegisterAction`** lets the model emit a structured side-output with any reply. Could drive
-  the vitals trace live (warmer or colder). Not needed for the first version.
+- **`RegisterAction`** lets the model emit a structured side-output with any reply. Drives the
+  live danger haze and the vitals trace (see "The haze shows the danger").
 
 **Context size:** no documented limit. Epic's docs say there's no limit on the number of facts,
 and the conversation history is compacted automatically. There is an `ai_character_limit_error`,
@@ -395,7 +422,10 @@ breaking in.
 4. **A lying-down client.** Persona NPCs are spawned characters, and a still, lying pose isn't
    guaranteed. Fallback: a static posed body in the recliner, with the talking persona NPC hidden
    nearby. Voice and subtitles still work, and a sedated client shouldn't move much anyway.
-5. **Private version code.** Confirm an island with persona NPCs can be published as a private
+5. **Live danger signal.** Check that `RegisterAction` fires reliably with each client reply,
+   how fast, and whether the distress values track the take sensibly. Fallback: drive the haze
+   from setup choices and the clock only, plus scripted crisis beats.
+6. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
 Fallback if the structured verdict doesn't work: prompt the client to say one of three fixed
