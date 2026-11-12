@@ -1,0 +1,208 @@
+using { /UnrealEngine.com/Temporary/Diagnostics }
+
+# Data shapes for Dead Air, plus one placeholder client so the flow can run before the
+# writing lands. NOT COMPILED YET: see CLAUDE.md in this folder for what is unverified.
+#
+# Two kinds of text live here:
+#  - `message` fields are filled by the LLM (ai_session.Prompt / RegisterAction). Their shapes
+#    come from docs/design.md and should only change with it.
+#  - `string` fields are authored text. Strings can be written inline and joined freely;
+#    ToMessage turns one into a `message` at the persona API edge.
+
+# One log channel for the whole game. Read it with SessionToolset.GetVerseOutput.
+dead_air_log := class(log_channel){}
+
+# Wraps authored text as a message for the persona API. Module-level because <localizes>
+# can't be an inline literal.
+ToMessage<localizes>(Text:string):message = "{Text}"
+
+# ---------------------------------------------------------------------------------------------
+# LLM response shapes (docs/design.md: "The client's verdict", "Continuity", "Narration and voice")
+# Field and type names guide the model, so renaming one changes what the model writes.
+# ---------------------------------------------------------------------------------------------
+
+take_verdict := enum{Positive, Mixed, Negative}
+
+take_score := struct:
+    BackstoryScore:int        # 0-3
+    PersonalityScore:int      # 0-3
+    EnvironmentScore:int      # 0-3
+    CommonSenseScore:int      # 0-3
+    Verdict:take_verdict
+    HintForWeakestCriterion:message
+
+scene_update := struct:
+    Distress:int              # 0-3, drives the haze
+    LogLine:message           # one terse debug-log line, e.g. "LOAF removed / SMOKE clearing"
+
+client_state := struct:
+    Trust:int                 # 0-3, in the visitor
+    Fear:int                  # 0-3
+    Hope:int                  # 0-3, that the loop can end
+    Mood:message              # one short phrase, e.g. "wary but softening"
+
+take_memory := struct:
+    WhoTheVisitorWas:message        # the role as the client understood it
+    KeyMoments:[]message            # at most 3, one sentence each
+    PromisesOrRequests:[]message    # things said that could be called back to
+    State:client_state              # how the client feels at the end of this take
+
+# ---------------------------------------------------------------------------------------------
+# Authored shapes
+# ---------------------------------------------------------------------------------------------
+
+# How much a setup choice pushes on the client's trauma. Sets the haze's base level for the take.
+risk_level := enum{Safe, Risky, Dangerous}
+
+RiskToHaze(Risk:risk_level)<transacts>:int =
+    case (Risk):
+        risk_level.Safe => 0
+        risk_level.Risky => 1
+        risk_level.Dangerous => 2
+
+# Casting: who the client thinks the player is.
+casting_role := class:
+    Id:string
+    Label:string              # shown on the directing menu
+    LogEdit:string            # log line shown when the take starts
+    ContextLine:string        # told to the client at take start
+
+# One scene setting. Element groups the options that exclude each other (oven, weather, ...).
+scene_setting := class:
+    Id:string
+    Element:string
+    Label:string
+    LogEdit:string
+    ContextLine:string
+    Risk:risk_level = risk_level.Safe
+
+# An item from the case file that the player brings into the dream.
+inject_item := class:
+    Id:string
+    Label:string
+    LogEdit:string
+    ContextLine:string
+    Risk:risk_level = risk_level.Safe
+
+# One step of the loop replay in the observe phase.
+loop_beat := class:
+    LogLine:string
+    Murmur:string = ""        # what the client mutters over this beat, if anything
+    HoldSeconds:float = 2.5
+
+dream := class:
+    Id:string
+    Title:string
+    LoopNote:string           # the case file's note on the loop
+    Personality:string        # SetPersonality text for this dream (dream self, rules, setting)
+    LoopBeats:[]loop_beat     # prewritten replay; the last beat is where the loop always ends
+    EndingBeatLog:string      # log line for "the moment the loop always ends" during a take
+    Roles:[]casting_role
+    Settings:[]scene_setting
+    Items:[]inject_item
+    PositiveLine:string       # the client's verdict lines, spoken with PromptToTalk
+    MixedLine:string
+    NegativeLine:string
+    GoodEndingLog:[]string    # authored good ending
+    BadEndingLog:[]string     # authored bad ending
+    FactRevealed:string       # what a positive verdict gives up; joins the facts for later dreams
+    TakeSeconds:float = 120.0 # how long a take runs before the last line
+
+client := class:
+    Id:string
+    Name:string
+    CaseFile:[]string         # entries shown on the screen
+    Dreams:[]dream            # in play order
+    StartTrust:int = 1
+    StartFear:int = 1
+    StartHope:int = 1
+    StartMood:string = "guarded"
+
+# The player's choices for one take. Build it with MakeTakeSetup so the caps hold.
+take_setup := struct:
+    Role:casting_role
+    Settings:[]scene_setting  # at most MaxSettings
+    Items:[]inject_item       # at most MaxItems
+
+MaxSettings:int = 2
+MaxItems:int = 2
+
+FirstN(Input:[]t, Count:int where t:type)<transacts>:[]t =
+    if (Head := Input.Slice[0, Min(Count, Input.Length)]):
+        Head
+    else:
+        Input
+
+MakeTakeSetup(Role:casting_role, Settings:[]scene_setting, Items:[]inject_item)<transacts>:take_setup =
+    take_setup:
+        Role := Role
+        Settings := FirstN(Settings, MaxSettings)
+        Items := FirstN(Items, MaxItems)
+
+# The haze base level for a setup: its riskiest choice.
+SetupHazeBase(Setup:take_setup)<transacts>:int =
+    var Highest:int = 0
+    for (Setting : Setup.Settings):
+        set Highest = Max(Highest, RiskToHaze(Setting.Risk))
+    for (Item : Setup.Items):
+        set Highest = Max(Highest, RiskToHaze(Item.Risk))
+    Highest
+
+# ---------------------------------------------------------------------------------------------
+# Placeholder content, from the Nell paper demo in docs/design.md. The writing stream's text in
+# writing/ replaces this. The same dream is used three times so the three-dream flow can run.
+# ---------------------------------------------------------------------------------------------
+
+MakePlaceholderClient()<transacts>:client =
+    client:
+        Id := "nell"
+        Name := "Eleanor \"Nell\" Price"
+        CaseFile := array:
+            "Eleanor \"Nell\" Price, 71. Baker. Proud, dry-humored, softens when someone needs her."
+            "Ran Price's Bakery with her late husband Walt, who whistled while he kneaded."
+            "Taught Walt's nephew Teddy to bake when he was a kid."
+            "Orders a cake every March 3 and never lets it be picked up."
+            "Won't let anyone whistle in the shop."
+            "Heart rate rises at 5 AM."
+        Dreams := array:
+            MakePlaceholderDream("nell_1", "Dream 1: 5 AM", "March 3 was Walt's birthday.")
+            MakePlaceholderDream("nell_2", "Dream 2 (placeholder copy)", "The morning of Walt's funeral she opened alone and burned every loaf.")
+            MakePlaceholderDream("nell_3", "Dream 3 (placeholder copy)", "The birthday cake was for Walt. Nobody picked it up.")
+        StartFear := 2
+
+MakePlaceholderDream(Id:string, Title:string, Fact:string)<transacts>:dream =
+    dream:
+        Id := Id
+        Title := Title
+        LoopNote := "5 AM at the bakery. The oven won't light. It always ends with the lights going out."
+        Personality := "You are Nell Price, 71, a proud, dry-humored baker, dreaming. It is 5 AM in your bakery and the oven won't light. Faceless customers press at the glass. The dough won't hold. There is no whistling. You do not know you are dreaming. Speak only dialogue, one to three short sentences. Never describe actions or the scene aloud; put any action in the scene log line instead. If the visitor or the scene pushes on a painful memory, let the dream turn dark and give the visitor a moment to respond."
+        LoopBeats := array:
+            loop_beat{LogLine := "SCENE bakery_interior / T 05:00 / OVEN state=cold / CUSTOMERS count=11 faces=null", Murmur := "It won't light. Why won't it light."}
+            loop_beat{LogLine := "T 05:02 / DOUGH state=slack / AUDIO whistling=absent", Murmur := "It's too quiet in here."}
+            loop_beat{LogLine := "T 05:04 / CUSTOMERS pressing=glass / HEART rate=rising", Murmur := "I'm not ready. Tell them I'm not ready."}
+            loop_beat{LogLine := "T 05:05 / LIGHTS state=out / LOOP restart"}
+        EndingBeatLog := "T 05:05 / LIGHTS state=flickering / LOOP end_imminent"
+        Roles := array:
+            casting_role{Id := "stranger", Label := "A stranger", LogEdit := "CAST visitor=unknown", ContextLine := "The visitor is a stranger who has walked into the shop."}
+            casting_role{Id := "teddy", Label := "Teddy, Walt's nephew", LogEdit := "CAST visitor=teddy_price", ContextLine := "The visitor is Teddy, Walt's nephew, who you taught to bake when he was a boy."}
+            casting_role{Id := "customer", Label := "A regular customer", LogEdit := "CAST visitor=regular", ContextLine := "The visitor is one of your regulars from years ago."}
+        Settings := array:
+            scene_setting{Id := "oven_warm", Element := "oven", Label := "Oven: warm", LogEdit := "OVEN state=warm", ContextLine := "The oven is lit and gently warm."}
+            scene_setting{Id := "oven_roaring", Element := "oven", Label := "Oven: roaring", LogEdit := "OVEN state=roaring", ContextLine := "The oven is roaring hot, and the bread is close to burning, the way it did the morning of the funeral.", Risk := risk_level.Dangerous}
+            scene_setting{Id := "weather_rain", Element := "weather", Label := "Weather: rain", LogEdit := "WEATHER state=rain", ContextLine := "Rain runs down the shop window."}
+            scene_setting{Id := "weather_clear", Element := "weather", Label := "Weather: clear dawn", LogEdit := "WEATHER state=clear", ContextLine := "A clear dawn is coming up outside."}
+        Items := array:
+            inject_item{Id := "walt_apron", Label := "Walt's apron", LogEdit := "INJECT item=walt_apron", ContextLine := "Walt's flour-stained apron hangs on its hook by the oven.", Risk := risk_level.Risky}
+            inject_item{Id := "cinnamon", Label := "Cinnamon", LogEdit := "INJECT item=cinnamon", ContextLine := "The shop smells of cinnamon."}
+            inject_item{Id := "music_box", Label := "A music box", LogEdit := "INJECT item=music_box", ContextLine := "A music box sits on the counter. You have never seen it before."}
+        PositiveLine := "I'm feeling a bit better."
+        MixedLine := "Something about this feels familiar..."
+        NegativeLine := "I'm confused."
+        GoodEndingLog := array:
+            "AUDIO whistling=present source=nell"
+            "CUSTOMERS faces=resolved / LOOP exit"
+        BadEndingLog := array:
+            "OVEN state=burning / SMOKE rising"
+            "LIGHTS state=out / HEART rate=spike / LOOP restart"
+        FactRevealed := Fact
+        TakeSeconds := 90.0
