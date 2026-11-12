@@ -1,0 +1,10 @@
+{
+  "extraKnownMarketplaces": {
+    "agent-kit": {
+      "source": { "source": "github", "repo": "infinitemonkey3/agent-kit" }
+    }
+  },
+  "enabledPlugins": {
+    "agent-kit@agent-kit": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "protected": [
+    "*.uefnproject",
+    "*.uplugin",
+    "Content/**/*.verse",
+    "Plugins/**/*.uplugin",
+    "Plugins/**/*.verse"
+  ],
+  "exclude": []
+}
