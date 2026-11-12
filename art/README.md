@@ -28,6 +28,8 @@ art/
     raw/               model output, untouched: <ID>_s<seed>.png
     cutout/            after alpha: <ID>_bria.png, <ID>_key.png
     final/             trimmed, power-of-two, ready to import: T_<Set>_<Layer>_<Variant>.png
+  tools/
+    cutout.py          magenta key, edge bleed, trim and fit to power-of-two (needs Pillow, numpy)
   room/                production room layers (same refs/raw/cutout/final split), after the test
   client/              production client frames
   posters/             posters and wall dressing
@@ -35,7 +37,7 @@ art/
   models/              3D sources, if the 3D path is chosen
 ```
 
-Only `style-test/` exists so far; the others are created when production starts. Images and
+Only `style-test/` and `tools/` exist so far; the others are created when production starts. Images and
 models are stored in Git LFS (see the repo's `.gitattributes`).
 
 Textures are power-of-two, 2K or smaller, 8-bit PNG, RGBA for cutouts and RGB for opaque
