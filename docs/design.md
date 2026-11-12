@@ -75,6 +75,23 @@ monitors, loose boards, tangled cable), paper case files on the desk, a cigarett
 a saucer, his movie posters on the walls. Cheap, cluttered, lived in. The clutter is good for
 the art budget: lots of small junk props that read fine without being detailed.
 
+**Art path: undecided, try both on Day 1.** The view is mostly fixed (seated at the desk), so
+the room doesn't have to be full 3D.
+
+| Path | How | Strengths | Risks |
+|---|---|---|---|
+| **3D room** | Gallery pieces plus Meshy props, lit in UEFN | Real depth and lighting, free head movement | Mixed sources look inconsistent; lying client needs the NPC or a posed mesh |
+| **2D layers in the 3D room** | Illustrated cutouts on planes (back wall, junk pile, recliner with client, desk, foreground clutter), slight parallax; noir graphic-novel or ink-wash style from fal | Strong, cohesive look for the effort; the client is an illustration with a breathing loop, so no lying-NPC problem; lights, post process and haze still apply; tiny memory cost | Keeping every layer in one style; less freedom to look around (lore becomes clickable items on the desk) |
+
+A full-screen UI scene (visual-novel style) was ruled out: post process and lights don't affect
+UI, so the haze and dimming would have to be rebuilt as UI effects. Don't mix the paths in the
+final build; a half-2D, half-3D room looks worse than either.
+
+**Consistency for 2D:** one image model for everything, one fixed style prompt, image editing
+(not fresh generation) to keep the client the same across dreams, and one reference image fed
+into every generation. Pick a fal model whose page allows commercial use, and log every image in
+`assets.md`.
+
 **The screen is a UMG widget rendered in the world**, placed over the computer's monitor. We
 build the whole debug interface (case file, menu, log, vitals) as one UMG UI element, and it
 sits in the scene like a real screen rather than as a HUD overlay. UEFN supports this: Epic's
@@ -493,7 +510,11 @@ breaking in.
    can carry a `message` (`LogLine`), and that the client stops narrating aloud once it has the
    log line. Fallback: drive the haze from setup choices and the clock only, plus scripted crisis
    beats, and use prewritten log lines only.
-6. **Private version code.** Confirm an island with persona NPCs can be published as a private
+6. **Art path.** Build the same desk view both ways: a quick 3D blockout with a few gallery or
+   Meshy props, and 2-3 fal-generated layers on planes in one style. Look at both from the desk
+   under the room lighting and the haze, and check that the 2D style holds across several
+   generated images. Pick one and commit to it.
+7. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
 Fallback if the structured verdict doesn't work: prompt the client to say one of three fixed
