@@ -222,14 +222,15 @@ element, and at most two items. Starting haze is the sum of `Haze`, capped at 2.
 
 #### item_cape
 
-- Label: `The cape / home-made`
+- Label: `The cape / dad's cloak`
 - Class: specific
 - Risky: no
 - Haze: 0
-- Log: `INJECT item=cape detail=handcut`
-- Context: `Your cape is the one your dad made you, not a shop one. You've never told anyone at school what it's made from.`
-- Why: `K-07`. His dad's gift, so it backs up the dream 1 reveal. What it's made from, and what
-  his mother thought of it, is dream 2.
+- Log: `INJECT item=cape src=carrier_cloak side=inside_out`
+- Context: `Your cape is your dad's old cloak from the Footings, not a shop one. He gave it to you to be Gale Rider in. You wear it inside out.`
+- Why: `K-07`. His dad's, so it backs up the dream 1 reveal. Why it's inside out (the
+  embroidery) and what his mother thought of the ragged hem are dream 3. If the visitor asks to
+  turn it right side out, that's a push on a painful memory: let it turn dark.
 
 #### item_work_cap
 
@@ -312,7 +313,7 @@ SESSION fault persists
 LAYER 2 detected / SCENE varro_kitchen / T 18:40 / DATE fitting_day
 ```
 
-The screen adds `U1-01` to `U1-04` from the case file.
+The screen adds `U1-01` to `U1-05` from the case file.
 
 ## Bad Ending
 
@@ -389,9 +390,12 @@ Prerecorded. The design's "her" lines become "him".
 - The lamp hung for him at brann-hang (`K-09`), the brann (`item_brann`, `C2`) and his dislike of footing at the
   gate (`D-03`): dream 3.
 - Gale Rider and the brann stay apart. The hero is escape (up, away, his dad's road); the brann
-  is his mother and the ground. Only his father crosses them: he cut the cape from his carrier's
-  sash (`K-07`, `F2-04`), and his mother didn't like it (`F2-05`). Dream 2 plays that out at
-  the same dinner as the fitting. Nothing else mixes the two.
+  is his mother and the ground. Only his father crosses them: he gave Des his carrier's cloak to
+  play Gale Rider in (`K-07`, `F1-04`). Des turned it inside out to hide the embroidery and cut
+  the hem ragged, and his mother didn't like it (`F3-04`, `F3-05`): dream 3. Nothing else
+  mixes the two.
+- Timeline: born in the Footings; the cloak at seven; the move to the surface a year ago; the
+  implant a few months after the move.
 - In his drawings Gale Rider climbs out of the top of the page (`F0-05`): dream 2 can use it
   when his dad says "Now you'll sound like them."
 - Dream 1's log stays clean of the AI.
