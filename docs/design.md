@@ -140,6 +140,32 @@ client. So narration and dialogue are split in what the model outputs, not in ho
     guaranteed, and adds a round trip per line)
   - story bonus: the AI takes over the narrator voice and reads a line that isn't in the log
 
+### Bonus: ask the software
+
+The debug software has a voice you can query, like a search engine for the client's records.
+It's a second persona that holds the **full fact sheet**, while the screen shows only part of
+it. The dream drops a reference the screen doesn't explain ("Walt always said the third loaf
+was for luck"), the player asks the software about it, and gets an answer that isn't on the
+screen, as if it searched the records.
+
+- **Why:** listening closely to the dream pays off, the player investigates instead of only
+  reading, and found facts feed the **Backstory** criterion. It also gives the narrator voice a
+  real job, which makes the AI's later takeover of that voice land harder.
+- **How it answers:** in the software's register, terse and record-like: *"Query: third loaf.
+  One record. Walter Price, interview 2019: 'Third loaf's for luck. Nell never ate it.'"* The
+  answer is spoken and also written to the log so the player can reread it.
+- **No inventing:** the prompt says to answer only from the fact sheet, and to say "No record"
+  for anything not in it. Keep the fact sheet short and concrete. Flash-Lite may still invent
+  details, so test it hard.
+- **Staged facts:** the software only holds the facts the player is allowed to find so far. The
+  fact dream 1 reveals isn't in its sheet until dream 1 is solved (`SetPersonality` per stage,
+  or "corrupted records" that unlock).
+- **Who the player is talking to:** `SetConversationTarget` picks the persona that hears the
+  player. A hold-to-query key (or a button on the screen) switches to the software, and letting
+  go switches back to the client. Querying during a take reads as whispering to the operator.
+- **Scope:** after the slice works. It depends on two personas sharing a voice channel cleanly
+  (Day 1 test).
+
 **Starting a take:** the room dims, a slate shows "Take 2", and the debug readout takes over the
 view. Film grain and a letterbox can come from the post-process devices planned in
 `research/art-style.md`. This replaces the old "dream fuzz": it's the implant syncing in.
@@ -492,7 +518,8 @@ What we ship for the jam: one client, three dreams, ending on a cliffhanger.
 - Only the client is a live LLM persona in the slice.
 - The three dreams reuse the same room, client body, persona setup, menu and verdict code.
 
-**After the jam (or if there's time):** a lucid moment between dreams, the "world closes in"
+**After the jam (or if there's time):** asking the software about the client, a lucid moment
+between dreams, the "world closes in"
 states, the AI as a speaking critic between takes, more clients, and the director twist with the
 final take. These stay in the design above as the full game.
 
@@ -535,7 +562,10 @@ breaking in.
    Meshy props, and 2-3 fal-generated layers on planes in one style. Look at both from the desk
    under the room lighting and the haze, and check that the 2D style holds across several
    generated images. Pick one and commit to it.
-7. **Private version code.** Confirm an island with persona NPCs can be published as a private
+7. **Two personas in one channel** (for the bonus query feature). Check that
+   `SetConversationTarget` cleanly routes the player's voice to the software or the client, and
+   that the software answers only from its fact sheet ("No record" otherwise).
+8. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
 Fallback if the structured verdict doesn't work: prompt the client to say one of three fixed
