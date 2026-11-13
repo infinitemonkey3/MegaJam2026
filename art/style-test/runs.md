@@ -315,7 +315,38 @@ sign. Framing targets on the wall, using the layout above (frame width is what t
 | 1. Fade in | 125, 186 cm | about 85 cm | the title only |
 | 2. Drift down (end) | 125, 95 cm | about 100 cm | the two figures' lower half, "Accepting applications...", WONDERWELL |
 | 3. "That's not me", track right | through 209, 105 cm | about 100 cm | the flyer |
-| 4. End | 273, 94 cm | about 80 cm, or push in to about 60 | the Help Wanted sign |
+| 4. Help Wanted | 273, 94 cm | about 80 cm | the Help Wanted sign; the track slows but doesn't stop |
+| 5. The door | 362, 115 cm | about 110 cm, pushing in to about 50 on the wired glass | the shop's street door; fade to black during the push |
+| 6. Office | (inside) | | fade up inside the office, on the room's existing entry move through `T_Room_Doorway_A` |
+
+Beats 5 and 6 are Chip's (2026-11-12): keep panning right to a door, push in and fade to black,
+then come back in the office.
+
+### Round 6: street door
+
+Run 2026-11-12, approved "Yes, make it" at about $0.06 (cap $0.20). 1 call on
+`google/nano-banana-2.1/edit`, no reruns. **About $0.06 estimated.** All rounds: about $2.37.
+
+| ID | Seed | Size | Reference images | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|---|
+| Street door, head-on, on magenta | 6101 | 2K 9:16 (1536x2752) | style ref, `T_Room_Doorway_A` (on magenta, 1024x512 JPG) | raw/Door_s6101.png | 0.063 | **yes**, after a local fix |
+
+Prompt: system prompt A, then "A single shabby street-level shop door seen flat and head-on ...
+wired-glass panel, dark inside with only a faint warm amber glow ... a small hand-lettered
+bone-paper card taped inside the glass, lettering too small to read ... should read as the
+outside of the doorway in the second image." The model wrote "Hand-Letted" on the card, so the
+heading was painted over locally with one of the card's own scribble lines
+(`raw/Door_fixed_s6101.png`, free). The card can carry the shop's name later if it gets one.
+
+| Final | Texture | Plane | Centre (across, up) |
+|---|---|---|---|
+| T_ColdOpen_Door_A.png | 1024x2048 RGBA, content box x=0 y=283 w=1024 h=1765 | 122 x 244 cm (the door, frame and step are 122 x 210; the top 34 cm is empty) | 362, 122 cm; spans 301 to 423 across, plane bottom on the pavement |
+
+**The wall needs to be wider.** The door with its frame is about 122 cm wide, so it can't fit
+between the Help Wanted sign (right edge at 303) and the wall's end at 400. Scale the whole wall
+uniformly to 432 x 243 cm (two halves of 216 x 243, cables 432 x 108). Nothing
+else moves: positions are measured from the wall's left edge and the pavement. The door then
+ends 9 cm short of the wall's right edge.
 
 Resolution: in beat 1 the title is about 72 cm wide on the top poster texture (2048 texels for
 90 cm), so it gets about 0.85 texels per screen pixel at 1080p, very slightly soft. Grain or a
