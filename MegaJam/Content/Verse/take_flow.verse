@@ -141,20 +141,26 @@ take_flow := class(creative_device):
             Logger.Print("[flow] {Dream.Id} has no roles to cast", ?Level := log_level.Error)
             take_phase.Done
 
-    # Shows one menu and returns the index the player confirmed. "Next" moves the highlight.
+    # Shows one menu and returns the index the player chose: "next" moves the highlight and
+    # "confirm" takes it, or the screen reports a direct pick (a click on the dream debugger).
     PickOne(Title:string, Labels:[]string)<suspends>:int =
         Options := for (Label : Labels) { ToMessage(Label) }
         var Highlighted:int = 0
         loop:
             Screen.SetMenu(ToMessage(Title), Options, Highlighted)
-            Confirmed := race:
+            # -1: confirm the highlight; -2: next; 0 or more: picked directly.
+            Choice := race:
                 block:
                     Screen.AwaitConfirm()
-                    true
+                    -1
                 block:
                     Screen.AwaitNext()
-                    false
-            if (Confirmed?):
+                    -2
+                Screen.AwaitPick()
+            if (Choice >= 0):
+                set Highlighted = Choice
+                break
+            if (Choice = -1):
                 break
             if (Wrapped := Mod[Highlighted + 1, Max(1, Labels.Length)]):
                 set Highlighted = Wrapped

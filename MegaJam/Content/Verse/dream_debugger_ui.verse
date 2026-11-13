@@ -57,8 +57,12 @@ WrapText(Text:string, Width:int)<transacts>:[]string =
         set Lines += array{Line}
     Lines
 
+TakeCursorOn<localizes>(Line:message):message = "> {Line}"
+TakeCursorOff<localizes>(Line:message):message = "  {Line}"
+TakeTitle<localizes>(Title:message):message = "[ {Title} ]"
+
 # One invisible button over a row (or part of a row). Action: 0..2 tabs, 100+ dreams,
-# 200+ questions.
+# 200+ questions, 300+ take menu options.
 debugger_hotspot := class:
     Row:int
     Action:int
@@ -68,8 +72,13 @@ debugger_hotspot := class:
     OnHighlight(Message:widget_message):void = Owner.MoveCursor(Action)
     OnClick(Message:widget_message):void = Owner.Activate(Action)
 
-dream_debugger_ui := class:
+dream_debugger_ui := class(debug_screen):
     Client:client
+
+    # INVOKE on the DREAMS tab: the dream's index. game_director starts the take.
+    InvokeEvent:event(int) = event(int){}
+    # A take menu option clicked or selected: its index (debug_screen.AwaitPick).
+    PickEvent:event(int) = event(int){}
 
     Logger:log = log{Channel := dead_air_log}
 
@@ -90,6 +99,15 @@ dream_debugger_ui := class:
     var Cursor:int = 0
     var Reply:string = ""
     var Page:int = 0
+    var Notice:string = ""
+
+    # The TAKE view: while the take flow runs, rows 6..15 are its scene log or its menu.
+    var InTake:logic = false
+    var Title:message = EmptyText
+    var TakeLog:[]message = array{}
+    var MenuTitle:message = EmptyText
+    var MenuOptions:[]message = array{}
+    var Vitals:int = 0
 
     # Shows the debugger over the monitor, given the monitor plane's screen rectangle.
     Show(Player:player, Monitor:monitor_rect):void =
@@ -133,7 +151,10 @@ dream_debugger_ui := class:
         else if (Action < 3):
             OpenTab(Action)
         else if (Action < 200):
-            Logger.Print("[ui] invoke dream {Action - 100} (not wired yet)")
+            Logger.Print("[ui] invoke dream {Action - 100}")
+            InvokeEvent.Signal(Action - 100)
+        else if (Action >= 300):
+            PickEvent.Signal(Action - 300)
         else:
             set Reply = "ASSISTANT> ...the answer will appear here."
             Logger.Print("[ui] ask question {Action - 200} (not wired yet)")
@@ -154,14 +175,21 @@ dream_debugger_ui := class:
             for (Old : Hotspots):
                 Root.RemoveWidget(Old.Button)
             set Hotspots = array{}
-            # The tabs share row 4, a third of the row each.
-            for (I -> Name : DebuggerTabNames):
-                AddHotspot(Root, 4, I, (1.0 * I) / 3.0, (1.0 * (I + 1)) / 3.0)
-            for (I -> Action : BodyActions()):
-                if (Action >= 0):
-                    AddHotspot(Root, DebuggerBodyFirst + I, Action, 0.0, 1.0)
-            if (First := Hotspots[Tab], PlayerUI := MaybePlayerUI?):
-                PlayerUI.SetFocus(First.Button)
+            if (InTake?):
+                # Only the menu's options, from row 7 (row 6 is the menu's title).
+                for (I -> Option : MenuOptions, DebuggerBodyFirst + 1 + I <= DebuggerBodyLast):
+                    AddHotspot(Root, DebuggerBodyFirst + 1 + I, 300 + I, 0.0, 1.0)
+                if (First := Hotspots[0], PlayerUI := MaybePlayerUI?):
+                    PlayerUI.SetFocus(First.Button)
+            else:
+                # The tabs share row 4, a third of the row each.
+                for (I -> Name : DebuggerTabNames):
+                    AddHotspot(Root, 4, I, (1.0 * I) / 3.0, (1.0 * (I + 1)) / 3.0)
+                for (I -> Action : BodyActions()):
+                    if (Action >= 0):
+                        AddHotspot(Root, DebuggerBodyFirst + I, Action, 0.0, 1.0)
+                if (First := Hotspots[Tab], PlayerUI := MaybePlayerUI?):
+                    PlayerUI.SetFocus(First.Button)
 
     AddHotspot(Root:canvas, Row:int, Action:int, X0:float, X1:float):void =
         Hotspot := debugger_hotspot{Row := Row, Action := Action, Owner := Self}
@@ -234,6 +262,12 @@ dream_debugger_ui := class:
             _ => array{}
 
     Render():void =
+        if (InTake?):
+            RenderTake()
+        else:
+            RenderTabs()
+
+    RenderTabs():void =
         SetRow(0, "WONDERWELL DREAM DEBUGGER  v4.1.7")
         SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
         SetRow(2, "PATIENT: {Client.Name}")
@@ -253,11 +287,44 @@ dream_debugger_ui := class:
                 SetRow(Row, if (Selectable?) then "{Mark}{Line}" else "  {Line}")
             else:
                 SetRow(Row, "")
-        SetRow(16, "")
+        SetRow(16, Notice)
+        SetRow(17, "ARROWS move  /  ENTER select  /  MOUSE click")
+
+    # The TAKE view: the take's title on row 4, then its menu or the last lines of its scene log,
+    # and the vitals on row 16.
+    RenderTake():void =
+        SetRow(0, "WONDERWELL DREAM DEBUGGER  v4.1.7")
+        SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
+        SetRow(2, "PATIENT: {Client.Name}")
+        SetRow(3, "")
+        SetTabMessage(0, TakeTitle(Title))
+        SetTab(1, "")
+        SetTab(2, "")
+        SetRow(5, "------------------------------------------------------------------------")
+        BodyRows := DebuggerBodyLast - DebuggerBodyFirst + 1
+        if (MenuOptions.Length > 0):
+            SetRowMessage(DebuggerBodyFirst, MenuTitle)
+            for (Row := DebuggerBodyFirst + 1..DebuggerBodyLast):
+                I := Row - DebuggerBodyFirst - 1
+                if (Option := MenuOptions[I]):
+                    SetRowMessage(Row, if (Cursor = 300 + I) then TakeCursorOn(Option) else TakeCursorOff(Option))
+                else:
+                    SetRow(Row, "")
+        else:
+            Shown := LastN(TakeLog, BodyRows)
+            for (Row := DebuggerBodyFirst..DebuggerBodyLast):
+                if (Line := Shown[Row - DebuggerBodyFirst]):
+                    SetRowMessage(Row, Line)
+                else:
+                    SetRow(Row, "")
+        Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
+        SetRow(16, "VITALS  [{Bars}]")
         SetRow(17, "ARROWS move  /  ENTER select  /  MOUSE click")
 
     SetRow(Index:int, Text:string):void =
-        Message := ToMessage(Text)
+        SetRowMessage(Index, ToMessage(Text))
+
+    SetRowMessage(Index:int, Message:message):void =
         case (Index):
             0 => set View.Row00Text = Message
             1 => set View.Row01Text = Message
@@ -280,9 +347,82 @@ dream_debugger_ui := class:
 
     # Row 4 is three tab labels, a third of the row each.
     SetTab(Index:int, Text:string):void =
-        Message := ToMessage(Text)
+        SetTabMessage(Index, ToMessage(Text))
+
+    SetTabMessage(Index:int, Message:message):void =
         case (Index):
             0 => set View.Tab0Text = Message
             1 => set View.Tab1Text = Message
             2 => set View.Tab2Text = Message
             _ => {}
+
+    # ---- The take (debug_screen, driven by take_flow) ----
+
+    # Switches to the TAKE view; the take flow fills it.
+    BeginTake():void =
+        set InTake = true
+        set TakeLog = array{}
+        set MenuOptions = array{}
+        set Vitals = 0
+        set Notice = ""
+        RebuildHotspots()
+        Render()
+
+    # Back to the tabs once the client's run is over.
+    EndTake():void =
+        set InTake = false
+        OpenTab(1)
+
+    # A line on row 16 of the tabs view, such as a locked layer.
+    ShowNotice(Text:string):void =
+        set Notice = Text
+        Render()
+
+    SetTitle<override>(InTitle:message):void =
+        set Title = InTitle
+        Render()
+
+    ClearLog<override>():void =
+        set TakeLog = array{}
+        Render()
+
+    SetCaseFile<override>(Entries:[]message):void =
+        set TakeLog = Entries
+        Render()
+
+    AppendLogLine<override>(Line:message):void =
+        set TakeLog = LastN(TakeLog + array{Line}, 40)
+        if (MenuOptions.Length > 0):
+            set MenuOptions = array{}
+            RebuildHotspots()
+        Render()
+
+    SetMenu<override>(InTitle:message, Options:[]message, Highlighted:int):void =
+        set MenuTitle = InTitle
+        set MenuOptions = Options
+        set Cursor = 300 + Highlighted
+        RebuildHotspots()
+        Render()
+
+    ShowSlate<override>(TakeNumber:int)<suspends>:void =
+        set MenuOptions = array{}
+        RebuildHotspots()
+        SetTitle(OverlaySlate(TakeNumber))
+        Sleep(1.5)
+
+    SetVitals<override>(Level:int):void =
+        set Vitals = Level
+        Render()
+
+    SetClientState<override>(TakeNumber:int, Feeling:client_state):void =
+        Logger.Print("[screen] STATE take={TakeNumber} trust={Feeling.Trust} fear={Feeling.Fear} hope={Feeling.Hope}")
+
+    # Picks come from clicks (AwaitPick); this screen has no separate next/confirm.
+    AwaitNext<override>()<suspends>:void =
+        Sleep(Inf)
+
+    AwaitConfirm<override>()<suspends>:void =
+        Sleep(Inf)
+
+    AwaitPick<override>()<suspends>:int =
+        PickEvent.Await()

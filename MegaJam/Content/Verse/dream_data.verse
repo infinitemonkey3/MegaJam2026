@@ -152,9 +152,8 @@ SetupHazeBase(Setup:take_setup)<transacts>:int =
 # Des, the slice's patient (writing/des/case-file.md). The case file is the file's "Screen"
 # section, as the dream debugger shows it: header, personality, likes, dislikes, key moments
 # (ANOMALY flags kept, the "Pays off" notes for us left out) and the loop note. The hidden fact
-# sheet unlocks by dream and isn't here. Only dream 1 is written; dreams 2 and 3 are the
-# placeholder dream under locked titles, and their loop data is still Nell's until the take
-# flow is moved onto Des.
+# sheet unlocks by dream and isn't here. Dream 1 is MakeDesDream1 (des_data.verse); dreams 2
+# and 3 are the placeholder dream under locked titles until they're written.
 # ---------------------------------------------------------------------------------------------
 
 MakeDesClient()<transacts>:client =
@@ -203,9 +202,13 @@ MakeDesClient()<transacts>:client =
             "CAST  1 PRINCIPAL / 120 EXTRAS, FACES NOT RENDERED"
             "DEPTH  3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED"
         Dreams := array:
-            MakePlaceholderDream("des_d1", "LAYER 1  Catchphrase  /  school_assembly 08:40", "The catchphrase is his father's goodbye.")
+            MakeDesDream1()
             MakePlaceholderDream("des_d2", "LAYER 2  [LOCKED]", "The implant chokes on the words his family gave him.")
             MakePlaceholderDream("des_d3", "LAYER 3  [LOCKED]", "What he never faced is what he did to his mother at the gate.")
+        StartTrust := 1
+        StartFear := 2
+        StartHope := 1
+        StartMood := "ready to be laughed at"
 
 # ---------------------------------------------------------------------------------------------
 # Placeholder content, from the Nell paper demo in docs/design.md. The writing stream's text in

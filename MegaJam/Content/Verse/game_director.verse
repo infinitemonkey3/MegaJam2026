@@ -113,9 +113,20 @@ game_director := class(creative_device):
         # The tutorial and the room between dreams come here (milestone 4).
 
         EnterPhase(game_phase.ClientPhase)
+        # The take runs on the dream debugger. It starts when the player invokes layer 1 on the
+        # DREAMS tab; the deeper layers are locked until it's solved.
+        set Takes.Screen = DebuggerUI
+        loop:
+            Invoked := DebuggerUI.InvokeEvent.Await()
+            if (Invoked = 0):
+                break
+            DebuggerUI.ShowNotice("LAYER LOCKED  //  CLEAR LAYER 1 FIRST")
+        Patient := MakeDesClient()
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
-            Takes.RunClient(MakePlaceholderClient(), Control)
+            DebuggerUI.BeginTake()
+            Takes.RunClient(Patient, Control)
+            DebuggerUI.EndTake()
         else:
             Logger.Print("[game] no client NPC; skipping the client phase", ?Level := log_level.Error)
 
