@@ -107,7 +107,7 @@ dream := class:
     ClearedLog:[]string = array{} # after a good ending: the debugger's notes, shown, not told
     BadEndingLog:[]string     # authored bad ending
     FactRevealed:string       # what a positive verdict gives up; joins the facts for later dreams
-    TakeSeconds:float = 120.0 # how long a take runs before the last line
+    TakeSeconds:float = 240.0 # how long a take runs before the last line (doubled from 120, Chip 2026-11-13)
 
 client := class:
     Id:string
@@ -268,4 +268,4 @@ MakePlaceholderDream(Id:string, Title:string, Fact:string)<transacts>:dream =
             "OVEN state=burning / SMOKE rising"
             "LIGHTS state=out / HEART rate=spike / LOOP restart"
         FactRevealed := Fact
-        TakeSeconds := 90.0
+        TakeSeconds := 180.0
