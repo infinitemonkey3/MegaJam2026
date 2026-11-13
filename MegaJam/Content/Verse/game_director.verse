@@ -31,6 +31,9 @@ game_director := class(creative_device):
     @editable StartAt:game_phase = game_phase.PreRollPhase
     # Sprint skips the current phase.
     @editable DevKeys:logic = false
+    # Which client is on the debugger and in the takes. Also set the client spawner's NPC
+    # definition (the voice) and the recliner art to match.
+    @editable Patient:patient_choice = patient_choice.NellPatient
 
     # How long the client phase waits for the client NPC's behavior to set up. The opening
     # doesn't wait for it at all.
@@ -101,7 +104,8 @@ game_director := class(creative_device):
 
         # The interactive dream debugger, over the monitor now that the camera is at rest and
         # the boot has played on the in-world screen behind it.
-        DebuggerUI := dream_debugger_ui{Client := MakeDesClient()}
+        Client := MakePatient(Patient)
+        DebuggerUI := dream_debugger_ui{Client := Client}
         if (Monitor := MakeMonitorPanel().ProjectRect[Player]):
             # The in-world screen stays as the dark fill behind; blank its boot text first.
             Debugger.Clear()
@@ -125,11 +129,10 @@ game_director := class(creative_device):
             if (Invoked = 0):
                 break
             DebuggerUI.ShowNotice("LAYER LOCKED  //  CLEAR LAYER 1 FIRST")
-        Patient := MakeDesClient()
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
             DebuggerUI.BeginTake()
-            Takes.RunClient(Patient, Control)
+            Takes.RunClient(Client, Control)
             DebuggerUI.EndTake()
         else:
             Logger.Print("[game] no client NPC; skipping the client phase", ?Level := log_level.Error)
@@ -191,3 +194,14 @@ game_director := class(creative_device):
             Sleep(0.5)
             set Waited += 0.5
         Found
+
+# The patients the game can run. Values carry a suffix so they can't clash with a content
+# folder's module name.
+patient_choice := enum:
+    NellPatient
+    DesPatient
+
+MakePatient(Choice:patient_choice)<transacts>:client =
+    case (Choice):
+        patient_choice.NellPatient => MakeNellClient()
+        patient_choice.DesPatient => MakeDesClient()

@@ -52,9 +52,16 @@ play session yet.
   `inject_item`, `risk_level`, `take_setup`. Authored text is `string`.
 - `MakeTakeSetup(Role, Settings, Items)`: builds a `take_setup` capped at `MaxSettings` (2) and
   `MaxItems` (2). `SetupHazeBase(Setup)`: haze base level from the riskiest choice.
-- `MakeDesClient()`: Des, the slice's patient, with the case file's Screen section from
-  `writing/des/case-file.md`; the debugger shows him. Only his dream 1 title is real; the take
-  flow still runs `MakePlaceholderClient()`.
+- `MakeDesClient()` (`des_data.verse`): Des, with the case file's Screen section from
+  `writing/des/case-file.md` and a full dream 1.
+- `MakeNellClient()` (`nell_data.verse`): Nell, the current patient 1 (2026-11-13), with the
+  Screen section of `writing/nell/case-file.md` and a full dream 1 from
+  `writing/nell/dream-1.md`; layers 2 and 3 are placeholders.
+- Patients are data: `game_director`'s `@editable Patient` (`patient_choice`, `MakePatient`)
+  picks which client the debugger and the takes run. Switching also needs the client spawner's
+  NPC definition (`Room/NPC/CD_Nell` or `CD_Des`; only its voice matters, since `LoadDream`
+  replaces the personality) and the recliner art (`Room_Recliner`'s material,
+  `MI_Room_Recliner_Nell`, or the empty recliner plus the `Room_Des` overlay).
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
 
