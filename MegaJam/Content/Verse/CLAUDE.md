@@ -77,6 +77,9 @@ play session yet.
   NPC's spawner. Phases (`take_phase`): CaseFile, Observe, Direct, RunTake, LastLine, Verdict,
   then GoodEnding (next dream), RetryEnding (back to Direct, "Take N+1"), or Finale after a
   positive verdict on the last dream (`DoFinale`, a stub for the scripted ending).
+- Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
+  opening prompt names both, so the client's first line reacts to them. `PickSettings` and
+  `PickItems` are unused until settings or more items come back.
 - Observe (the replay) is paced by the player: each loop beat goes in the log, the client tells
   it as her own memory (`client_control.NarrateBeat`, first person, past tense, using the beat's
   murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (row 16 of the dream debugger,

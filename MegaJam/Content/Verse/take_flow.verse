@@ -130,15 +130,17 @@ take_flow := class(creative_device):
             Screen.AwaitContinue()
         take_phase.Direct
 
-    # 3. Direct: the player sets up the take on the screen: a role, then up to 2 settings,
-    # then up to 2 items.
+    # 3. Direct: the player sets up the take on the screen: who they are, then one item. The
+    # client opens the take by reacting to both. Settings and a second item are off for now
+    # (play test, 2026-11-13: with more choices the client's opening stayed generic, "you're
+    # here early"); PickSettings and PickItems are kept for when they come back.
     DoDirect(Dream:dream)<suspends>:take_phase =
         Director.PlayLine(DirectorLineBeforeTake)
         RoleIndex := PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
         if (Role := Dream.Roles[RoleIndex]):
-            Settings := PickSettings(Dream)
-            Items := PickItems(Dream)
-            set MaybeSetup = option{MakeTakeSetup(Role, Settings, Items)}
+            ItemIndex := PickOne("INJECT ITEM", for (Option : Dream.Items) { Option.Label })
+            Items := if (Item := Dream.Items[ItemIndex]) then array{Item} else array{}
+            set MaybeSetup = option{MakeTakeSetup(Role, array{}, Items)}
             take_phase.RunTake
         else:
             Logger.Print("[flow] {Dream.Id} has no roles to cast", ?Level := log_level.Error)
