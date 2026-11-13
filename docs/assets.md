@@ -18,3 +18,5 @@ Notes:
 - License lines are the badge shown on each fal model page on 2026-11-12; the providers' own
   terms were not read.
 | `audio/narration/VO_Director_ColdOpen_01.wav`, `_02.wav`, `_03.wav`, `VO_Director_Tutorial_01.wav` (director voice-over) | fal, `google/gemini-3.8-flash-tts`, voice `Orus` | fal model page: "Commercial use" (Google's own terms not read) | No, generated 2026-11-12 |
+| `audio/sfx/AMB_Rain_Window.wav`, `AMB_Dream_Hum.wav`, `SFX_Dream_Transition.wav`, `AMB_AI_NeonBuzz.wav` (room, dream and AI sounds) | fal, `elevenlabs/sound-effects/v3` | fal model page: "Commercial use" (ElevenLabs' own terms not read) | No, generated 2026-11-12 |
+| `audio/music-src/MUS_Wonderwell_Jingle.m4a` (cold-open ad jingle) | fal, `sonilo/v1.1/text-to-music` | fal model page: "Commercial use"; model described as licensed, commercial-use-safe | No, generated 2026-11-12 |

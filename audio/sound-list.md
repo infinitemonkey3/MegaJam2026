@@ -17,11 +17,41 @@ the mood; music stays out of the takes.
 Nothing here is generated until Chip approves the batch and its cost. Every kept file goes in
 `docs/assets.md`.
 
-## Status
+## Kept so far
+
+From batch A, with Chip's notes. Effects are WAV, 44.1 kHz stereo, in `audio/sfx/`.
+
+| File | Was generated as | Now used for |
+|---|---|---|
+| `sfx/AMB_Rain_Window.wav` | `AMB_Rain_Window` | Rain on the window, the room's base loop |
+| `sfx/AMB_Dream_Hum.wav` | `AMB_Monitor_Hum` | The "we're in the dream" bed, right after the projector transition |
+| `sfx/SFX_Dream_Transition.wav` | `SFX_Projector_SpinUp`, take A | The transition into dream debugging (6 s, ends on its own, so no running loop) |
+| `sfx/AMB_AI_NeonBuzz.wav` | `AMB_Neon_Buzz` | Too harsh for the room; kept for the AI break-in |
+| `music-src/MUS_Wonderwell_Jingle.m4a` | `MUS_Wonderwell_Jingle`, take B | Cold-open ad. AAC from the model: needs converting to WAV before UEFN can import it |
+
+The room still needs a softer outside-sign sound (a new prompt for `AMB_Neon_Buzz` below, much
+quieter and more distant), or none.
+
+### Jingle sync with the narration
+
+The hard cut lands on the narration's turn. Timings measured from the kept takes:
+`VO_Director_ColdOpen_01` is 8.1 s, `_02` is 4.4 s, `_03` is 6.8 s.
+
+1. The jingle starts with the pan down the wall (t = 0).
+2. Line 1 ("Everyone dreams now... it's beautiful.") starts about 3 s in, over the jingle, and
+   ends at about 11 s.
+3. At about 11.5 s the jingle stops dead, and line 2 ("That's not me.") starts on the cut, with
+   only rain and the street left.
+
+The jingle is 15 s, so it is still mid-phrase at the cut, which is the point. The exact frame is
+set in the cold-open Level Sequence; if the cut feels late, start line 1 earlier rather than
+trimming the jingle's opening.
+
+## Batch marks
 
 | Mark | Meaning |
 |---|---|
-| A | In the first audition batch |
+| A | In the first audition batch (done) |
 | - | Later batch |
 
 ## The room (looping ambience)
@@ -30,7 +60,7 @@ Nothing here is generated until Chip approves the batch and its cost. Every kept
 |---|---|---|---|---|---|
 | `AMB_Rain_Window` | Rain on the window, steady | 20 s | yes | A | Steady night rain against a single-pane window in a small cluttered room, heard from inside. Close, soft drips on the sill, no thunder, no music. |
 | `AMB_Rain_Window_Heavy` | Heavier rain for tense states | 20 s | yes | - | Heavy night rain lashing a single-pane window in a small room, heard from inside, gusts against the glass, no thunder, no music. |
-| `AMB_Neon_Buzz` | Buzzing neon sign outside | 20 s | yes | A | An old neon sign buzzing just outside a window at night, steady electrical hum with occasional faint crackles, muffled by the glass, rain faintly behind. |
+| `AMB_Neon_Buzz` | Soft neon sign outside (batch A's take was too harsh; it moved to the AI break-in) | 20 s | yes | - | A neon sign across the street at night heard faintly through a closed window, a soft low electrical hum, very quiet and distant, rain in front of it, no crackles. |
 | `AMB_Neon_Buzz_Failing` | The sign flickering harder (haze) | 20 s | yes | - | A failing neon sign outside a window, buzzing and sputtering, irregular crackles and clicks as it flickers, muffled by glass. |
 | `AMB_Monitor_Hum` | Old monitor hum and coil whine | 20 s | yes | A | A bulky old CRT computer monitor running in a quiet room, low electrical hum with a faint high coil whine, close by, no other sounds. |
 | `AMB_City_Distant` | Far siren, a train, all very low | 30 s | yes | - | A distant city at night heard through a closed window: a far-off siren fading, a train passing a long way off, low traffic rumble, very quiet. |
@@ -59,8 +89,10 @@ Nothing here is generated until Chip approves the batch and its cost. Every kept
 | ID | Sound | Length | Loop | Batch | Prompt |
 |---|---|---|---|---|---|
 | `SFX_Projector_SpinUp` | Take start: an old film projector spinning up | 6 s | no | A | An old 16mm film projector switching on in a small room: a heavy switch click, the motor spinning up, then the rhythmic clicking clatter of film running through the gate settling into a steady speed. Close, mechanical, no music. |
-| `AMB_Projector_Run` | The projector running during the take | 15 s | yes | - | An old 16mm film projector running steadily in a small room: rhythmic clicking clatter of film through the gate and a low motor whir, close, constant. |
 | `SFX_Projector_Stop` | The take ends: projector winds down | 4 s | no | - | An old 16mm film projector switching off: switch click, the clatter slowing and the motor winding down to silence. |
+
+During the take, `AMB_Dream_Hum` (kept from batch A) is the bed, so there is no projector running
+loop.
 | `SFX_Implant_Sync` | The readout takes over the view | 3 s | no | - | A soft rising electronic whoosh with a tape-machine spin-up, a faint digital shimmer at the end, as if a dream is syncing in. |
 | `AMB_Haze_1` / `_2` / `_3` | Haze layers, a low drone that thickens | 20 s each | yes | - | (1) A barely audible low sub drone, calm but uneasy. (2) A low drone with a slow dissonant swell and faint static. (3) A thick low drone, dissonant, with crackling static and a distant warped hum. |
 | `SFX_Glitch_Burst` | The log corrupts | 1 s | no | - | A short harsh digital glitch: data stutter, a crackle of static and a clipped electronic squeal. |
