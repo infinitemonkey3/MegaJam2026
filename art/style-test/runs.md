@@ -356,6 +356,65 @@ around the title only, laid over the top half.
 This replaces the hard cut on "That's not me" in `docs/design.md` (cold open, step 2) with a
 track; the design doc is the orchestrator's to update.
 
+# Round 7: Des in the shared seat, and the Wonderwell title screen
+
+Run 2026-11-13. Chip approved 8 calls on `google/nano-banana-2.1/edit` at about $0.51 (cap
+$0.80). 8 calls, no reruns. **About $0.47 estimated** (6 x $0.063 at 2K + 2 x $0.044 at 1K). All
+rounds: about $2.84.
+
+The boy is **Des** from `docs/design.md` (13, eighth grade). Chip had first called him a 5th
+grader; the design doc's age was used.
+
+| ID | Seed | Size | Reference images | Output file | Cost (est.) | Kept? |
+|---|---|---|---|---|---|---|
+| Empty recliner (Nell edited out of L2) | 7101 | 2K 1:1 | L2_s1211, style ref | raw/ReclinerEmpty_s7101.png | 0.063 | **yes** |
+| Des seated in the empty recliner | 7201 | 2K 1:1 | ReclinerEmpty, L2_s1211 (pose), style ref | raw/DesSeat_s7201.png | 0.063 | no, darker, cloak reads less |
+| Des seated in the empty recliner | 7202 | 2K 1:1 | same | raw/DesSeat_s7202.png | 0.063 | **yes** |
+| Title background | 7301 | 2K 16:9 | ReclinerEmpty, Wonderwell poster, style ref | raw/TitleBg_s7301.png | 0.063 | **yes** |
+| Title background | 7302 | 2K 16:9 | same | raw/TitleBg_s7302.png | 0.063 | no, kept as a spare |
+| WONDERWELL wordmark on magenta | 7401 | 2K 4:1 | Wonderwell poster | raw/TitleWord_s7401.png | 0.063 | **yes**, ghost letters cropped |
+| Des mouth half-open | 7501 | 1K 1:1 | refs/des-face-crop.png | raw/DesMouthHalf_s7501.png | 0.044 | **yes** |
+| Des mouth open | 7502 | 1K 1:1 | refs/des-face-crop.png | raw/DesMouthOpen_s7502.png | 0.044 | **yes** |
+
+Prompts, in short (full text in the fal request history):
+
+- **Empty recliner:** system prompt A; "Remove the woman completely ... keep everything else
+  exactly the same ... draw the parts of the recliner that she was covering."
+- **Des:** system prompt A; same pose as Nell in L2; "13 years old, thin and small for his age
+  ... a too-big hand-me-down school blazer ... his father's heavy dark wool cloak worn inside
+  out: rough grey lining showing ... hem cut short and ragged like a cartoon hero's cape ...
+  behind his right ear a cheap clunky beige plastic translator earpiece, with a thin wire taped
+  to his temple."
+- **Title background:** system prompt A without the palette line; the empty recliner small in
+  the lower centre in noir colours, the poster's dream (clouds, stairways, lanterns) in the
+  Wonderwell palette above, breaking up into dry-brush where it meets the dark; one cable runs up
+  into the clouds; calm sky at the top for the title.
+- **Wordmark:** no house style; WONDERWELL in the poster's serif, cream with a gold inline and a
+  black outline, on magenta. The model added faint ghost letters above the word; rows above 206
+  were cleared before fitting.
+- **Mouths:** no system prompt; "Change only the boy's mouth ... keep everything else exactly the
+  same."
+
+## Finals
+
+Made with `art/tools/des_parts.py` (seat, overlay, mouth, chest) and `cutout.py` (title).
+
+| Final | Texture | Plane or use |
+|---|---|---|
+| T_Room_Recliner_Empty.png | 2048x2048 RGBA, content box x=0 y=295 w=2048 h=1753 | The seat on its own. Same plane as the old recliner: 230 x 230 cm, depth slot 3. |
+| T_Client_Des_Overlay.png | 2048x2048 RGBA, same content box | Des alone, aligned 1:1 with the empty seat: same size and position, 0.5 cm in front. A small sliver of chair-back pattern on the right is included; it matches the seat underneath, so it doesn't show. |
+| T_Client_Des_Mouth_Atlas.png | 1024x256 RGBA, cells closed, half, open, half | Mouth cell on the seat texture: x=1258 y=628 w=207 h=207 (about 23 x 23 cm), in front of the overlay. |
+| T_Client_Des_Chest.png | 512x512 RGBA, feathered | Chest piece on the seat texture: x=942 y=654 w=663 h=663 (about 74 x 74 cm), in front of the overlay, scaled about 2% to breathe. |
+| T_Title_Background_A.png | 2048x1024 RGB | 16:9 title image (stretched to 2:1 for a power-of-two texture; show it at 16:9). |
+| T_Title_Wordmark_A.png | 2048x512 RGBA, content box x=0 y=187 w=2048 h=325 | The title, separate so it can fade, flicker or glitch. Sits over the top third of the background. |
+
+`mockup-title.jpg` shows the wordmark over the background at 1920x1080. `mockup-des.jpg` shows
+the overlay alone, the overlay on the seat, the mouth atlas and the chest piece.
+
+Nell's existing combined drawing (`T_Room_ReclinerClient_Breath0_Key`) stays as it is; she isn't
+the slice's client. If she's needed on the shared seat later, her overlay can be cut the same
+way (free, local).
+
 ---
 
 # Final art pass list
