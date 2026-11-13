@@ -41,8 +41,8 @@ game_director := class(creative_device):
         Logger.Print("[game] director started, StartAt={GamePhaseName(StartAt)}")
         Player := AwaitPlayer()
         set State.MaybePlayer = option{Player}
-        # The player is never a body in this game: hide and freeze the character before
-        # anything else, so the first thing they see is the pre-roll, not themselves.
+        # The player is never a body in this game: hide the character before anything else,
+        # so the first thing they see is the pre-roll, not themselves.
         HoldPlayer(Player)
         Input.Bind(Player, DevKeys)
 
@@ -105,15 +105,15 @@ game_director := class(creative_device):
         set State.Phase = Next
         State.PhaseChangedEvent.Signal(Next)
 
-    # Hides the player's character and freezes it in place for the whole game. The character
-    # can take a moment to exist after the player joins, so this retries briefly.
+    # Hides the player's character for the whole game. The character can take a moment to
+    # exist after the player joins, so this retries briefly. Not put in stasis: stasis also
+    # blocks Crouch and Jump, which drive the menus (first replay, 2026-11-13).
     HoldPlayer(Player:player)<suspends>:void =
         var Waited:float = 0.0
         loop:
             if (Character := Player.GetFortCharacter[]):
                 Character.Hide()
-                Character.PutInStasis(stasis_args{AllowTurning := false, AllowFalling := false, AllowEmotes := false})
-                Logger.Print("[game] player character hidden and held")
+                Logger.Print("[game] player character hidden")
                 break
             if (Waited >= CharacterWaitSeconds):
                 Logger.Print("[game] no character to hide after {CharacterWaitSeconds}s", ?Level := log_level.Warning)
