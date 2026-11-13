@@ -15,9 +15,9 @@ using { /UnrealEngine.com/Temporary/UI }
 #    Tab0Text..Tab2Text). Verse UI can't set a font, UMG can. UEFN has no monospace font that
 #    passes validation (DroidSansMono is /Engine, and .ttf imports are refused), so NotoSans it
 #    is. The page is 1300 x 1000 in a Scale Box, so it scales evenly into the hole.
-#  - the input: invisible Verse UI buttons over the selectable rows, so the mouse clicks them and
-#    the arrow keys or D-pad move focus between them. Hovering or focusing one moves the ">"
-#    cursor in the text.
+#  - the input: invisible Verse UI buttons over the selectable rows. Hovering one focuses it and
+#    moves the ">" cursor in the text; a mouse click or Space (Jump) selects it. Arrow keys and
+#    Enter don't work in Fortnite's UI.
 # The dark fill behind is the world's glass and in-world screen, which get the camera's
 # perspective (a flat UI fill didn't match).
 #
@@ -67,10 +67,16 @@ debugger_hotspot := class:
     Row:int
     Action:int
     Owner:dream_debugger_ui
-    Button:button = button{Slot := button_slot{Widget := color_block{DefaultColor := NamedColors.Black, DefaultOpacity := 0.0}}}
+    Button:button
 
-    OnHighlight(Message:widget_message):void = Owner.MoveCursor(Action)
-    OnClick(Message:widget_message):void = Owner.Activate(Action)
+    # A click goes to the focused button, not the one under the mouse, and hovering doesn't move
+    # focus on its own (play test, 2026-11-13), so hovering a line focuses it.
+    OnHighlight(Message:widget_message):void =
+        Owner.FocusButton(Button)
+        Owner.MoveCursor(Action)
+
+    OnClick(Message:widget_message):void =
+        Owner.Activate(Action)
 
 dream_debugger_ui := class(debug_screen):
     Client:client
@@ -139,6 +145,10 @@ dream_debugger_ui := class(debug_screen):
 
     # ---- Actions ----
 
+    FocusButton(Target:button):void =
+        if (PlayerUI := MaybePlayerUI?):
+            PlayerUI.SetFocus(Target)
+
     MoveCursor(Action:int):void =
         set Cursor = Action
         Render()
@@ -192,12 +202,22 @@ dream_debugger_ui := class(debug_screen):
                     PlayerUI.SetFocus(First.Button)
 
     AddHotspot(Root:canvas, Row:int, Action:int, X0:float, X1:float):void =
-        Hotspot := debugger_hotspot{Row := Row, Action := Action, Owner := Self}
+        # The button takes the size of its content, so the content is the row's full rectangle,
+        # in 1080p UI units. Invisible; the text widget above ignores the mouse, so the buttons
+        # get it (it covered them until its root was Not Hit-Testable, Self & All Children).
+        W := Area.Width * (X1 - X0) * 1920.0
+        H := Area.Height * (1.0 / (1.0 * DebuggerRowCount)) * 1080.0
+        Fill := color_block{DefaultColor := NamedColors.Black, DefaultOpacity := 0.0, DefaultDesiredSize := vector2{X := W, Y := H}}
+        Hotspot := debugger_hotspot:
+            Row := Row
+            Action := Action
+            Owner := Self
+            Button := button{Slot := button_slot{Widget := Fill, HorizontalAlignment := horizontal_alignment.Fill, VerticalAlignment := vertical_alignment.Fill}}
         Hotspot.Button.HighlightEvent().Subscribe(Hotspot.OnHighlight)
         Hotspot.Button.OnClick().Subscribe(Hotspot.OnClick)
         Y0 := (1.0 * Row) / (1.0 * DebuggerRowCount)
         Y1 := (1.0 * (Row + 1)) / (1.0 * DebuggerRowCount)
-        Root.AddWidget(canvas_slot{Anchors := AreaAnchors(X0, Y0, X1, Y1), Offsets := margin{}, Widget := Hotspot.Button})
+        Root.AddWidget(canvas_slot{Anchors := AreaAnchors(X0, Y0, X1, Y1), Offsets := margin{}, Alignment := vector2{X := 0.0, Y := 0.0}, SizeToContent := false, Widget := Hotspot.Button})
         set Hotspots += array{Hotspot}
 
 
@@ -288,7 +308,7 @@ dream_debugger_ui := class(debug_screen):
             else:
                 SetRow(Row, "")
         SetRow(16, Notice)
-        SetRow(17, "ARROWS move  /  ENTER select  /  MOUSE click")
+        SetRow(17, "MOUSE click  /  SPACE select")
 
     # The TAKE view: the take's title on row 4, then its menu or the last lines of its scene log,
     # and the vitals on row 16.
@@ -319,7 +339,7 @@ dream_debugger_ui := class(debug_screen):
                     SetRow(Row, "")
         Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
         SetRow(16, "VITALS  [{Bars}]")
-        SetRow(17, "ARROWS move  /  ENTER select  /  MOUSE click")
+        SetRow(17, "MOUSE click  /  SPACE select")
 
     SetRow(Index:int, Text:string):void =
         SetRowMessage(Index, ToMessage(Text))

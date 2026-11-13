@@ -105,6 +105,7 @@ game_director := class(creative_device):
         if (Monitor := MakeMonitorPanel().ProjectRect[Player]):
             # The in-world screen stays as the dark fill behind; blank its boot text first.
             Debugger.Clear()
+            Input.FreeMouse(Player)
             DebuggerUI.Show(Player, Monitor)
         else:
             Logger.Print("[game] couldn't place the dream debugger over the monitor", ?Level := log_level.Warning)

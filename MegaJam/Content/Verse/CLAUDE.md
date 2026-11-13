@@ -112,6 +112,12 @@ play session yet.
   lines) and ASSISTANT (face plus preset questions). Invoking and asking only log so far. Shown
   with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
   background (they get the camera's perspective).
+- Input on the debugger (play test, 2026-11-13): the UMG text widget must be Not Hit-Testable
+  (Self & All Children) or its rows catch the mouse above the Verse buttons; "Self Hit-Test
+  Invisible" isn't enough. `input_router.FreeMouse` drops the weapon mapping before it shows.
+  Hovering a line focuses it, Space (Jump) activates the focused button, mouse clicks work.
+  Arrow keys and Enter do nothing: Verse can't hear them and Fortnite's UI doesn't navigate with
+  them.
 - Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
   blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
