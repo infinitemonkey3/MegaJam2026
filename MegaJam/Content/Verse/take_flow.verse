@@ -118,13 +118,16 @@ take_flow := class(creative_device):
         Director.PlayLine("{Dream.Id}_intro")
         take_phase.Observe
 
-    # 2. Observe: replay the loop as a log, the client murmuring over it.
+    # 2. Observe: replay the loop as a log, one beat at a time. The client tells each beat as
+    # something that happened to her, and the player presses CONTINUE for the next (play test,
+    # 2026-11-13: the timed replay raced by and the gist got lost).
     DoObserve(Dream:dream, Control:client_control)<suspends>:take_phase =
         for (Beat : Dream.LoopBeats):
             Log(Beat.LogLine)
-            if (Beat.Murmur.Length > 0):
-                Control.MurmurLine(Beat.Murmur)
-            Sleep(Beat.HoldSeconds)
+            Narrating := Control.NarrateBeat(Beat.LogLine, Beat.Murmur)
+            if (Narrating?):
+                Control.AwaitSpeechEnd(SpeechSeconds)
+            Screen.AwaitContinue()
         take_phase.Direct
 
     # 3. Direct: the player sets up the take on the screen: a role, then up to 2 settings,

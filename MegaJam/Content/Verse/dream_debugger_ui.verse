@@ -62,7 +62,9 @@ TakeCursorOff<localizes>(Line:message):message = "  {Line}"
 TakeTitle<localizes>(Title:message):message = "[ {Title} ]"
 
 # One invisible button over a row (or part of a row). Action: 0..2 tabs, 100+ dreams,
-# 200+ questions, 300+ take menu options.
+# 200+ questions, 300+ take menu options, ContinueAction.
+ContinueAction:int = 400
+
 debugger_hotspot := class:
     Row:int
     Action:int
@@ -85,6 +87,8 @@ dream_debugger_ui := class(debug_screen):
     InvokeEvent:event(int) = event(int){}
     # A take menu option clicked or selected: its index (debug_screen.AwaitPick).
     PickEvent:event(int) = event(int){}
+    # The CONTINUE prompt was pressed (debug_screen.AwaitContinue).
+    ContinueEvent:event() = event(){}
 
     Logger:log = log{Channel := dead_air_log}
 
@@ -114,6 +118,8 @@ dream_debugger_ui := class(debug_screen):
     var MenuTitle:message = EmptyText
     var MenuOptions:[]message = array{}
     var Vitals:int = 0
+    # True while the take flow waits on CONTINUE; row 16 shows it instead of the vitals.
+    var ContinueShown:logic = false
     # How many lines show above the newest one; prose lines wrap to two or three rows each.
     TakeLogLines:int = 3
     # Input mode All while there's something to click; None while the player talks, so Fortnite
@@ -178,6 +184,8 @@ dream_debugger_ui := class(debug_screen):
         else if (Action < 200):
             Logger.Print("[ui] invoke dream {Action - 100}")
             InvokeEvent.Signal(Action - 100)
+        else if (Action = ContinueAction):
+            ContinueEvent.Signal()
         else if (Action >= 300):
             PickEvent.Signal(Action - 300)
         else:
@@ -204,6 +212,8 @@ dream_debugger_ui := class(debug_screen):
                 # Only the menu's options, from row 7 (row 6 is the menu's title).
                 for (I -> Option : MenuOptions, DebuggerBodyFirst + 1 + I <= DebuggerBodyLast):
                     AddHotspot(Root, DebuggerBodyFirst + 1 + I, 300 + I, 0.0, 1.0)
+                if (ContinueShown?):
+                    AddHotspot(Root, 16, ContinueAction, 0.0, 1.0)
                 if (First := Hotspots[0], PlayerUI := MaybePlayerUI?):
                     PlayerUI.SetFocus(First.Button)
             else:
@@ -363,7 +373,10 @@ dream_debugger_ui := class(debug_screen):
                 set View.BodyMessage = EmptyText
                 set View.LatestMessage = EmptyText
         Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
-        SetRow(16, "VITALS  [{Bars}]")
+        if (ContinueShown?):
+            SetRow(16, "> [ CONTINUE ]")
+        else:
+            SetRow(16, "VITALS  [{Bars}]")
         SetRow(17, "MOUSE click  /  SPACE select")
 
     SetRow(Index:int, Text:string):void =
@@ -475,3 +488,14 @@ dream_debugger_ui := class(debug_screen):
 
     AwaitPick<override>()<suspends>:int =
         PickEvent.Await()
+
+    # CONTINUE on row 16, under the log: a click, or Space on the focused prompt.
+    AwaitContinue<override>()<suspends>:void =
+        SetClickable(true)
+        set ContinueShown = true
+        RebuildHotspots()
+        Render()
+        ContinueEvent.Await()
+        set ContinueShown = false
+        RebuildHotspots()
+        Render()

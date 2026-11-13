@@ -77,6 +77,12 @@ play session yet.
   NPC's spawner. Phases (`take_phase`): CaseFile, Observe, Direct, RunTake, LastLine, Verdict,
   then GoodEnding (next dream), RetryEnding (back to Direct, "Take N+1"), or Finale after a
   positive verdict on the last dream (`DoFinale`, a stub for the scripted ending).
+- Observe (the replay) is paced by the player: each loop beat goes in the log, the client tells
+  it as her own memory (`client_control.NarrateBeat`, first person, past tense, using the beat's
+  murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (row 16 of the dream debugger,
+  a click or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
+- During a take the client is told the visitor can describe their own actions ("I light the
+  oven") and that they really happen.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,
   "next" moves the highlight, "confirm" picks; a `Done` option ends a list early.
 - Fields `Screen`, `Haze`, `Director` hold the seams; they default to the stubs.
