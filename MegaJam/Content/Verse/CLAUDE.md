@@ -31,7 +31,10 @@ play session yet.
   Reload, both mouse buttons: Verse only hears Fortnite's input actions, not raw keys).
 
 ### Cold open (`cold_open.verse`)
-- `cold_open`: `RunPreRoll` (a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
+- `title_card` (`title_card.verse`): the Wonderwell title card (`Content/TitleCard/T_TitleCard`,
+  from `art/style-test/mockup-title.jpg`) full screen with the prompt low under the recliner.
+  The pre-roll shows it over the black overlay and `EndPreRoll` takes it down.
+- `cold_open`: `RunPreRoll` (the title card over a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
   ended by `input_router.AnyKeyEvent`; lifted under the sequence's own fade from black),
   `RunColdOpen` (plays the Level Sequence and swaps to the desk
   camera underneath it), `RunRoomIntro` (plays `LS_RoomIntro` on the `Room Intro Sequence`
@@ -90,7 +93,8 @@ play session yet.
   aloud, then `Celebrate` shows the LAYER CLEARED
   banner with the dream's `ClearedLog` (the debugger's notes, not told by the client) listed
   under it, and one CONTINUE before the next layer.
-- The dream debugger's take log shows only the newest line (the player reads at their own pace).
+- The dream debugger's take log shows only the newest line (the player reads at their own pace),
+  pinned to the top of the log area (`LatestText`'s slot is top-aligned).
 - Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
   does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,
