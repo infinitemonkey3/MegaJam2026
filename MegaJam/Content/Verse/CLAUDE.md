@@ -4,8 +4,10 @@ The game logic for *Dead Air* (`docs/design.md`): the take loop for one client w
 dreams, the wrapper around the client's LLM persona, and seams for the screen, haze and
 director's voice. One file per system. All files share one module (the folder's).
 
-**Status: written offline, never compiled.** Every engine call was checked against the 43.00
-digests (table below), but the code itself has not been through `BuildAll`. Expect syntax fixes.
+**Status: compiles clean, not yet run.** The first `BuildAll` (2026-11-12, Fortnite 43.00)
+returned no errors or warnings, and the editor loads the classes as
+`/<guid>/_Verse.Verse-<class>` (for example `_Verse.Verse-take_flow`). Nothing has run in a play
+session yet, and no `take_flow` device is placed.
 
 ## Provides
 
@@ -68,9 +70,9 @@ digests (table below), but the code itself has not been through `BuildAll`. Expe
   and `StartTake`; each sits behind that one function.
 - A setting pick removes the other settings with the same `Element`. The design's "up to 2 per
   element" could also mean 2 per element; this reads it as 2 in total, one per element.
-- The folder is named `Verse`, so its module is `Verse`. No file here writes
-  `using { /Verse.org/Verse }` (it is imported implicitly), so no clash was written, but whether
-  a project module named `Verse` shadows the implicit one is untested.
+- The folder is named `Verse`, so its module is `Verse` and class paths carry a `Verse-` prefix.
+  It compiles alongside the implicit `/Verse.org/Verse`; don't add `using { /Verse.org/Verse }`
+  in these files without building, since that path was not tried.
 
 ## Engine APIs relied on
 
@@ -122,9 +124,10 @@ V = `Verse\Verse.digest.verse`, FN = `Fortnite\Fortnite.digest.verse`.
 
 Not called yet, read for the seams: `GetPlayerInput<native><public>(Player:player)<transacts><decides>:player_input` (V:2713), `GetInputEvents<native><public>(ActionToBind:input_action(t) where t:type):input_events(t)` (V:2767), `TriggerActivationEvent<native><public>:listenable(tuple(player, t))` (V:2731), `CommitSayEvent<native><public>:listenable(tuple(?agent, message))` (UE:111, for the verdict fallback).
 
-## Unverified or guessed
+## Checked by the first compile
 
-Signatures above are exact; these are about how the code uses them or the language.
+Signatures above are exact. The language uses below were guesses when written; all of them
+compiled on 2026-11-12. "Compiles" isn't "works": items 1, 4 and 8 still need a play session.
 
 1. **Casting an `npc_behavior` to `client_npc_behavior`** (`client_npc_behavior[Agent.GetNPCBehavior[]]`
    in `take_flow.FindClientControl`). `npc_behavior` is `class<abstract>` with no `<castable>`
@@ -149,7 +152,7 @@ Signatures above are exact; these are about how the code uses them or the langua
 12. **Interfaces with `<suspends>` methods and interface-typed field defaults**
     (`Screen:debug_screen = stub_debug_screen{}`).
 
-Behavior the spikes still need to answer (the code assumes yes): `PromptToTalk` context lines
+Behavior a play session still needs to answer (the code assumes yes): `PromptToTalk` context lines
 stay in the session history for the take; `ClearHistory()` leaves the personality in place;
 `Prompt` right after another `Prompt` works; `StopHearEvent` fires once per player utterance;
 `PromptToTalk` is accepted while the persona is idle after `SetPersonality`.
