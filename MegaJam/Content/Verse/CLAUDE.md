@@ -159,6 +159,14 @@ play session yet.
   text in a play session. Nothing documents how widget pixels map to world size.
 - Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it and the spike screen entities
   can go.
+- **Talking to the client needs the persona's conversation UI** (play test, 2026-11-13). It's
+  the HUD Controller device's "Show LLM Conversations UI" (Show Element). That device's "Show
+  HUD" must stay Do Not Override: Hide Element hides everything, the talk UI included, and Verse
+  `ShowElementsForPlayer` can't override the device. The player holds the talk key it shows.
+  During a take the debugger also drops to input mode None so Fortnite gets the keyboard.
+- **The first take works end to end** (2026-11-13): INVOKE layer 1, the replay with Des's
+  murmurs, directing by clicks, talking to Des by voice, his `scene_update` sentences in the
+  log, the verdict and the retry.
 - **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD
   element for the player (`HideFortniteHUD`) and the character the moment it exists
   (`HoldPlayer`), before the black start screen goes on. If a later feature needs one HUD
