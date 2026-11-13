@@ -9,7 +9,15 @@ using { /Verse.org/Simulation }
 #
 # Everything is a `message`, never a `string`: text written by the model is redacted when it
 # is turned into a string, so it can only be passed through to UI.
+EmptyText<localizes>:message = ""
+
 debug_screen := interface:
+    # The screen's title line: "NO SIGNAL", "DEAD AIR", the client's name.
+    SetTitle(Title:message):void
+
+    # Empties the log.
+    ClearLog():void
+
     # Case file view: one message per entry.
     SetCaseFile(Entries:[]message):void
 
@@ -36,6 +44,13 @@ debug_screen := interface:
 # takes its first option and the flow runs unattended. Model-written text shows redacted here.
 stub_debug_screen := class(debug_screen):
     Logger:log = log{Channel := dead_air_log}
+
+    SetTitle<override>(Title:message):void =
+        Text := Localize(Title)
+        Logger.Print("[screen] TITLE {Text}")
+
+    ClearLog<override>():void =
+        Logger.Print("[screen] LOG cleared")
 
     SetCaseFile<override>(Entries:[]message):void =
         Logger.Print("[screen] CASE FILE {Entries.Length} entries")
