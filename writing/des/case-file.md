@@ -11,10 +11,14 @@ quoted anywhere, in the file or in the dreams.
 ## Footing Talk
 
 The few words of the Footings' speech the slice uses. Invented for the game; it stands in for
-no real community. Not shown as a list; the words appear in the file and in his speech.
+no real community. Built like a dialect: it differs where dialects usually do (family words,
+greetings, goodbyes), with invented words, never a real dialect's. Not shown as a list; the words appear in the file and in his speech.
 
 - `brann`: a light, a lamp. "Keep yer brann lit" is how footing families say goodnight and
   goodbye.
+- `athy`: dad. What Des calls his father at home.
+- `mavvy`: mum.
+- `Down safe?` / `Safe down.`: hello, how are you, and the answer. You made it down safe.
 - `upside`: the upper layers of the city, where the sky is.
 - `yer`: your.
 - `the day`: daylight, which the Footings never get. "Bring the day down" is what you say to
