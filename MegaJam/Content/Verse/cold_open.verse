@@ -4,20 +4,17 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 
 # The pre-roll and the cold open (docs/implementation-plan.md, section 2). game_director runs
 # RunPreRoll, RunColdOpen and RunBoot in order, each raced against the dev skip, and calls the
-# matching End* function afterwards either way, so a skipped phase still leaves the cameras
-# and sounds right.
+# matching End* function afterwards either way, so a skipped phase still leaves the cameras,
+# the overlay and the sounds right.
 #
-# The pre-roll is the desk monitor seen up close through MonitorCamera: a dead broadcast, the
-# mic check and the voice choice. The cinematic is one Level Sequence (camera path, narration,
-# jingle and rain on its own tracks). It ends on the desk view, where the same monitor boots.
+# Everything outside the Level Sequence is the full-screen overlay (overlay_screen):
+#  - pre-roll: black with "PRESS ANY KEY TO START" (Chip, 2026-11-13)
+#  - cold open: the overlay comes down under the sequence's own fade from black
+#  - after it: the sequence ends on black and the overlay goes back up as the stand-in for the
+#    room, where DEAD AIR boots. The 3D world is never shown outside the sequence.
 
 # Authored placeholder text; the writing stream's versions replace it.
-NoSignalTitle<localizes>:message = "NO SIGNAL"
-MicPrompt<localizes>:message = "Say something."
-MicHeard<localizes>:message = "SIGNAL DETECTED"
-VoiceMenuTitle<localizes>:message = "HOW DO YOU TALK TO THEM?  [crouch] change  [jump] start"
-TalkOption<localizes>:message = "Out loud (microphone)"
-PresetOption<localizes>:message = "Preset lines (no microphone)"
+PressAnyKeyText<localizes>:message = "PRESS ANY KEY TO START"
 DeadAirTitle<localizes>:message = "DEAD AIR"
 BootLines:[]string = array:
     "BOOT dbg_link / BUILD unlicensed"
@@ -27,7 +24,7 @@ BootLines:[]string = array:
 
 # Device references the cold open uses, set on game_director in the editor.
 cold_open_rig := class:
-    MonitorCamera:gameplay_camera_fixed_point_device    # tight on the monitor: the pre-roll
+    MonitorCamera:gameplay_camera_fixed_point_device    # a fixed view under the start screen
     DeskCamera:gameplay_camera_fixed_point_device       # the seated desk view the game plays from
     Sequence:cinematic_sequence_device                  # the cold-open Level Sequence
     NoSignalSound:audio_player_device                   # AMB_No_Signal, looping
@@ -38,7 +35,7 @@ cold_open_rig := class:
 cold_open := class:
     Rig:cold_open_rig
     Input:input_router
-    Screen:debug_screen
+    Screen:overlay_screen
 
     Logger:log = log{Channel := dead_air_log}
 
@@ -51,55 +48,20 @@ cold_open := class:
 
     # ---- Pre-roll ----
 
-    RunPreRoll(State:game_state, Player:player, MaybeControl:?client_control)<suspends>:void =
-        Rig.MonitorCamera.AddTo(Player)
-        Rig.NoSignalSound.Play()
+    # Black with "PRESS ANY KEY TO START"; any key the input router hears starts the game.
+    # Voice mode stays at its default (mic); the preset-lines choice needs a new home.
+    RunPreRoll(Player:player)<suspends>:void =
+        Rig.MonitorCamera.AddTo(Player)    # a fixed view under the black, so nothing shows when it lifts
         Screen.ClearLog()
-        Screen.SetTitle(NoSignalTitle)
-        Screen.AppendLogLine(MicPrompt)
-        race:
-            WatchMic(MaybeControl)
-            ChooseVoiceMode(State)
+        Screen.SetMenu(EmptyText, array{}, 0)
+        Screen.SetTitle(PressAnyKeyText)
+        Screen.Show(Player)
+        Rig.NoSignalSound.Play()
+        Input.AnyKeyEvent.Await()
         Logger.Print("[cold_open] pre-roll done")
-
-    # Shows "SIGNAL DETECTED" whenever someone speaks on the client's voice channel. In a solo
-    # island that's the player. Unverified: whether a player broadcasts on that channel before
-    # anyone is their conversation target. Never returns.
-    WatchMic(MaybeControl:?client_control)<suspends>:void =
-        if (Control := MaybeControl?):
-            loop:
-                Control.VoiceChannel.BeginBroadcastEvent().Await()
-                Screen.AppendLogLine(MicHeard)
-        else:
-            Logger.Print("[cold_open] no client voice channel; the mic check can't listen", ?Level := log_level.Warning)
-            Sleep(Inf)
-
-    # The voice choice doubles as the start prompt: confirming a choice starts the game.
-    ChooseVoiceMode(State:game_state)<suspends>:void =
-        Options := array{TalkOption, PresetOption}
-        var Highlighted:int = 0
-        loop:
-            Screen.SetMenu(VoiceMenuTitle, Options, Highlighted)
-            Confirmed := race:
-                block:
-                    Input.ConfirmEvent.Await()
-                    true
-                block:
-                    Input.NextEvent.Await()
-                    false
-            if (Confirmed?):
-                break
-            set Highlighted = if (Highlighted = 0) then 1 else 0
-        set State.VoiceMode = if (Highlighted = 0) then voice_mode.Mic else voice_mode.Presets
-        if (Highlighted = 0):
-            Logger.Print("[cold_open] voice mode: mic")
-        else:
-            Logger.Print("[cold_open] voice mode: presets")
 
     EndPreRoll():void =
         Rig.NoSignalSound.Stop()
-        Screen.SetMenu(EmptyText, array{}, 0)
-        Screen.ClearLog()
         Screen.SetTitle(EmptyText)
 
     # ---- Cinematic ----
@@ -107,9 +69,11 @@ cold_open := class:
     RunColdOpen(Player:player)<suspends>:void =
         Rig.Sequence.Play(Player)
         # Swap to the desk camera underneath the sequence's camera, one tick in, so the pre-roll
-        # view never shows between the two and the sequence's last frame hands straight over.
+        # view never shows between the two. The sequence opens on its own fade from black, so
+        # the overlay comes down under it without a seam.
         Sleep(0.0)
         GoToDesk(Player)
+        Screen.Hide()
         race:
             Rig.Sequence.StoppedEvent.Await()
             block:
@@ -117,7 +81,9 @@ cold_open := class:
                 Logger.Print("[cold_open] sequence never stopped; moving on", ?Level := log_level.Warning)
         Logger.Print("[cold_open] sequence done")
 
+    # The sequence ends on black; the overlay goes straight back up as the room stand-in.
     EndColdOpen(Player:player):void =
+        Screen.Show(Player)
         Rig.Sequence.GoToEndAndStop(Player)
         GoToDesk(Player)
         Rig.RoomRain.Play()
@@ -143,8 +109,10 @@ cold_open := class:
     EndBoot():void =
         Screen.SetTitle(DeadAirTitle)
 
-    # For debug starts after the cold open: put the player at the desk as if it had played.
+    # For debug starts after the cold open: put the player at the room stand-in as if it had
+    # played.
     SkipToDesk(Player:player):void =
+        Screen.SetTitle(DeadAirTitle)
+        Screen.Show(Player)
         GoToDesk(Player)
         Rig.RoomRain.Play()
-        Screen.SetTitle(DeadAirTitle)

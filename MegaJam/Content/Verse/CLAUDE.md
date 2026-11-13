@@ -1,11 +1,12 @@
 # Content/Verse
 
-The game logic for *Wonderwell* (`docs/design.md`): the game director and its phases, the
+The game logic for *Dead Air* (`docs/design.md`): the game director and its phases, the
 pre-roll and cold open, the take loop for one client with three dreams, the wrapper around the
 client's LLM persona, and seams for the screen, haze and director's voice. One file per system.
 All files share one module (the folder's).
 
-**Status: compiles clean, not yet run.** Every file builds with no errors or warnings
+**Status:** the start screen, cold open and boot have been played in a session (2026-11-13).
+`overlay_screen` (the black room stand-in) compiles clean but hasn't been played yet. Earlier: Every file builds with no errors or warnings
 (2026-11-12; 43.00 for the take flow, 43.10 for the cold open), and the editor loads the classes
 as `/<guid>/_Verse.Verse-<class>` (for example `_Verse.Verse-game_director`). A `Game Director`
 and a `Take Flow` device are placed and wired in the editor's level, but nothing has run in a
@@ -24,15 +25,17 @@ play session yet.
 - `game_state`: `Phase`, `MaybePlayer`, `VoiceMode` (`voice_mode{Mic, Presets}`),
   `PhaseChangedEvent`. `game_phase`, `GamePhaseName`, `GamePhaseIndex`.
 - `input_router`: `Bind(Player, DevKeys)`; `NextEvent` (Crouch), `ConfirmEvent` (Jump),
-  `SkipEvent` (Sprint, dev keys only).
+  `SkipEvent` (Sprint, dev keys only), `AnyKeyEvent` (movement, Jump, Crouch, Sprint, Interact,
+  Reload, both mouse buttons: Verse only hears Fortnite's input actions, not raw keys).
 
 ### Cold open (`cold_open.verse`)
-- `cold_open`: `RunPreRoll` (NO SIGNAL on the monitor, the mic check, the Talk or Preset-lines
-  choice, which doubles as Start), `RunColdOpen` (plays the Level Sequence and swaps to the desk
+- `cold_open`: `RunPreRoll` (a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
+  ended by `input_router.AnyKeyEvent`; lifted under the sequence's own fade from black),
+  `RunColdOpen` (plays the Level Sequence and swaps to the desk
   camera underneath it), `RunBoot` (DEAD AIR, the boot log, the tutorial line). Each has an
   `End*`/`SkipToDesk` that leaves cameras and sounds right if the phase was skipped.
-- `cold_open_rig`: the device references it uses. Placeholder text: `NoSignalTitle`,
-  `MicPrompt`, `VoiceMenuTitle`, `BootLines`.
+- `cold_open_rig`: the device references it uses. Placeholder text: `PressAnyKeyText`,
+  `DeadAirTitle`, `BootLines`.
 
 ### Data (`dream_data.verse`)
 - `dead_air_log`: the log channel everything prints to (`GetVerseOutput`). Lines are tagged
@@ -74,10 +77,10 @@ play session yet.
   `SetCaseFile`, `AppendLogLine`, `SetMenu`, `ShowSlate`, `SetVitals`, `SetClientState`,
   `AwaitNext`, `AwaitConfirm`. Display takes `message`s only; input is two waits the real
   screen backs with `/Verse.org/Input` actions. `EmptyText`.
-- `entity_screen` (`entity_screen.verse`): **temporary** `debug_screen` over the spike's
-  in-world widget (`Content/Spikes/UW_SpikeScreen`: Title, Body, Menu fields), so the cold open
-  shows on a real screen before stream 5's widget exists. Writes to every `UW_SpikeScreen`
-  entity under the director's simulation entity.
+- `overlay_screen` (`overlay_screen.verse`): the `debug_screen` as a full-screen Verse UI
+  overlay, black with title, log and menu text. `Show(Player)` / `Hide()`. It's the start
+  screen and the stand-in for the room until the 2D room and the real screen exist; text set
+  while it's hidden shows next time.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line
@@ -104,14 +107,23 @@ play session yet.
   a module name clashes with an enumerator of the same name anywhere in this module. That's why
   `game_phase` values carry a `Phase` suffix (`ColdOpenPhase`, `RoomPhase`). Don't add enum
   values named like a content folder.
-- `entity_screen` depends on `Content/Spikes/UW_SpikeScreen` (module `Spikes`), the one spike
-  asset kept after the test-content purge. It and the spike screen entities go when the real
-  screen lands.
+- **The 3D world only shows inside the cold-open sequence.** Outside it, `overlay_screen` is up
+  (black). The sequence fades in from and out to black, so the overlay comes down and goes back
+  up under black with no seam. Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it
+  and the spike screen entities can go.
+- **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD
+  element for the player (`HideFortniteHUD`) and the character the moment it exists
+  (`HoldPlayer`), before the black start screen goes on. If a later feature needs one HUD
+  element back (the persona talk prompt, say), show just that one with `ShowElementsForPlayer`. **Don't put the character in stasis:** `PutInStasis` also blocks Crouch and Jump,
+  which drive every menu, and the game sits waiting with no control. Nothing waits on the client
+  NPC before the opening; the client phase waits for it.
+- The pre-roll no longer has the design's mic check or the Talk/Preset-lines choice (Chip
+  wanted a plain black start screen). `game_state.VoiceMode` stays `Mic` until that choice gets
+  a new home.
 - Only one `take_flow` may run: it's started by `game_director`, so keep its `RunOnBegin` off
   whenever a director is placed.
-- The pre-roll's "signal detected" check listens on the client's voice channel
-  (`BeginBroadcastEvent`). With no `client_npc_behavior` NPC in the level it can't listen, and
-  logs a warning; the voice choice still works.
+- Verse devices render as consoles in a play session too. Keep `Game Director` and `Take Flow`
+  out of every camera's view (they sit behind the cameras, at +X).
 - `audio_player_device` has no finished event, so `cold_open.TutorialSeconds` is the WAV's
   length (5.36 s) plus a margin. Change it with the line.
 - The folder is named `Verse`, so its module is `Verse` and class paths carry a `Verse-` prefix.
@@ -177,14 +189,19 @@ Cold open and game shell (43.10 lines):
 | `player_input` | `AddInputMapping<native><public>(InputMapping:input_mapping):void`; `GetInputEvents<native><public>(ActionToBind:input_action(t) where t:type):input_events(t)` | V:3653, 3659 |
 | `input_events.TriggerActivationEvent` | `TriggerActivationEvent<native><public>:listenable(tuple(player, t))` | V:3623 |
 | `Character` inputs | `TraversalMapping<public>:input_mapping`; `Crouch`, `Sprint`, `Jump<public>:input_action(logic)` | FN:35, 38, 41, 44 |
-| `voice_channel.BeginBroadcastEvent` | `BeginBroadcastEvent<public>():listenable(agent)` | V:3871 |
+| `GetPlayerUI`, `player_ui` | `GetPlayerUI<native><public>(Player:player)<transacts><decides>:player_ui`; `AddWidget<native><public>(Widget:widget, Slot:player_ui_slot):void`; `RemoveWidget<native><public>(Widget:widget):void` | UE:1837, 1845, 1848 |
+| `canvas_slot`, `color_block`, `text_base` | `canvas_slot` (`Anchors`, `Offsets`, `SizeToContent`, `Alignment`, `Widget`); `color_block` (`DefaultColor`, `DefaultOpacity`); `text_base` (`DefaultText`, `DefaultTextColor`, `DefaultJustification`) | UE:2007, 2038, 2231 |
+| `Character` extra inputs | `InteractMapping`, `RangedWeaponMapping:input_mapping`; `Interact`, `Reload`, `WeaponPrimary`, `WeaponSecondary:input_action(logic)`; `Move:input_action(vector3)` | FN:18-60 |
 | `entity.FindDescendantEntities` | `(InEntity:entity).FindDescendantEntities<native><public>(entity_type:castable_subtype(entity))<transacts>:generator(entity_type)` | V:766 |
 | `creative_device.GetSimulationEntity` | `(CreativeDevice:creative_device).GetSimulationEntity<native><public>()<transacts><decides>:entity` | FN:9045 |
 | `GetPlayspace`, `GetPlayers` | `(CreativeObject:creative_object_interface).GetPlayspace<native><public>()<transacts>:fort_playspace`; `GetPlayers<public>()<transacts>:[]player` | FN:9116, 1615 |
 | `cinematic_sequence_device` | `Play<public>(Agent:agent):void`; `GoToEndAndStop<public>(Agent:agent):void`; `StoppedEvent<public>:listenable(tuple())` | FN:6242, 6260, 6236 |
 | `gameplay_camera_device` | `AddTo<public>(Agent:agent):void`; `RemoveFrom<public>(Agent:agent):void` | FN:4473, 4479 |
 | `audio_player_device` | `Play<public>():void`; `Stop<public>():void` (no finished event) | FN:2758, 2764 |
-| `UW_SpikeScreen_entity` | `var TitleMessage`, `var BodyMessage`, `var MenuMessage<public>:message` (generated from the spike widget) | `Digests/<guid>-Assets/<guid>-Assets.digest.verse`, module `/invaliddomain/MegaJam/Spikes` |
+| `GetFortCharacter` | `(InAgent:agent).GetFortCharacter<native><public>()<transacts><decides>:fort_character` | FN:905 |
+| `fort_character.Hide` | `Hide<public>():void` | FN:875 |
+| `fort_hud_controller` | `(Playspace:fort_playspace).GetHUDController<native><public>():fort_hud_controller`; `HideElementsForPlayer<public>(Player:player, HUDElements:[]hud_element_identifier):void`; `creative_hud_identifier_all`, `player_hud_identifier_all`, `hud_identifier_visual_sound_effect_all` | FN:12424, 12418, 12426, 12478, 12502 |
+| `stack_box`, `stack_box_slot` | `stack_box` (`Orientation`, `Slots`); `stack_box_slot` (`Widget`, `HorizontalAlignment`, `Padding`) | UE:2171, 2185 |
 
 Not called yet: `CommitSayEvent<native><public>:listenable(tuple(?agent, message))` (UE:111 in 43.00, for the verdict fallback).
 
