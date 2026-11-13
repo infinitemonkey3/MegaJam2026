@@ -1,13 +1,12 @@
 # Content/Verse
 
-The game logic for *Wonderwell* (`docs/design.md`): the game director and its phases, the
+The game logic for *Dead Air* (`docs/design.md`): the game director and its phases, the
 pre-roll and cold open, the take loop for one client with three dreams, the wrapper around the
 client's LLM persona, and seams for the screen, haze and director's voice. One file per system.
 All files share one module (the folder's).
 
 **Status:** the start screen, cold open and boot have been played in a session (2026-11-13).
-**`overlay_screen` and its use in `cold_open` and `game_director` have not been compiled yet**
-(the editor's MCP server was down); build them first. Before that change: Every file builds with no errors or warnings
+`overlay_screen` (the black room stand-in) compiles clean but hasn't been played yet. Earlier: Every file builds with no errors or warnings
 (2026-11-12; 43.00 for the take flow, 43.10 for the cold open), and the editor loads the classes
 as `/<guid>/_Verse.Verse-<class>` (for example `_Verse.Verse-game_director`). A `Game Director`
 and a `Take Flow` device are placed and wired in the editor's level, but nothing has run in a
