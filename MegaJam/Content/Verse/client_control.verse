@@ -166,7 +166,10 @@ client_control := class:
     # the whole take, append these lines to the personality in LoadDream-style SetPersonality
     # instead and prompt only "Say your first line".
     StartTake(Dream:dream, Setup:take_setup, TakeNumber:int):logic =
-        var Lines:[]message = array{ToMessage("The dream begins again from the top."), ToMessage(Setup.Role.ContextLine)}
+        # The persona system also passes on the player's own name or outfit, and the client used
+        # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
+        # says it again next to the casting.
+        var Lines:[]message = array{ToMessage("The dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. Any other name or rank you have been told for them is wrong; never say it.")}
         for (Setting : Setup.Settings):
             set Lines += array{ToMessage(Setting.ContextLine)}
         for (Item : Setup.Items):
