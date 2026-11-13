@@ -186,7 +186,7 @@ client_control := class:
         # The persona system also passes on the player's own name or outfit, and the client used
         # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
         # says it again next to the casting.
-        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("The visitor may describe what they do, like \"I light the oven\" or \"I hand you the apron\". It really happens in the dream: react to it and let it change the scene.")}
+        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
         for (Setting : Setup.Settings):
             set Lines += array{ToMessage(Setting.ContextLine)}
         for (Item : Setup.Items):
@@ -221,7 +221,7 @@ client_control := class:
     # False if the persona refused (busy).
     NarrateBeat(LogLine:string, Murmur:string):logic =
         Words := if (Murmur.Length > 0) then " Work in these words of yours: \"{Murmur}\"" else ""
-        Instructions := ToMessage("Tell the visitor about this part of your morning as something that happened to you, in the first person and the past tense, in one or two short sentences in your own voice, like you're relating a story. Don't call anyone by name. What happened: {LogLine}{Words}")
+        Instructions := ToMessage("Tell the visitor about what happened next as something that happened to you, in the first person and the past tense, in one or two short sentences in your own voice, like you're relating a story. Don't call anyone by name. What happened: {LogLine}{Words}")
         if (Persona.PromptToTalk[Instructions, VoiceChannel]):
             true
         else:

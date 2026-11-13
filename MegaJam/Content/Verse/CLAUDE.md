@@ -84,8 +84,12 @@ play session yet.
   it as her own memory (`client_control.NarrateBeat`, first person, past tense, using the beat's
   murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (row 16 of the dream debugger,
   a click or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
-- During a take the client is told the visitor can describe their own actions ("I light the
-  oven") and that they really happen.
+- Endings are told the same way: each `GoodEndingLog` / `BadEndingLog` line is narrated with
+  CONTINUE, the client says `FactRevealed` aloud, and `Celebrate` shows the dream's
+  `ClearedLog` (the debugger's notes) as one LAYER CLEARED screen before the next layer.
+- The dream debugger's take log shows only the newest line (the player reads at their own pace).
+- Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
+  does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,
   "next" moves the highlight, "confirm" picks; a `Done` option ends a list early.
 - Fields `Screen`, `Haze`, `Director` hold the seams; they default to the stubs.

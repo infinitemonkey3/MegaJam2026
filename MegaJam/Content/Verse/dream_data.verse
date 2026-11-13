@@ -103,7 +103,8 @@ dream := class:
     PositiveLine:string       # the client's verdict lines, spoken with PromptToTalk
     MixedLine:string
     NegativeLine:string
-    GoodEndingLog:[]string    # authored good ending
+    GoodEndingLog:[]string    # authored good ending: scene lines, told by the client
+    ClearedLog:[]string = array{} # after a good ending: the debugger's notes, shown, not told
     BadEndingLog:[]string     # authored bad ending
     FactRevealed:string       # what a positive verdict gives up; joins the facts for later dreams
     TakeSeconds:float = 120.0 # how long a take runs before the last line

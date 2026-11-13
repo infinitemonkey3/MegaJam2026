@@ -50,6 +50,7 @@ MakeDesDream1()<transacts>:dream =
             "The hall has faces now, and they say it with him."
             "He isn't alone on the stage."
             "His heart slows down."
+        ClearedLog := array:
             "The loop is broken. Layer 1 is clear."
             "Recovered: his dad, Ansel Varro, says that line at the door every morning at 05:10."
             "Two anomalies explained: the catchphrase, and why he never stutters as the hero."

@@ -104,8 +104,8 @@ take_flow := class(creative_device):
             take_phase.RunTake => DoRunTake(Dream, Control)
             take_phase.LastLine => DoLastLine(Dream, Control)
             take_phase.Verdict => DoVerdict(Subject, Dream, Control)
-            take_phase.GoodEnding => DoGoodEnding(Dream)
-            take_phase.RetryEnding => DoRetryEnding(Dream)
+            take_phase.GoodEnding => DoGoodEnding(Dream, Control)
+            take_phase.RetryEnding => DoRetryEnding(Dream, Control)
             take_phase.Finale => DoFinale()
             take_phase.Done => take_phase.Done
 
@@ -123,12 +123,25 @@ take_flow := class(creative_device):
     # 2026-11-13: the timed replay raced by and the gist got lost).
     DoObserve(Dream:dream, Control:client_control)<suspends>:take_phase =
         for (Beat : Dream.LoopBeats):
-            Log(Beat.LogLine)
-            Narrating := Control.NarrateBeat(Beat.LogLine, Beat.Murmur)
-            if (Narrating?):
-                Control.AwaitSpeechEnd(SpeechSeconds)
-            Screen.AwaitContinue()
+            Narrate(Control, Beat.LogLine, Beat.Murmur)
         take_phase.Direct
+
+    # One told line: it goes in the log, the client tells it as her own memory, then the player
+    # presses CONTINUE.
+    Narrate(Control:client_control, Line:string, Murmur:string)<suspends>:void =
+        Log(Line)
+        Narrating := Control.NarrateBeat(Line, Murmur)
+        if (Narrating?):
+            Control.AwaitSpeechEnd(SpeechSeconds)
+        Screen.AwaitContinue()
+
+    # The layer-cleared screen after a good ending: the debugger's notes all at once, under a
+    # LAYER CLEARED title, with one CONTINUE before the next layer (Chip, 2026-11-13).
+    Celebrate(Dream:dream)<suspends>:void =
+        if (Dream.ClearedLog.Length > 0):
+            Screen.SetTitle(ToMessage("LAYER CLEARED"))
+            Log(Join(array{"***  LAYER CLEARED  ***"} + Dream.ClearedLog, "\n"))
+            Screen.AwaitContinue()
 
     # 3. Direct: the player sets up the take on the screen: who they are, then one item. The
     # client opens the take by reacting to both. Settings and a second item are off for now
@@ -271,16 +284,20 @@ take_flow := class(creative_device):
             Control.AwaitSpeechEnd(SpeechSeconds)
             take_phase.RetryEnding
 
-    # Good ending: the loop resolves its authored way, the client gives up the dream's fact,
-    # and the next dream begins.
-    DoGoodEnding(Dream:dream)<suspends>:take_phase =
+    # Good ending: the client tells how the loop resolves, says the dream's fact in her own
+    # words, then the debugger's notes, each with CONTINUE; then the next dream begins.
+    DoGoodEnding(Dream:dream, Control:client_control)<suspends>:take_phase =
         Haze.Reset()
         Screen.SetVitals(0)
         for (Line : Dream.GoodEndingLog):
-            Log(Line)
-            Sleep(1.5)
+            Narrate(Control, Line, "")
         set Facts += array{Dream.FactRevealed}
-        Log("RECOVERED {Dream.FactRevealed}")
+        Log(Dream.FactRevealed)
+        Revealing := Control.SpeakLine(Dream.FactRevealed)
+        if (Revealing?):
+            Control.AwaitSpeechEnd(SpeechSeconds)
+        Screen.AwaitContinue()
+        Celebrate(Dream)
         Director.PlayLine("{Dream.Id}_solved")
         set DreamIndex += 1
         take_phase.CaseFile
@@ -288,13 +305,12 @@ take_flow := class(creative_device):
     # Bad or mixed ending, then back to the menu for the next take. A negative verdict plays
     # the authored bad ending. A mixed one (or a missing score) resets with only the hint the
     # client already spoke.
-    DoRetryEnding(Dream:dream)<suspends>:take_phase =
+    DoRetryEnding(Dream:dream, Control:client_control)<suspends>:take_phase =
         if (Score := MaybeScore?, Score.Verdict = take_verdict.Negative):
             Haze.SetDistress(3)
             Screen.SetVitals(3)
             for (Line : Dream.BadEndingLog):
-                Log(Line)
-                Sleep(1.5)
+                Narrate(Control, Line, "")
             Director.PlayLine(DirectorLineFailedTake)
         else:
             Director.PlayLine(DirectorLineMixedTake)

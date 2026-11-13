@@ -120,8 +120,6 @@ dream_debugger_ui := class(debug_screen):
     var Vitals:int = 0
     # True while the take flow waits on CONTINUE; row 16 shows it instead of the vitals.
     var ContinueShown:logic = false
-    # How many lines show above the newest one; prose lines wrap to two or three rows each.
-    TakeLogLines:int = 3
     # Input mode All while there's something to click; None while the player talks, so Fortnite
     # gets the keyboard (and the talk key) back.
     var Clickable:logic = true
@@ -360,17 +358,15 @@ dream_debugger_ui := class(debug_screen):
                 else:
                     SetRow(Row, "")
         else:
-            # The log is prose. The newest line is big and bright at the bottom (LatestText), so
-            # it's always in the same place; a few lines before it sit above it, small and dim
-            # (play test, 2026-11-13: lines ran off the top and the current one was hard to find).
+            # The log is prose, one line at a time: the newest is big and bright at the bottom
+            # (LatestText). The player reads at their own pace with CONTINUE, so the older lines
+            # aren't shown (play test, 2026-11-13).
             for (Row := DebuggerBodyFirst..DebuggerBodyLast):
                 SetRow(Row, "")
-            Recent := LastN(TakeLog, TakeLogLines + 1)
-            if (Newest := Recent[Recent.Length - 1], Older := Recent.Slice[0, Recent.Length - 1]):
-                set View.BodyMessage = Join(Older, OverlayNewLine)
+            set View.BodyMessage = EmptyText
+            if (Newest := TakeLog[TakeLog.Length - 1]):
                 set View.LatestMessage = Newest
             else:
-                set View.BodyMessage = EmptyText
                 set View.LatestMessage = EmptyText
         Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
         if (ContinueShown?):
