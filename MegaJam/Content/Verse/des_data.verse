@@ -17,13 +17,13 @@ MakeDesDream1()<transacts>:dream =
         LoopNote := "LOOP  SCENE school_assembly / START T 08:40 / END T 08:44 / END STATE lights=off. RUNS 11 NIGHTS / NO VARIATION."
         Personality := DesPersonality
         LoopBeats := array:
-            loop_beat{LogLine := "08:40. Des lands on the assembly stage in his cape. The whole year fills the hall, faces blank.", Murmur := "Okay. Okay. Just say it."}
-            loop_beat{LogLine := "08:41. A spotlight finds him. The hall goes quiet.", Murmur := "Everybody's looking."}
-            loop_beat{LogLine := "08:42. He starts the catchphrase. The implant catches on the first word.", Murmur := "K-k-keep yer..."}
+            loop_beat{LogLine := "Des lands on the assembly stage in his cape. The whole year fills the hall, faces blank.", Murmur := "Okay. Okay. Just say it."}
+            loop_beat{LogLine := "A spotlight finds him. The hall goes quiet.", Murmur := "Everybody's looking."}
+            loop_beat{LogLine := "He starts the catchphrase. The implant catches on the first word.", Murmur := "K-k-keep yer..."}
             loop_beat{LogLine := "Somebody at the back laughs. Just one."}
-            loop_beat{LogLine := "08:43. He tries again and sticks on brann. Forty of them are laughing now.", Murmur := "K-keep yer b-b-b... I know it. I know it."}
+            loop_beat{LogLine := "He tries again and sticks on brann. Forty of them are laughing now.", Murmur := "K-keep yer b-b-b... I know it. I know it."}
             loop_beat{LogLine := "The whole hall is laughing. His heart is racing."}
-            loop_beat{LogLine := "08:44. The lights go out. The dream starts over."}
+            loop_beat{LogLine := "The lights go out. The dream starts over."}
         EndingBeatLog := "The lights flicker. This is when they always go out. One more thing to say."
         Roles := array:
             casting_role{Id := "cast_father", Label := "Ansel Varro / father", LogEdit := "You step on stage as Ansel Varro, his dad.", ContextLine := "The visitor is your dad, Ansel. He talks footing, like at home. He works three jobs so you can have a better life up here. He should be at work. You've never seen him at school."}
@@ -45,7 +45,7 @@ MakeDesDream1()<transacts>:dream =
         MixedLine := "I almost had it. It's right there."
         NegativeLine := "Can I just go? I want to go."
         GoodEndingLog := array:
-            "08:44. The lights stay on."
+            "The lights stay on."
             "He says the whole line, in footing, without a stammer. The implant goes quiet."
             "The hall has faces now, and they say it with him."
             "He isn't alone on the stage."
@@ -55,7 +55,7 @@ MakeDesDream1()<transacts>:dream =
             "Two anomalies explained: the catchphrase, and why he never stutters as the hero."
             "A deeper layer opens: the kitchen at 18:40, the day the implant was fitted."
         BadEndingLog := array:
-            "08:44. The whole hall is laughing."
+            "The whole hall is laughing."
             "He can't get a single word out. The implant takes over."
             "The lights go out."
             "His heart is pounding."

@@ -114,8 +114,8 @@ dream_debugger_ui := class(debug_screen):
     var MenuTitle:message = EmptyText
     var MenuOptions:[]message = array{}
     var Vitals:int = 0
-    # How many of the latest log lines show; prose lines wrap to two or three rows each.
-    TakeLogLines:int = 4
+    # How many lines show above the newest one; prose lines wrap to two or three rows each.
+    TakeLogLines:int = 3
     # Input mode All while there's something to click; None while the player talks, so Fortnite
     # gets the keyboard (and the talk key) back.
     var Clickable:logic = true
@@ -304,6 +304,7 @@ dream_debugger_ui := class(debug_screen):
 
     RenderTabs():void =
         set View.BodyMessage = EmptyText
+        set View.LatestMessage = EmptyText
         SetRow(0, "WONDERWELL DREAM DEBUGGER  v4.1.7")
         SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
         SetRow(2, "PATIENT: {Client.Name}")
@@ -340,6 +341,7 @@ dream_debugger_ui := class(debug_screen):
         BodyRows := DebuggerBodyLast - DebuggerBodyFirst + 1
         if (MenuOptions.Length > 0):
             set View.BodyMessage = EmptyText
+            set View.LatestMessage = EmptyText
             SetRowMessage(DebuggerBodyFirst, MenuTitle)
             for (Row := DebuggerBodyFirst + 1..DebuggerBodyLast):
                 I := Row - DebuggerBodyFirst - 1
@@ -348,10 +350,18 @@ dream_debugger_ui := class(debug_screen):
                 else:
                     SetRow(Row, "")
         else:
-            # The log is prose: the latest lines, word-wrapped over the body rows.
+            # The log is prose. The newest line is big and bright at the bottom (LatestText), so
+            # it's always in the same place; a few lines before it sit above it, small and dim
+            # (play test, 2026-11-13: lines ran off the top and the current one was hard to find).
             for (Row := DebuggerBodyFirst..DebuggerBodyLast):
                 SetRow(Row, "")
-            set View.BodyMessage = Join(LastN(TakeLog, TakeLogLines), OverlayNewLine)
+            Recent := LastN(TakeLog, TakeLogLines + 1)
+            if (Newest := Recent[Recent.Length - 1], Older := Recent.Slice[0, Recent.Length - 1]):
+                set View.BodyMessage = Join(Older, OverlayNewLine)
+                set View.LatestMessage = Newest
+            else:
+                set View.BodyMessage = EmptyText
+                set View.LatestMessage = EmptyText
         Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
         SetRow(16, "VITALS  [{Bars}]")
         SetRow(17, "MOUSE click  /  SPACE select")
