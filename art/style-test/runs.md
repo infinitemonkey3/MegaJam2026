@@ -417,6 +417,37 @@ way (free, local).
 
 ---
 
+# Round: 4K back wall and whole desk
+
+Run 2026-11-13 after Chip's notes from the desk camera at its 90 degree field of view: the back
+wall and desk were too soft, and the desk ran off the right edge of its image, so its right end
+couldn't be shown. Approved by Chip ("Yes, generate", cap $0.80). 4 paid calls on
+`google/nano-banana-2.1/edit` at 4K with system prompt A and `refs/style-ref.png`, about $0.14
+each, **about $0.56 estimated**.
+
+| ID | Seed | Size | Output file | Kept? |
+|---|---|---|---|---|
+| Back wall without posters (round 2 prompt, unchanged) | 2121 | 4K 16:9, 5504x3072 | raw/WallClean4K_s2121.png | **yes** |
+| Back wall without posters | 2122 | 4K 16:9 | raw/WallClean4K_s2122.png | no |
+| Whole desk with lamp | 2125 | 4K 21:9, 6336x2688 | raw/Desk4K_s2125.png | **yes** |
+| Whole desk with lamp | 2126 | 4K 21:9 | raw/Desk4K_s2126.png | no |
+
+The desk prompt changed from round 2: the whole desk top is shown with both ends complete and a
+magenta margin on each side, the lamp stands fully inside the frame near the right end, and "a
+cigarette burn" is gone (jam content guidelines).
+
+| Final | Texture | Plane |
+|---|---|---|
+| T_Room_BackWallClean_A.png | 4096x2048 RGB (16:9 stretched to 2:1) | unchanged |
+| T_Room_Desk_A.png | 4096x2048 RGBA, content box x=0 y=358 w=4096 h=1690 (`cutout.py key`, then `fit`) | `Room_Desk` keeps Chip's 214.75 cm width; scale Y 1.07375 for 2:1 |
+
+**Texture settings in UEFN.** Imported textures came in with an LOD Bias of 1 (2 on the 4K
+ones), which caps them at 1024 pixels, and the texture streamer kept the desk at a low mip even
+with the bias cleared. Every texture in `Content/Room/Textures` and `Content/ColdOpen/Textures`
+is now LOD Bias 0 with Never Stream on. Set both on any new layer texture after import.
+
+---
+
 # Final art pass list
 
 Held for a texture-upgrade pass at the end of the jam (Chip, 2026-11-12). Add to it as things
