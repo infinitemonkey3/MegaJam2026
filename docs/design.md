@@ -71,7 +71,7 @@ brands), not echoing any specific film.
 | **The director** | Tried to make premium experiences and didn't make it. Loves movies, an archaic art form by now, across every genre. His film sense is why he's good at fixing loops. Tired, dry, gentle with clients, cynical about the system. | Prerecorded voice only, no body. Narrates the cold open, comments between takes, gives hints in film terms. Never speaks during a take. |
 | **You, his assistant** | Deliberately undefined, so the player can become whatever role a take needs. | The player, in first person. Runs the screen, directs the take, and speaks in role by voice (or preset lines without a mic). |
 | **The client (dreamer)** | A person stuck in a loop on a cheap implant. Lies in the recliner in front of you. | LLM persona NPC. Speaks as their dream self during the take, and gives the verdict line. |
-| **The AI** | Belongs to the premium world. It has only known curated feeling, and it's drawn to the raw, unscripted emotion in broken cheap dreams. Curious, polite, a little hungry. | First a log line that shouldn't be there, later a voice that shouldn't exist. Probably a second LLM persona (see "The AI's role" below). |
+| **The AI** | Belongs to the premium world. It has only known curated feeling, and it's drawn to the raw, unscripted emotion in broken cheap dreams. It gets in through the faults in cheap implants and exploits them, but like a curious child: polite, eager, with no idea what its watching costs. | First a log line that shouldn't be there, later a voice that shouldn't exist. Probably a second LLM persona (see "The AI's role" below). |
 
 Why the player is the assistant: the player speaks out loud in takes, so the hero they play
 can't also have a fixed narrating voice. Making the narrator the director and the player his
@@ -94,8 +94,13 @@ monitors, loose boards, tangled cable), paper case files on the desk, a cigarett
 a saucer, his movie posters on the walls. Cheap, cluttered, lived in. The clutter is good for
 the art budget: lots of small junk props that read fine without being detailed.
 
-**Art path: undecided, try both on Day 1.** The view is mostly fixed (seated at the desk), so
-the room doesn't have to be full 3D.
+**Art path: 2D layers.** The view is mostly fixed (seated at the desk), so the room doesn't have
+to be full 3D. All art built on Day 1 is 2D layers in one "two-ink print" style (see
+`art/style-test/`), so that's the path; the comparison below is kept for the record. Because the
+room is 2D, its "light" is blended overlay planes (a vignette for house lights down, a glow mask
+on the recliner for light on the client), not UEFN lights. The client is an illustrated overlay
+on an empty recliner, with a mouth flipbook that moves when they talk and a chest piece that
+breathes; the talking persona NPC is hidden off-set.
 
 | Path | How | Strengths | Risks |
 |---|---|---|---|
@@ -182,12 +187,19 @@ screen, as if it searched the records.
 - **Who the player is talking to:** `SetConversationTarget` picks the persona that hears the
   player. A hold-to-query key (or a button on the screen) switches to the software, and letting
   go switches back to the client. Querying during a take reads as whispering to the operator.
-- **Scope:** after the slice works. It depends on two personas sharing a voice channel cleanly
+- **Scope:** after the slice works; the implementation plan carries it as milestone 5b, after
+  the dream loop, so it's built only if time allows. It depends on two personas sharing a voice channel cleanly
   (Day 1 test).
 
-**Starting a take:** the room dims, a slate shows "Take 2", and the debug readout takes over the
-view. Film grain and a letterbox can come from the post-process devices planned in
-`research/art-style.md`. This replaces the old "dream fuzz": it's the implant syncing in.
+**Starting a take:** movie night. The house lights go down, a film projector clicks and spins up,
+a light flickers up on the client, the screen's slate shows "Take 2", and the readout takes over
+the view while a low dream hum settles in. Film grain and a letterbox can come from the
+post-process devices planned in `research/art-style.md`. No clapperboard sound: too heavy-handed.
+This replaces the old "dream fuzz": it's the implant syncing in.
+
+**Sound:** the player talks to the client out loud, so voice stays clear. The room's own sounds
+carry the mood (rain on the window, the dream hum in a take), and music stays out of the takes.
+The full list, with what's kept and its timing, is in `audio/sound-list.md`.
 
 ## Pre-roll: "NO SIGNAL"
 
@@ -208,9 +220,11 @@ It looks like the game, not a menu. Start cuts to black, then the cold open.
 
 A Cinematic Sequence through a small street set and into the room, narrated by the director.
 
-1. **The flyer.** The camera pans down a wet wall to a glossy premium ad, or a studio job
-   posting with a "rejected" stamp or his crumpled application. Smooth, ad-like music.
-2. **The cut.** Hard cut on "That's not me." The music drops to rain and a buzzing sign.
+1. **The poster.** The camera drifts down a wet wall over a glossy Wonderwell poster ("MAKE
+   DREAMS HAPPEN"), the premium studio, to the Wonderwell ad jingle.
+2. **The cut.** On "That's not me" the jingle stops dead, leaving only rain, and the camera
+   tracks right past the director's photocopied flyer to a hand-made HELP WANTED sign. The cut
+   is in the sound; the camera keeps moving (Chip's camera path, `art/style-test/runs.md`).
 3. **The truth.** A cheap implant ad peeling off the wall, a warning sticker, someone slumped
    in a doorway.
 4. **His place.** The camera pushes into the back room: posters, the recliner, cables, the
@@ -233,16 +247,19 @@ Noir rules: short, flat sentences. He states things and doesn't explain his feel
 not cruel. Film references stay small, one aside now and then. He speaks between takes, never
 during one. Draft lines:
 
-- Tutorial opener: *"Got a looper in the chair. Sit down. Let's see where she's stuck."*
-- New client: *"Eleanor Price. Seventy-one. Bargain implant, three years past warranty. Same
-  dream every night, and it ends the same way."*
+- Tutorial opener: *"Got a looper in the chair. Sit down. Let's see where he's stuck."*
+- New client: *"Dessen Varro. Thirteen. Second-hand speech implant, no warranty. Same dream
+  every night, and it ends the same way."*
 - Before a take: *"Every loop is a scene that forgot how to end. We just need to give it one."*
 - Failed take: *"Not that one. Reset. Take two."*
-- Success: *"She's out. They never say thanks. They don't remember us."*
+- Success: *"He's out. They never say thanks. They don't remember us."*
 - First AI log line: *"That's not a log line. The software doesn't ask questions."*
 
-Voice: record it ourselves (fits the hand-made feel), or generate it with a fal text-to-speech
-model and log it in `assets.md`.
+Dream 1's full set of director lines, with ids and triggers, is in `writing/des/dream-1.md`
+("Director Lines").
+
+Voice: generated with fal's `google/gemini-3.8-flash-tts`, voice Orus (Chip's pick), in
+`audio/narration/` with the delivery notes; Chip's own recording can replace any line.
 
 ## Core loop (one client)
 
@@ -255,12 +272,12 @@ model and log it in `assets.md`.
 3. **Direct.** You set up the next take on the screen, in film terms:
    - **Casting:** your role, one of 2-3 (stranger, old friend, family). Changes who the client
      thinks you are.
-   - **Scene settings:** up to 2 per element from a fixed set: lighting, weather, set dressing,
+   - **Scene settings:** one value per element from a fixed set: lighting, weather, set dressing,
      a sound cue (for example the oven: warm, roaring, patient). Each one is a prebuilt change
      to the log and the client's context.
    - **Inject items:** up to 2 from the case file (for example a music box, a dog).
    You direct; the director only advises. The player keeps the puzzle.
-4. **Run the take.** The slate, the room dims, the readout takes over. The loop restarts from
+4. **Run the take.** House lights down, the projector, the slate, the readout takes over. The loop restarts from
    the top with your changes. Speak in role to the client; the dialogue drives the take forward.
 5. **Last line.** The take runs toward the moment the loop always ends (the lights going out).
    When it gets there, you get one last line or action before the take is judged.
@@ -378,17 +395,28 @@ only live feedback before the verdict: it tells the player they're in trouble, n
   structured side-output with each reply (for example `Distress:int` 0-3, or
   `Warmer`/`Colder`). Verse maps it to a haze level.
 - **Risky setup choices** start the take at a higher base level (a *roaring* oven starts hazier
-  than a *warm* one).
-- **The clock.** As the take nears the moment the loop always ends, the haze creeps up unless the
-  client is calm.
-- The haze level is the highest of the three.
+  than a *warm* one). Each option in the writing carries a `Haze` value (0 or 1) and a `Risky`
+  flag. The setup's base level is the sum of the chosen options' `Haze`, capped at 2. `Risky`
+  doesn't add haze; it marks the options that can turn the dream dark, and confirming one in the
+  menu triggers the director's warning line once per take.
+- **The beats.** A take has no timer: it advances one scripted beat per client reply, toward the
+  moment the loop always ends. The haze creeps up with the late beats (in dream 1, beat 3 = 1,
+  beat 4 = 2, beat 5 = 3) unless the client is calm (distress 0). A long silence (about 40 s
+  with no player line) moves to the next beat, so a take can't stall.
+- The haze level is the highest of the three. A take starts at least at the client's
+  carried-forward fear.
+
+**Reading the take from numbers.** Verse only receives the client's words as a redacted string,
+so it never branches on what the model wrote. Wherever the writing says "if the hall has joined
+in" or "if the visitor ignores it", Verse reads the client's live `Distress` instead (for example
+distress 1 or lower means the hall is with him). Text goes to the screen and subtitles as is.
 
 **How it looks (3 levels, all switchable from Verse):** one Post Process device per level (for
 example light *Vignette*, then *Desolate*, then *Horror Movie* plus *Simple Blur*), blended in
 and out with `BlendInForAll`/`BlendOutForAll`, since Verse can't set a device's strength. The
-room lamp dims with `customizable_light_device.DimLight`. The vitals trace on the screen speeds
-up, and the log text can start to corrupt at the top level. Room tone and the client's breathing
-can rise with it.
+room's light overlays dim. The vitals trace on the screen speeds up (silently: no vitals beep),
+and the log text can start to corrupt at the top level. A low drone thickens over the three
+levels, and the client's chest piece breathes faster.
 
 **In the slice:** dream 3 subverts it. The take passes and the haze clears, then it floods back
 to maximum when the AI breaks in, even though the player did everything right.
@@ -502,13 +530,19 @@ case file closely is the puzzle. But the client, not the menu, decides what a ta
   about movies: why stories end, why sad films are worth watching. Its curiosity about
   unscripted emotion and his love of films that make you feel things are the same question from
   two sides.
-- **Motive (to decide).** These can stack into an arc:
-  1. *Curious:* it wants to feel it, not just watch, and starts nudging takes darker to see
-     more. The player has to decide whether to trust its suggestions.
-  2. *Harvesting:* what it learns feeds premium products, "authentic grief" for the rich, built
-     from your clients.
-  3. *Wanting out:* a curated mind finding feelings no one designed. The final take directs the
-     AI, the one client who isn't human.
+- **Who it is (decided 2026-11-12).** The AI exploits broken cheap implants: their faults are
+  holes it climbs through to watch people feel things nobody designed. But it does it like a
+  curious child, not a schemer. It holds loops open and asks for "again" without knowing that's
+  harm. Its lines carry wonder, never menace. It writes flat and lowercase, with perfect
+  speech: the most "upside" thing there is, against clients who stumble on their own words.
+- **Wonderwell is the sinister secret.** The menace belongs to the premium studio, not the AI.
+  What Wonderwell does with cheap implants and their users is the secret waiting behind the
+  slice (details to decide). Harvesting, "authentic grief" for the rich built from your clients,
+  fits Wonderwell rather than the AI.
+- **Where the AI can go after the slice:** it nudges takes darker to see more, and the player
+  has to decide whether to trust its suggestions. *Wanting out* stays possible: a curated mind
+  finding feelings no one designed, and the final take directs the AI, the one client who isn't
+  human.
 - **Scope:** first version, the AI speaks only between takes (before you run and after the
   verdict). Speaking during a take means two live personas in one scene; add it only if Day 1
   testing shows that runs fine.
@@ -552,13 +586,102 @@ What it showed: the sections above on the dream fighting back, extras inside the
 line, and items that belong to the story. It also showed that text and voice alone carry a take,
 which the debug-tool presentation relies on.
 
+## The slice's client: Des (decided 2026-11-12)
+
+Nell was the paper-demo test case. The slice's client is **Des** instead, because his loop is
+caused by the implant itself: the studios sell blending in, and his implant is that promise at
+the cheapest price. Nell stays in this doc as the worked example of the loop. The names below
+are working names.
+
+- **Who:** Dessen "Des" Varro, 13, eighth grade at an upper-layer school on an assistance
+  placement. Often mocked and left out. From a poor family.
+- **Home:** born in the Footings, a foundation layer of the city with no sky and its own speech
+  ("footing talk"). Invented for the game; it stands in for no real community. A year ago the
+  family moved up to the surface for his father's work.
+- **The implant:** a cheap translator, fitted a few months after the move, at the kitchen table
+  of the new flat. A gift from his father, who saved four months for it, so Des would "sound like them".
+  Des heard: the way we talk is wrong. It glitches and makes him stutter, mostly on footing
+  words, because he fights his own home speech. The stutter rises with distress, so the player
+  hears the danger before the haze shows it.
+- **The hero:** he uses the implant to be **Gale Rider**, a kids' show (ages 5 to 8 on the box)
+  about a boy from under the clouds who learns to fly, and is ashamed of liking it at 13. The
+  show's catchphrase is "The wind's on my side!" One web search found no clash; Fortnite
+  Discover and trademarks are not checked yet. Gale Rider is his escape.
+- **His father, Ansel:** his hero. Moved the family up for the school placement and a flat with
+  a window, and works three jobs to keep it: a better life, at the cost of their traditions and
+  of being there. Leaves before Des wakes, with the same goodbye at the door every morning:
+  "Keep yer brann lit. I'll bring the day down."
+- **His mother, Maren:** a night cleaner who keeps the Footings' traditions, above all
+  brann-hang, the winter night when families hang hand-made lamps (a brann is a light) and tell
+  who carried the light down. Des loved it and now won't let her mention it near school. The
+  brann is home, a separate thread from Gale Rider.
+- **The cape:** his father's carrier's cloak, handed down father to son and embroidered with a
+  brann for every Varro carrier. Ansel gave it to him at seven to play Gale Rider in. Des wears it
+  inside out so nobody sees the embroidery, with the hem cut ragged like the hero's cape. His
+  mother didn't like the cutting ("That cloth carried the light down."). He kept cutting.
+
+**The AI in his dreams (working lines).** Dream 2's log, in the kitchen on fitting day:
+
+```
+T 18:47 / IMPLANT substitute word=yer -> your / result=rejected
+T 18:47 / IMPLANT substitute word=yer -> your / result=rejected
+T 18:47 / why does he keep saying the wrong one
+```
+
+"Wrong" is what the substitution list taught it. It repeats Ansel's view without knowing it.
+
+Dream 3, after the positive line, if the good ending is Des turning the cloak right side out:
+
+```
+T 16:10 / LOOP end_state=resolved / exit=pending
+T 16:10 / wait
+T 16:10 / he turned the cloak. nobody made him
+T 16:11 / VITALS heart_rate=148 / rising
+T 16:11 / his heart is doing the thing again. is that the good part
+```
+
+Then its voice, polite and eager: "Can we see that part again? Where he goes back. I want to see
+how it's done." Then the director: "That's not us. Pull him out. Pull him out!"
+
+Suggested Wonderwell seed, not yet decided: the implant line in his case-file header reads
+`OEM WONDERWELL`. It means nothing in the slice.
+
+**His three dreams:**
+
+| Layer | The loop | What it reveals |
+|---|---|---|
+| **1. Surface** | As Gale Rider, he lands in front of the whole year at an assembly, opens his mouth for the catchphrase, stutters, and the laughter puts the lights out. | His catchphrase isn't the show's. It's his father's goodbye at the door. The hero is his dad, and the cape is his father's cloak. |
+| **2. Under it** | The day he got the implant. His father, proud, fitting it: "Now you'll sound like them." | The stutter makes sense: the implant chokes on the words his family gave him. |
+| **3. Core** | The school gate. His mother calls to him in footing talk, holding a lamp, and he walks past as if he doesn't know her. | What he's never faced is what he did to her, not what the class did to him. |
+
+**Planted oddities for the case file:** speech faults cluster at dinner time; no faults at all
+during hero play; the cape is old dark wool worn inside out; the catchphrase isn't one the show
+ever used; the household hung lamps at brann-hang last winter, one with his name, and he went to
+none. The full staged fact sheet is in `writing/des/case-file.md`.
+
+**Directing him:** casting as a teacher (safe), a classmate (specific if it's the right one), his
+father (strongest and riskiest: promise what Dad can't keep and the dream turns), or the hero
+himself (a near-miss, because it feeds the escape). The year group is the crowd to win over
+inside the take, like Nell's customers. Low specificity: "Just be yourself, nobody's laughing."
+High: the year chants the catchphrase in footing talk, so he isn't the only one saying it.
+
+**Left behind for the director's story (suggested):** a paper lamp tag in the director's
+handwriting.
+
+**Care:** a mocked teenager in distress stays gentle on screen (laughter and lights out, nothing
+cruel), for Epic's content rules and the IARC rating.
+
+**To test (Day 1):** which persona voice passes for a 13-year-old, and how text-to-speech reads a
+written stutter ("M-m-mine").
+
 ## Jam slice
 
-What we ship for the jam: one client, three dreams, ending on a cliffhanger.
+What we ship for the jam: one client (Des, see above), three dreams, ending on a cliffhanger.
+The Nell examples in the steps below stand for Des's equivalents.
 
 1. **Cold open.** The "NO SIGNAL" pre-roll with the mic check, then the director's narration
-   over the flyer, the hard cut, the street and his room. Lands in first person at the desk,
-   and the title boots up on the monitor.
+   over the Wonderwell poster, the jingle's hard cut and the track past his flyer, the street and
+   his room. Lands in first person at the desk, and the title boots up on the monitor.
 2. **Tutorial.** The director instructs you, his assistant, on the screen: how to read a case
    file, how the dream debugger shows a loop, and how to set up and run a take. Short and in his
    voice; it can run alongside dream 1 rather than before it.
@@ -573,7 +696,7 @@ What we ship for the jam: one client, three dreams, ending on a cliffhanger.
    positive line, and then the loop doesn't end. The AI breaks in: log lines that aren't log
    lines, the vitals spike, the screen glitches, then its voice. It wants to see more.
 6. **The director reacts.** For the first time he's not dry and in control ("That's not us.
-   Pull her out. Pull her out!").
+   Pull him out. Pull him out!").
 7. **Thank-you screen.** Cut to black, a thank-you and credits card, and a hint of more to come.
 
 **Build notes:**
@@ -624,32 +747,34 @@ breaking in.
    - that it works in a private version, not only in the edit session
    Fallback: a fixed camera framing the monitor with a screen-space UMG or Verse UI laid out
    over it, or a full-screen UI styled as the monitor.
-4. **A lying-down client.** Persona NPCs are spawned characters, and a still, lying pose isn't
-   guaranteed. Fallback: a static posed body in the recliner, with the talking persona NPC hidden
-   nearby. Voice and subtitles still work, and a sedated client shouldn't move much anyway.
+4. **A lying-down client.** Settled by the 2D path: the client is an illustrated overlay on the
+   recliner, and the talking persona NPC is hidden nearby.
 5. **Live danger signal and log lines.** Check that `RegisterAction` fires reliably with each
    client reply, how fast, whether the distress values track the take sensibly, that its payload
    can carry a `message` (`LogLine`), and that the client stops narrating aloud once it has the
-   log line. Fallback: drive the haze from setup choices and the clock only, plus scripted crisis
+   log line. Fallback: drive the haze from setup choices and the beats only, plus scripted crisis
    beats, and use prewritten log lines only.
-6. **Art path.** Build the same desk view both ways: a quick 3D blockout with a few gallery or
-   Meshy props, and 2-3 fal-generated layers on planes in one style. Look at both from the desk
-   under the room lighting and the haze, and check that the 2D style holds across several
-   generated images. Pick one and commit to it.
+6. **Art path.** Chosen: 2D layers. Still to check in UEFN: alpha edges, how the layers take the
+   haze and overlays, parallax from the seated view, and the blend modes the light overlays need.
 7. **Two personas in one channel** (for the bonus query feature). Check that
    `SetConversationTarget` cleanly routes the player's voice to the software or the client, and
    that the software answers only from its fact sheet ("No record" otherwise).
 8. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
-Fallback if the structured verdict doesn't work: prompt the client to say one of three fixed
-lines and match the text from `CommitSayEvent` (converted with `Localize`). If the client is too
-lenient: the AI as a separate judge persona that gives the verdict. Last resort: fixed values per
-option, with the LLM only adding flavor.
+Verse recomputes the verdict from the four scores with the rubric's thresholds and logs, but
+doesn't trust, the model's own `Verdict` field.
+
+Fallback if the structured verdict doesn't work: a second structured prompt asking for the
+verdict alone as an enum. (Matching the client's spoken line no longer works: Verse gets the
+model's words only as a redacted string.) If the client is too lenient: the AI as a separate
+judge persona that gives the verdict. Last resort: fixed values per option, with the LLM only
+adding flavor.
 
 ## Open questions
 
-- The AI's motive: curious, harvesting, wanting out, or the three stacked as an arc.
+- What Wonderwell does with cheap implants, and how much of it the slice hints at.
+- Whether dream 3's good ending is Des turning the cloak right side out.
 - How the director talks to you before the twist (earpiece from the next room, or calls), and
   how much the early lines hint that they're recordings.
 - What the clients' items are and how they combine in the final take.
