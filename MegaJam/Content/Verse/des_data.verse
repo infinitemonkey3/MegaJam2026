@@ -1,6 +1,7 @@
 # Des, dream 1 ("Catchphrase", layer 1), from writing/des/dream-1.md and
 # writing/prompts/client-personality-des-dream-1.md. Converted by hand; change the writing
-# first, then this.
+# first, then this. Log text is plain prose on the dream debugger (Chip, 2026-11-13), so the
+# writing's debugger-format log lines are rewritten as sentences here.
 #
 # Not carried over yet: the take beats (B0..B6) and crisis beats (C1 Staying, C2 Lamp Light).
 # The take runs on take_flow's clock and the client reacts live through scene_update, so the
@@ -16,46 +17,46 @@ MakeDesDream1()<transacts>:dream =
         LoopNote := "LOOP  SCENE school_assembly / START T 08:40 / END T 08:44 / END STATE lights=off. RUNS 11 NIGHTS / NO VARIATION."
         Personality := DesPersonality
         LoopBeats := array:
-            loop_beat{LogLine := "SCENE school_assembly / T 08:40 / HALL count=120 faces=null / STAGE occupant=des", Murmur := "Okay. Okay. Just say it."}
-            loop_beat{LogLine := "T 08:41 / SPOTLIGHT state=on target=des / HALL audio=silent", Murmur := "Everybody's looking."}
-            loop_beat{LogLine := "T 08:42 / SPEECH fault=1 word=keep / IMPLANT assist=override", Murmur := "K-k-keep yer..."}
-            loop_beat{LogLine := "T 08:42 / HALL audio=laugh count=1"}
-            loop_beat{LogLine := "T 08:43 / SPEECH fault=4 word=brann / HALL audio=laugh count=40", Murmur := "K-keep yer b-b-b... I know it. I know it."}
-            loop_beat{LogLine := "T 08:43 / HALL audio=laugh count=120 / HEART rate=142"}
-            loop_beat{LogLine := "T 08:44 / LIGHTS state=off / SCENE end"}
-        EndingBeatLog := "T 08:43 / LIGHTS flicker=1 / HEART rate=138 / LAST LINE open"
+            loop_beat{LogLine := "08:40. Des lands on the assembly stage in his cape. The whole year fills the hall, faces blank.", Murmur := "Okay. Okay. Just say it."}
+            loop_beat{LogLine := "08:41. A spotlight finds him. The hall goes quiet.", Murmur := "Everybody's looking."}
+            loop_beat{LogLine := "08:42. He starts the catchphrase. The implant catches on the first word.", Murmur := "K-k-keep yer..."}
+            loop_beat{LogLine := "Somebody at the back laughs. Just one."}
+            loop_beat{LogLine := "08:43. He tries again and sticks on brann. Forty of them are laughing now.", Murmur := "K-keep yer b-b-b... I know it. I know it."}
+            loop_beat{LogLine := "The whole hall is laughing. His heart is racing."}
+            loop_beat{LogLine := "08:44. The lights go out. The dream starts over."}
+        EndingBeatLog := "The lights flicker. This is when they always go out. One more thing to say."
         Roles := array:
-            casting_role{Id := "cast_father", Label := "Ansel Varro / father", LogEdit := "CAST visitor=ansel_varro role=father", ContextLine := "The visitor is your dad, Ansel. He talks footing, like at home. He works three jobs so you can have a better life up here. He should be at work. You've never seen him at school."}
-            casting_role{Id := "cast_juno", Label := "Juno Pell / classmate", LogEdit := "CAST visitor=juno_pell role=classmate", ContextLine := "The visitor is Juno Pell, from your year. Juno sat next to you last year, asked what \"brann\" meant, and didn't laugh."}
-            casting_role{Id := "cast_teacher", Label := "Ms. Adeyemi-Ross / head of year", LogEdit := "CAST visitor=adeyemi_ross role=teacher", ContextLine := "The visitor is Ms. Adeyemi-Ross, head of year. She's kind. She calls you Dessen."}
-            casting_role{Id := "cast_gale_rider", Label := "Gale Rider / the hero", LogEdit := "CAST visitor=gale_rider role=hero", ContextLine := "The visitor is Gale Rider, the real one from the show. He says \"The wind's on my side!\""}
+            casting_role{Id := "cast_father", Label := "Ansel Varro / father", LogEdit := "You step on stage as Ansel Varro, his dad.", ContextLine := "The visitor is your dad, Ansel. He talks footing, like at home. He works three jobs so you can have a better life up here. He should be at work. You've never seen him at school."}
+            casting_role{Id := "cast_juno", Label := "Juno Pell / classmate", LogEdit := "You step on stage as Juno Pell, from his year.", ContextLine := "The visitor is Juno Pell, from your year. Juno sat next to you last year, asked what \"brann\" meant, and didn't laugh."}
+            casting_role{Id := "cast_teacher", Label := "Ms. Adeyemi-Ross / head of year", LogEdit := "You step on stage as Ms. Adeyemi-Ross, head of year.", ContextLine := "The visitor is Ms. Adeyemi-Ross, head of year. She's kind. She calls you Dessen."}
+            casting_role{Id := "cast_gale_rider", Label := "Gale Rider / the hero", LogEdit := "You step on stage as Gale Rider, the hero from the show.", ContextLine := "The visitor is Gale Rider, the real one from the show. He says \"The wind's on my side!\""}
         Settings := array:
-            scene_setting{Id := "lights_lamp", Element := "light", Label := "LIGHT / brann glow", LogEdit := "LIGHT src=brann color=amber / SPOTLIGHT state=off", ContextLine := "The stage light this time is warm and low, like a brann at home.", Risk := risk_level.Risky}
-            scene_setting{Id := "lights_spot", Element := "light", Label := "LIGHT / hard spotlight", LogEdit := "SPOTLIGHT state=on intensity=max", ContextLine := "The spotlight is brighter than ever. You can't see past it."}
-            scene_setting{Id := "hall_standing", Element := "hall", Label := "HALL / everyone standing", LogEdit := "HALL pose=standing", ContextLine := "This time the whole year is standing, like they're about to do something together."}
-            scene_setting{Id := "hall_empty", Element := "hall", Label := "HALL / empty", LogEdit := "HALL count=0", ContextLine := "The hall is empty. Nobody came. That feels wrong. Assemblies are never empty."}
+            scene_setting{Id := "lights_lamp", Element := "light", Label := "LIGHT / brann glow", LogEdit := "The stage light is a warm, low brann glow.", ContextLine := "The stage light this time is warm and low, like a brann at home.", Risk := risk_level.Risky}
+            scene_setting{Id := "lights_spot", Element := "light", Label := "LIGHT / hard spotlight", LogEdit := "The spotlight is as hard and bright as it gets.", ContextLine := "The spotlight is brighter than ever. You can't see past it."}
+            scene_setting{Id := "hall_standing", Element := "hall", Label := "HALL / everyone standing", LogEdit := "The whole year is on its feet.", ContextLine := "This time the whole year is standing, like they're about to do something together."}
+            scene_setting{Id := "hall_empty", Element := "hall", Label := "HALL / empty", LogEdit := "The hall is empty.", ContextLine := "The hall is empty. Nobody came. That feels wrong. Assemblies are never empty."}
         Items := array:
-            inject_item{Id := "item_cape", Label := "The cape / dad's cloak", LogEdit := "INJECT item=cape src=carrier_cloak side=inside_out", ContextLine := "Your cape is your dad's old cloak from the Footings, not a shop one. He gave it to you to be Gale Rider in. You wear it inside out."}
-            inject_item{Id := "item_work_cap", Label := "Dad's work cap", LogEdit := "INJECT item=work_cap loc=stage", ContextLine := "Your dad's work cap is on the stage, the one he wears upside. It smells like the trains."}
-            inject_item{Id := "item_brann", Label := "A brann / paper lamp", LogEdit := "INJECT item=brann loc=stage state=lit", ContextLine := "There's a lit brann on the stage, a paper lamp from home. Somebody brought it here. Here.", Risk := risk_level.Risky}
-            inject_item{Id := "item_cue_cards", Label := "Cue cards", LogEdit := "INJECT item=cue_cards loc=lectern", ContextLine := "There are cue cards on the lectern with the catchphrase printed on them. The show's version."}
+            inject_item{Id := "item_cape", Label := "The cape / dad's cloak", LogEdit := "His cape is his dad's old cloak, worn inside out.", ContextLine := "Your cape is your dad's old cloak from the Footings, not a shop one. He gave it to you to be Gale Rider in. You wear it inside out."}
+            inject_item{Id := "item_work_cap", Label := "Dad's work cap", LogEdit := "His dad's work cap sits on the stage.", ContextLine := "Your dad's work cap is on the stage, the one he wears upside. It smells like the trains."}
+            inject_item{Id := "item_brann", Label := "A brann / paper lamp", LogEdit := "A lit brann, a paper lamp from home, sits on the stage.", ContextLine := "There's a lit brann on the stage, a paper lamp from home. Somebody brought it here. Here.", Risk := risk_level.Risky}
+            inject_item{Id := "item_cue_cards", Label := "Cue cards", LogEdit := "Cue cards with the show's catchphrase sit on the lectern.", ContextLine := "There are cue cards on the lectern with the catchphrase printed on them. The show's version."}
         FactRevealed := "It's not from the show. It's my dad's. He says it at the door every morning before I'm up. \"Keep yer brann lit. I'll bring the day down.\" I keep my eyes shut so he'll say it."
         PositiveLine := "I said it. I actually said it."
         MixedLine := "I almost had it. It's right there."
         NegativeLine := "Can I just go? I want to go."
         GoodEndingLog := array:
-            "T 08:44 / LIGHTS state=on / FLICKER cleared"
-            "SPEECH fault=0 / IMPLANT assist=idle"
-            "HALL faces=resolved / HALL audio=chant"
-            "STAGE occupants=2"
-            "HEART rate=88"
-            "LOOP exit / LAYER 1 cleared"
-            "RECORD recovered / VARRO, ANSEL / morning log 05:10"
-            "ANOMALY K-06 cleared / ANOMALY K-05 cleared"
-            "LAYER 2 detected / SCENE varro_kitchen / T 18:40 / DATE fitting_day"
+            "08:44. The lights stay on."
+            "He says the whole line, in footing, without a stammer. The implant goes quiet."
+            "The hall has faces now, and they say it with him."
+            "He isn't alone on the stage."
+            "His heart slows down."
+            "The loop is broken. Layer 1 is clear."
+            "Recovered: his dad, Ansel Varro, says that line at the door every morning at 05:10."
+            "Two anomalies explained: the catchphrase, and why he never stutters as the hero."
+            "A deeper layer opens: the kitchen at 18:40, the day the implant was fitted."
         BadEndingLog := array:
-            "T 08:44 / HALL audio=laugh count=120"
-            "SPEECH fault=max / IMPLANT assist=override"
-            "LIGHTS state=off"
-            "HEART rate=151"
-            "LOOP restart"
+            "08:44. The whole hall is laughing."
+            "He can't get a single word out. The implant takes over."
+            "The lights go out."
+            "His heart is pounding."
+            "The dream starts over."

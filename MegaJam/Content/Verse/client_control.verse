@@ -111,7 +111,7 @@ client_control := class:
 
     # What the model sees when deciding to emit the scene_update action.
     SceneUpdateName<localizes>:message = "scene_update"
-    SceneUpdateDescription<localizes>:message = "Emit with every reply. Distress is how distressed you are right now, 0 (calm) to 3 (panicking). LogLine is one terse debug-log line for anything you do or that changes in the scene, like: LOAF removed / SMOKE clearing. Never say the log line aloud."
+    SceneUpdateDescription<localizes>:message = "Emit with every reply. Distress is how distressed you are right now, 0 (calm) to 3 (panicking). LogLine is one short plain sentence, present tense, saying what you do or what changes in the scene, like: The bread comes out of the oven and the smoke starts to clear. Never say the log line aloud."
 
     # Signaled with every scene_update the model emits. take_flow awaits it during a take.
     SceneUpdateEvent:event(scene_update) = event(scene_update){}

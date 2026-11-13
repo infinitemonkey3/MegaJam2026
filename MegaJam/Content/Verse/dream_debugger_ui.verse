@@ -114,6 +114,11 @@ dream_debugger_ui := class(debug_screen):
     var MenuTitle:message = EmptyText
     var MenuOptions:[]message = array{}
     var Vitals:int = 0
+    # How many of the latest log lines show; prose lines wrap to two or three rows each.
+    TakeLogLines:int = 4
+    # Input mode All while there's something to click; None while the player talks, so Fortnite
+    # gets the keyboard (and the talk key) back.
+    var Clickable:logic = true
 
     # Shows the debugger over the monitor, given the monitor plane's screen rectangle.
     Show(Player:player, Monitor:monitor_rect):void =
@@ -131,6 +136,16 @@ dream_debugger_ui := class(debug_screen):
             set MaybeRoot = option{Root}
             OpenTab(0)
             Logger.Print("[ui] dream debugger shown")
+
+    # Re-adds the debugger with input mode All (menus) or None (talking in a take).
+    SetClickable(On:logic):void =
+        if (On <> Clickable, PlayerUI := MaybePlayerUI?, Root := MaybeRoot?):
+            set Clickable = On
+            PlayerUI.RemoveWidget(Root)
+            Mode := if (On?) then ui_input_mode.All else ui_input_mode.None
+            PlayerUI.AddWidget(Root, player_ui_slot{ZOrder := 800, InputMode := Mode})
+            if (On?):
+                RebuildHotspots()
 
     Hide():void =
         if (PlayerUI := MaybePlayerUI?, Root := MaybeRoot?):
@@ -288,6 +303,7 @@ dream_debugger_ui := class(debug_screen):
             RenderTabs()
 
     RenderTabs():void =
+        set View.BodyMessage = EmptyText
         SetRow(0, "WONDERWELL DREAM DEBUGGER  v4.1.7")
         SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
         SetRow(2, "PATIENT: {Client.Name}")
@@ -323,6 +339,7 @@ dream_debugger_ui := class(debug_screen):
         SetRow(5, "------------------------------------------------------------------------")
         BodyRows := DebuggerBodyLast - DebuggerBodyFirst + 1
         if (MenuOptions.Length > 0):
+            set View.BodyMessage = EmptyText
             SetRowMessage(DebuggerBodyFirst, MenuTitle)
             for (Row := DebuggerBodyFirst + 1..DebuggerBodyLast):
                 I := Row - DebuggerBodyFirst - 1
@@ -331,12 +348,10 @@ dream_debugger_ui := class(debug_screen):
                 else:
                     SetRow(Row, "")
         else:
-            Shown := LastN(TakeLog, BodyRows)
+            # The log is prose: the latest lines, word-wrapped over the body rows.
             for (Row := DebuggerBodyFirst..DebuggerBodyLast):
-                if (Line := Shown[Row - DebuggerBodyFirst]):
-                    SetRowMessage(Row, Line)
-                else:
-                    SetRow(Row, "")
+                SetRow(Row, "")
+            set View.BodyMessage = Join(LastN(TakeLog, TakeLogLines), OverlayNewLine)
         Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
         SetRow(16, "VITALS  [{Bars}]")
         SetRow(17, "MOUSE click  /  SPACE select")
@@ -391,6 +406,7 @@ dream_debugger_ui := class(debug_screen):
     # Back to the tabs once the client's run is over.
     EndTake():void =
         set InTake = false
+        SetClickable(true)
         OpenTab(1)
 
     # A line on row 16 of the tabs view, such as a locked layer.
@@ -418,6 +434,7 @@ dream_debugger_ui := class(debug_screen):
         Render()
 
     SetMenu<override>(InTitle:message, Options:[]message, Highlighted:int):void =
+        SetClickable(true)
         set MenuTitle = InTitle
         set MenuOptions = Options
         set Cursor = 300 + Highlighted
@@ -427,6 +444,8 @@ dream_debugger_ui := class(debug_screen):
     ShowSlate<override>(TakeNumber:int)<suspends>:void =
         set MenuOptions = array{}
         RebuildHotspots()
+        # The take: the player talks now, so the keyboard goes back to Fortnite.
+        SetClickable(false)
         SetTitle(OverlaySlate(TakeNumber))
         Sleep(1.5)
 

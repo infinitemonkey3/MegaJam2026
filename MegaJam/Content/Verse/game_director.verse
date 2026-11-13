@@ -117,6 +117,9 @@ game_director := class(creative_device):
         # The take runs on the dream debugger. It starts when the player invokes layer 1 on the
         # DREAMS tab; the deeper layers are locked until it's solved.
         set Takes.Screen = DebuggerUI
+        # The persona's talk prompt is one of Fortnite's interaction prompts, hidden with the rest
+        # of the HUD at the start; the player needs it to talk to the client.
+        GetPlayspace().GetHUDController().ShowElementsForPlayer(Player, array{creative_hud_identifier_interaction_prompts{}})
         loop:
             Invoked := DebuggerUI.InvokeEvent.Await()
             if (Invoked = 0):
