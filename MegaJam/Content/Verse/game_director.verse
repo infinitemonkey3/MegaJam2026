@@ -1,5 +1,6 @@
 using { /Fortnite.com/Characters }
 using { /Fortnite.com/Devices }
+using { /Fortnite.com/UI }
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 
@@ -41,8 +42,9 @@ game_director := class(creative_device):
         Logger.Print("[game] director started, StartAt={GamePhaseName(StartAt)}")
         Player := AwaitPlayer()
         set State.MaybePlayer = option{Player}
-        # The player is never a body in this game: hide the character before anything else,
-        # so the first thing they see is the pre-roll, not themselves.
+        # The player is never a body in this game and never sees Fortnite's HUD: hide both
+        # before anything else, so the first thing they see is the start screen.
+        HideFortniteHUD(Player)
         HoldPlayer(Player)
         Input.Bind(Player, DevKeys)
 
@@ -104,6 +106,13 @@ game_director := class(creative_device):
             Logger.Print("[game] {GamePhaseName(State.Phase)} -> {GamePhaseName(Next)}")
         set State.Phase = Next
         State.PhaseChangedEvent.Signal(Next)
+
+    # Hides every Fortnite HUD element (health, minimap, prompts, sound visualizers) for this
+    # player for the whole game. Our own Verse UI isn't part of it and still shows.
+    HideFortniteHUD(Player:player):void =
+        Everything:[]hud_element_identifier = array{creative_hud_identifier_all{}, player_hud_identifier_all{}, hud_identifier_visual_sound_effect_all{}}
+        GetPlayspace().GetHUDController().HideElementsForPlayer(Player, Everything)
+        Logger.Print("[game] Fortnite HUD hidden")
 
     # Hides the player's character for the whole game. The character can take a moment to
     # exist after the player joins, so this retries briefly. Not put in stasis: stasis also

@@ -109,8 +109,10 @@ play session yet.
 - `entity_screen` depends on `Content/Spikes/UW_SpikeScreen` (module `Spikes`), the one spike
   asset kept after the test-content purge. It and the spike screen entities go when the real
   screen lands.
-- **The player never has a body.** `game_director` hides the player's character the moment it
-  exists (`HoldPlayer`), before the black start screen goes on. **Don't put the character in stasis:** `PutInStasis` also blocks Crouch and Jump,
+- **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD
+  element for the player (`HideFortniteHUD`) and the character the moment it exists
+  (`HoldPlayer`), before the black start screen goes on. If a later feature needs one HUD
+  element back (the persona talk prompt, say), show just that one with `ShowElementsForPlayer`. **Don't put the character in stasis:** `PutInStasis` also blocks Crouch and Jump,
   which drive every menu, and the game sits waiting with no control. Nothing waits on the client
   NPC before the opening; the client phase waits for it.
 - The pre-roll no longer has the design's mic check or the Talk/Preset-lines choice (Chip
@@ -196,6 +198,7 @@ Cold open and game shell (43.10 lines):
 | `audio_player_device` | `Play<public>():void`; `Stop<public>():void` (no finished event) | FN:2758, 2764 |
 | `GetFortCharacter` | `(InAgent:agent).GetFortCharacter<native><public>()<transacts><decides>:fort_character` | FN:905 |
 | `fort_character.Hide` | `Hide<public>():void` | FN:875 |
+| `fort_hud_controller` | `(Playspace:fort_playspace).GetHUDController<native><public>():fort_hud_controller`; `HideElementsForPlayer<public>(Player:player, HUDElements:[]hud_element_identifier):void`; `creative_hud_identifier_all`, `player_hud_identifier_all`, `hud_identifier_visual_sound_effect_all` | FN:12424, 12418, 12426, 12478, 12502 |
 | `UW_SpikeScreen_entity` | `var TitleMessage`, `var BodyMessage`, `var MenuMessage<public>:message` (generated from the spike widget) | `Digests/<guid>-Assets/<guid>-Assets.digest.verse`, module `/invaliddomain/MegaJam/Spikes` |
 
 Not called yet: `CommitSayEvent<native><public>:listenable(tuple(?agent, message))` (UE:111 in 43.00, for the verdict fallback).
