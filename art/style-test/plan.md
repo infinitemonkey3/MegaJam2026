@@ -202,7 +202,7 @@ Prompt (same for all three):
 ```
 Wide interior view of a cramped back room at night, seen from a chair at a desk, at seated eye
 level. Along the bottom of the frame: the near edge of a scarred wooden desk with a stack of
-paper case folders, a chipped saucer with a stubbed-out cigarette, a coil of black cable, and a
+paper case folders, a chipped saucer of loose screws, a coil of black cable, and a
 bulky old monitor with its screen off. Middle distance, right of centre: an old reclining
 armchair patched with tape, and asleep in it an elderly woman with short white hair, a steel-blue
 cardigan and a grey blanket, a thin black cable taped at her temple and trailing to the floor.
@@ -263,7 +263,7 @@ Pick rule for L2: the variation where she best matches the client block (hair, c
 closed eyes, taped cable), nothing is cropped, and the magenta is flat. Tie goes to the lowest
 seed.
 
-**L3 foreground desk clutter.** `aspect_ratio: "16:9"`, 2 variations (seeds `1221`, `1222`).
+**L3 foreground desk clutter.** (2026-11-13: the images in `raw/`, `cutout/` and `refs/` were made when this prompt and the style-reference prompt asked for a stubbed-out cigarette in the saucer; that was swapped for screws to meet the jam's content guidelines, and the clutter layer was removed from the game.) `aspect_ratio: "16:9"`, 2 variations (seeds `1221`, `1222`).
 Cutout. Final texture 2048x1024.
 
 ```
@@ -271,8 +271,8 @@ One isolated group of objects on a perfectly flat, uniform, pure magenta (#FF00F
 The background has no shadow, no surface, no gradient and no texture, and magenta appears
 nowhere on the objects. The objects sit in a low, wide row as if on the near edge of a desk,
 seen from just above, with their bottom edge flat and level: a stack of three paper case folders
-tied with string, the top one labelled "PRICE, E." in capitals; a chipped saucer with a
-stubbed-out cigarette and ash; a coffee-ringed mug; a small screwdriver; a loose circuit board;
+tied with string, the top one labelled "PRICE, E." in capitals; a chipped saucer of loose
+screws; a coffee-ringed mug; a small screwdriver; a loose circuit board;
 a coil of black cable. The whole group fits inside the frame with a clear magenta margin at the
 top and sides. Warm amber lamp light from the right, a teal edge light from the left.
 ```

@@ -18,6 +18,7 @@ game_director := class(creative_device):
     @editable MonitorCamera:gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
     @editable DeskCamera:gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
     @editable ColdOpenSequence:cinematic_sequence_device = cinematic_sequence_device{}
+    @editable RoomIntroSequence:cinematic_sequence_device = cinematic_sequence_device{}
     @editable NoSignalSound:audio_player_device = audio_player_device{}
     @editable RoomRain:audio_player_device = audio_player_device{}
     @editable BootChime:audio_player_device = audio_player_device{}
@@ -57,6 +58,7 @@ game_director := class(creative_device):
                 MonitorCamera := MonitorCamera
                 DeskCamera := DeskCamera
                 Sequence := ColdOpenSequence
+                RoomIntro := RoomIntroSequence
                 NoSignalSound := NoSignalSound
                 RoomRain := RoomRain
                 BootChime := BootChime
@@ -78,6 +80,10 @@ game_director := class(creative_device):
                 Input.SkipEvent.Await()
             Opening.EndColdOpen(Player)
             race:
+                Opening.RunRoomIntro(Player)
+                Input.SkipEvent.Await()
+            Opening.EndRoomIntro(Player)
+            race:
                 Opening.RunBoot()
                 Input.SkipEvent.Await()
             Opening.EndBoot()
@@ -88,6 +94,8 @@ game_director := class(creative_device):
         # The tutorial and the room between dreams come here (milestone 4).
 
         EnterPhase(game_phase.ClientPhase)
+        # The take menus still live on the black overlay until the in-world screen exists.
+        Screen.Show(Player)
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
             Takes.RunClient(MakePlaceholderClient(), Control)
