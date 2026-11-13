@@ -187,7 +187,8 @@ screen, as if it searched the records.
 - **Who the player is talking to:** `SetConversationTarget` picks the persona that hears the
   player. A hold-to-query key (or a button on the screen) switches to the software, and letting
   go switches back to the client. Querying during a take reads as whispering to the operator.
-- **Scope:** after the slice works. It depends on two personas sharing a voice channel cleanly
+- **Scope:** after the slice works; the implementation plan carries it as milestone 5b, after
+  the dream loop, so it's built only if time allows. It depends on two personas sharing a voice channel cleanly
   (Day 1 test).
 
 **Starting a take:** movie night. The house lights go down, a film projector clicks and spins up,
@@ -246,16 +247,19 @@ Noir rules: short, flat sentences. He states things and doesn't explain his feel
 not cruel. Film references stay small, one aside now and then. He speaks between takes, never
 during one. Draft lines:
 
-- Tutorial opener: *"Got a looper in the chair. Sit down. Let's see where she's stuck."*
-- New client: *"Eleanor Price. Seventy-one. Bargain implant, three years past warranty. Same
-  dream every night, and it ends the same way."*
+- Tutorial opener: *"Got a looper in the chair. Sit down. Let's see where he's stuck."*
+- New client: *"Dessen Varro. Thirteen. Second-hand speech implant, no warranty. Same dream
+  every night, and it ends the same way."*
 - Before a take: *"Every loop is a scene that forgot how to end. We just need to give it one."*
 - Failed take: *"Not that one. Reset. Take two."*
-- Success: *"She's out. They never say thanks. They don't remember us."*
+- Success: *"He's out. They never say thanks. They don't remember us."*
 - First AI log line: *"That's not a log line. The software doesn't ask questions."*
 
-Voice: record it ourselves (fits the hand-made feel), or generate it with a fal text-to-speech
-model and log it in `assets.md`.
+Dream 1's full set of director lines, with ids and triggers, is in `writing/des/dream-1.md`
+("Director Lines").
+
+Voice: generated with fal's `google/gemini-3.8-flash-tts`, voice Orus (Chip's pick), in
+`audio/narration/` with the delivery notes; Chip's own recording can replace any line.
 
 ## Core loop (one client)
 
@@ -268,7 +272,7 @@ model and log it in `assets.md`.
 3. **Direct.** You set up the next take on the screen, in film terms:
    - **Casting:** your role, one of 2-3 (stranger, old friend, family). Changes who the client
      thinks you are.
-   - **Scene settings:** up to 2 per element from a fixed set: lighting, weather, set dressing,
+   - **Scene settings:** one value per element from a fixed set: lighting, weather, set dressing,
      a sound cue (for example the oven: warm, roaring, patient). Each one is a prebuilt change
      to the log and the client's context.
    - **Inject items:** up to 2 from the case file (for example a music box, a dog).
@@ -391,10 +395,21 @@ only live feedback before the verdict: it tells the player they're in trouble, n
   structured side-output with each reply (for example `Distress:int` 0-3, or
   `Warmer`/`Colder`). Verse maps it to a haze level.
 - **Risky setup choices** start the take at a higher base level (a *roaring* oven starts hazier
-  than a *warm* one).
-- **The clock.** As the take nears the moment the loop always ends, the haze creeps up unless the
-  client is calm.
-- The haze level is the highest of the three.
+  than a *warm* one). Each option in the writing carries a `Haze` value (0 or 1) and a `Risky`
+  flag. The setup's base level is the sum of the chosen options' `Haze`, capped at 2. `Risky`
+  doesn't add haze; it marks the options that can turn the dream dark, and confirming one in the
+  menu triggers the director's warning line once per take.
+- **The beats.** A take has no timer: it advances one scripted beat per client reply, toward the
+  moment the loop always ends. The haze creeps up with the late beats (in dream 1, beat 3 = 1,
+  beat 4 = 2, beat 5 = 3) unless the client is calm (distress 0). A long silence (about 40 s
+  with no player line) moves to the next beat, so a take can't stall.
+- The haze level is the highest of the three. A take starts at least at the client's
+  carried-forward fear.
+
+**Reading the take from numbers.** Verse only receives the client's words as a redacted string,
+so it never branches on what the model wrote. Wherever the writing says "if the hall has joined
+in" or "if the visitor ignores it", Verse reads the client's live `Distress` instead (for example
+distress 1 or lower means the hall is with him). Text goes to the screen and subtitles as is.
 
 **How it looks (3 levels, all switchable from Verse):** one Post Process device per level (for
 example light *Vignette*, then *Desolate*, then *Horror Movie* plus *Simple Blur*), blended in
@@ -697,28 +712,29 @@ breaking in.
    - that it works in a private version, not only in the edit session
    Fallback: a fixed camera framing the monitor with a screen-space UMG or Verse UI laid out
    over it, or a full-screen UI styled as the monitor.
-4. **A lying-down client.** Persona NPCs are spawned characters, and a still, lying pose isn't
-   guaranteed. Fallback: a static posed body in the recliner, with the talking persona NPC hidden
-   nearby. Voice and subtitles still work, and a sedated client shouldn't move much anyway.
+4. **A lying-down client.** Settled by the 2D path: the client is an illustrated overlay on the
+   recliner, and the talking persona NPC is hidden nearby.
 5. **Live danger signal and log lines.** Check that `RegisterAction` fires reliably with each
    client reply, how fast, whether the distress values track the take sensibly, that its payload
    can carry a `message` (`LogLine`), and that the client stops narrating aloud once it has the
-   log line. Fallback: drive the haze from setup choices and the clock only, plus scripted crisis
+   log line. Fallback: drive the haze from setup choices and the beats only, plus scripted crisis
    beats, and use prewritten log lines only.
-6. **Art path.** Build the same desk view both ways: a quick 3D blockout with a few gallery or
-   Meshy props, and 2-3 fal-generated layers on planes in one style. Look at both from the desk
-   under the room lighting and the haze, and check that the 2D style holds across several
-   generated images. Pick one and commit to it.
+6. **Art path.** Chosen: 2D layers. Still to check in UEFN: alpha edges, how the layers take the
+   haze and overlays, parallax from the seated view, and the blend modes the light overlays need.
 7. **Two personas in one channel** (for the bonus query feature). Check that
    `SetConversationTarget` cleanly routes the player's voice to the software or the client, and
    that the software answers only from its fact sheet ("No record" otherwise).
 8. **Private version code.** Confirm an island with persona NPCs can be published as a private
    version.
 
-Fallback if the structured verdict doesn't work: prompt the client to say one of three fixed
-lines and match the text from `CommitSayEvent` (converted with `Localize`). If the client is too
-lenient: the AI as a separate judge persona that gives the verdict. Last resort: fixed values per
-option, with the LLM only adding flavor.
+Verse recomputes the verdict from the four scores with the rubric's thresholds and logs, but
+doesn't trust, the model's own `Verdict` field.
+
+Fallback if the structured verdict doesn't work: a second structured prompt asking for the
+verdict alone as an enum. (Matching the client's spoken line no longer works: Verse gets the
+model's words only as a redacted string.) If the client is too lenient: the AI as a separate
+judge persona that gives the verdict. Last resort: fixed values per option, with the LLM only
+adding flavor.
 
 ## Open questions
 
