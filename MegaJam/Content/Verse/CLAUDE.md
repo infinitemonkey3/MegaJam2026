@@ -61,7 +61,9 @@ play session yet.
   picks which client the debugger and the takes run. Switching also needs the client spawner's
   NPC definition (`Room/NPC/CD_Nell` or `CD_Des`; only its voice matters, since `LoadDream`
   replaces the personality) and the recliner art (`Room_Recliner`'s material,
-  `MI_Room_Recliner_Nell`, or the empty recliner plus the `Room_Des` overlay).
+  `MI_Room_Recliner_Nell`, or the empty recliner plus the `Room_Des` overlay). Hidden in Game
+  does nothing on these actors in a session, so `Room_Des` is parked at Z -10000 while Nell is
+  the patient; it goes back to (-399.5, -443, 134).
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
 
