@@ -1,8 +1,8 @@
 # Sound list
 
 Every sound and music cue for the jam slice, with the prompt that makes it. Written 2026-11-12
-from Chip's notes on the first plan: no slate clap, no vitals beep, and a film projector spinning
-up marks the start of a take.
+from Chip's notes on the first plan: no slate clap, no vitals beep (the vitals trace on the
+screen stays, silent), and a film projector spinning up marks the start of a take.
 
 **The rule:** the player talks to Des out loud, so voice stays clear. The room's own sounds carry
 the mood; music stays out of the takes.
