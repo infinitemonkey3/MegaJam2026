@@ -107,11 +107,17 @@ play session yet.
 - `entity_screen` depends on `Content/Spikes/UW_SpikeScreen` (module `Spikes`), the one spike
   asset kept after the test-content purge. It and the spike screen entities go when the real
   screen lands.
+- **The player never has a body.** `game_director` hides the player's character and puts it in
+  stasis the moment it exists (`HoldPlayer`), before the pre-roll camera goes on, so the first
+  thing seen is NO SIGNAL. Nothing waits on the client NPC before the opening: the mic check
+  finds its voice channel whenever the NPC is ready, and the client phase waits for it then.
 - Only one `take_flow` may run: it's started by `game_director`, so keep its `RunOnBegin` off
   whenever a director is placed.
 - The pre-roll's "signal detected" check listens on the client's voice channel
-  (`BeginBroadcastEvent`). With no `client_npc_behavior` NPC in the level it can't listen, and
-  logs a warning; the voice choice still works.
+  (`BeginBroadcastEvent`). With no `client_npc_behavior` NPC in the level it never starts
+  listening; the voice choice still works.
+- Verse devices render as consoles in a play session too. Keep `Game Director` and `Take Flow`
+  out of every camera's view (they sit behind the cameras, at +X).
 - `audio_player_device` has no finished event, so `cold_open.TutorialSeconds` is the WAV's
   length (5.36 s) plus a margin. Change it with the line.
 - The folder is named `Verse`, so its module is `Verse` and class paths carry a `Verse-` prefix.
@@ -184,6 +190,8 @@ Cold open and game shell (43.10 lines):
 | `cinematic_sequence_device` | `Play<public>(Agent:agent):void`; `GoToEndAndStop<public>(Agent:agent):void`; `StoppedEvent<public>:listenable(tuple())` | FN:6242, 6260, 6236 |
 | `gameplay_camera_device` | `AddTo<public>(Agent:agent):void`; `RemoveFrom<public>(Agent:agent):void` | FN:4473, 4479 |
 | `audio_player_device` | `Play<public>():void`; `Stop<public>():void` (no finished event) | FN:2758, 2764 |
+| `GetFortCharacter` | `(InAgent:agent).GetFortCharacter<native><public>()<transacts><decides>:fort_character` | FN:905 |
+| `fort_character` | `Hide<public>():void`; `PutInStasis<public>(Args:stasis_args)<transacts>:void` (`stasis_args`: `AllowTurning`, `AllowFalling`, `AllowEmotes`) | FN:875, 866, 914 |
 | `UW_SpikeScreen_entity` | `var TitleMessage`, `var BodyMessage`, `var MenuMessage<public>:message` (generated from the spike widget) | `Digests/<guid>-Assets/<guid>-Assets.digest.verse`, module `/invaliddomain/MegaJam/Spikes` |
 
 Not called yet: `CommitSayEvent<native><public>:listenable(tuple(?agent, message))` (UE:111 in 43.00, for the verdict fallback).

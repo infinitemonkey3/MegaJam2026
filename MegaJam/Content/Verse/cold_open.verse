@@ -51,28 +51,35 @@ cold_open := class:
 
     # ---- Pre-roll ----
 
-    RunPreRoll(State:game_state, Player:player, MaybeControl:?client_control)<suspends>:void =
+    # Takes is only used to find the client NPC's voice channel for the mic check, whenever the
+    # NPC finishes setting up; the pre-roll doesn't wait for it.
+    RunPreRoll(State:game_state, Player:player, Takes:take_flow)<suspends>:void =
         Rig.MonitorCamera.AddTo(Player)
         Rig.NoSignalSound.Play()
         Screen.ClearLog()
         Screen.SetTitle(NoSignalTitle)
         Screen.AppendLogLine(MicPrompt)
         race:
-            WatchMic(MaybeControl)
+            WatchMic(Takes)
             ChooseVoiceMode(State)
         Logger.Print("[cold_open] pre-roll done")
 
     # Shows "SIGNAL DETECTED" whenever someone speaks on the client's voice channel. In a solo
-    # island that's the player. Unverified: whether a player broadcasts on that channel before
-    # anyone is their conversation target. Never returns.
-    WatchMic(MaybeControl:?client_control)<suspends>:void =
+    # island that's the player. Waits for the client NPC to set up first, however long that
+    # takes. Unverified: whether a player broadcasts on that channel before anyone is their
+    # conversation target. Never returns.
+    WatchMic(Takes:take_flow)<suspends>:void =
+        var MaybeControl:?client_control = false
+        loop:
+            if (Found := Takes.FindClientControl[]):
+                set MaybeControl = option{Found}
+                break
+            Sleep(0.5)
         if (Control := MaybeControl?):
+            Logger.Print("[cold_open] mic check listening on the client's voice channel")
             loop:
                 Control.VoiceChannel.BeginBroadcastEvent().Await()
                 Screen.AppendLogLine(MicHeard)
-        else:
-            Logger.Print("[cold_open] no client voice channel; the mic check can't listen", ?Level := log_level.Warning)
-            Sleep(Inf)
 
     # The voice choice doubles as the start prompt: confirming a choice starts the game.
     ChooseVoiceMode(State:game_state)<suspends>:void =

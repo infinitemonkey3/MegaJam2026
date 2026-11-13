@@ -1,3 +1,4 @@
+using { /Fortnite.com/Characters }
 using { /Fortnite.com/Devices }
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
@@ -27,8 +28,11 @@ game_director := class(creative_device):
     # Sprint skips the current phase.
     @editable DevKeys:logic = false
 
-    # How long to wait for the client NPC's behavior to set up before going on without it.
+    # How long the client phase waits for the client NPC's behavior to set up. The opening
+    # doesn't wait for it at all.
     ClientWaitSeconds:float = 15.0
+    # How long to keep trying to hide the player's character after they spawn.
+    CharacterWaitSeconds:float = 5.0
 
     State:game_state = game_state{}
     Input:input_router = input_router{}
@@ -37,11 +41,13 @@ game_director := class(creative_device):
         Logger.Print("[game] director started, StartAt={GamePhaseName(StartAt)}")
         Player := AwaitPlayer()
         set State.MaybePlayer = option{Player}
+        # The player is never a body in this game: hide and freeze the character before
+        # anything else, so the first thing they see is the pre-roll, not themselves.
+        HoldPlayer(Player)
         Input.Bind(Player, DevKeys)
 
         Screen:debug_screen = if (Sim := GetSimulationEntity[]) then entity_screen{Root := Sim, Input := Input} else stub_debug_screen{}
         set Takes.Screen = Screen
-        MaybeControl := AwaitClientControl()
 
         Opening := cold_open:
             Rig := cold_open_rig:
@@ -58,7 +64,7 @@ game_director := class(creative_device):
         if (Runs[game_phase.PreRollPhase]):
             EnterPhase(game_phase.PreRollPhase)
             race:
-                Opening.RunPreRoll(State, Player, MaybeControl)
+                Opening.RunPreRoll(State, Player, Takes)
                 Input.SkipEvent.Await()
             Opening.EndPreRoll()
 
@@ -79,6 +85,7 @@ game_director := class(creative_device):
         # The tutorial and the room between dreams come here (milestone 4).
 
         EnterPhase(game_phase.ClientPhase)
+        MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
             Takes.RunClient(MakePlaceholderClient(), Control)
         else:
@@ -91,10 +98,28 @@ game_director := class(creative_device):
         GamePhaseIndex(StartAt) <= GamePhaseIndex(Phase)
 
     EnterPhase(Next:game_phase):void =
-        From := GamePhaseName(State.Phase)
+        if (State.Phase = Next):
+            Logger.Print("[game] start at {GamePhaseName(Next)}")
+        else:
+            Logger.Print("[game] {GamePhaseName(State.Phase)} -> {GamePhaseName(Next)}")
         set State.Phase = Next
-        Logger.Print("[game] {From} -> {GamePhaseName(Next)}")
         State.PhaseChangedEvent.Signal(Next)
+
+    # Hides the player's character and freezes it in place for the whole game. The character
+    # can take a moment to exist after the player joins, so this retries briefly.
+    HoldPlayer(Player:player)<suspends>:void =
+        var Waited:float = 0.0
+        loop:
+            if (Character := Player.GetFortCharacter[]):
+                Character.Hide()
+                Character.PutInStasis(stasis_args{AllowTurning := false, AllowFalling := false, AllowEmotes := false})
+                Logger.Print("[game] player character hidden and held")
+                break
+            if (Waited >= CharacterWaitSeconds):
+                Logger.Print("[game] no character to hide after {CharacterWaitSeconds}s", ?Level := log_level.Warning)
+                break
+            Sleep(0.1)
+            set Waited += 0.1
 
     # The first player in the island. The game is solo: set Island Settings max players to 1.
     AwaitPlayer()<suspends>:player =
