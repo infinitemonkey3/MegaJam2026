@@ -104,8 +104,8 @@ take_flow := class(creative_device):
             take_phase.RunTake => DoRunTake(Dream, Control)
             take_phase.LastLine => DoLastLine(Dream, Control)
             take_phase.Verdict => DoVerdict(Subject, Dream, Control)
-            take_phase.GoodEnding => DoGoodEnding(Dream)
-            take_phase.RetryEnding => DoRetryEnding(Dream)
+            take_phase.GoodEnding => DoGoodEnding(Dream, Control)
+            take_phase.RetryEnding => DoRetryEnding(Dream, Control)
             take_phase.Finale => DoFinale()
             take_phase.Done => take_phase.Done
 
@@ -118,43 +118,66 @@ take_flow := class(creative_device):
         Director.PlayLine("{Dream.Id}_intro")
         take_phase.Observe
 
-    # 2. Observe: replay the loop as a log, the client murmuring over it.
+    # 2. Observe: replay the loop as a log, one beat at a time. The client tells each beat as
+    # something that happened to her, and the player presses CONTINUE for the next (play test,
+    # 2026-11-13: the timed replay raced by and the gist got lost).
     DoObserve(Dream:dream, Control:client_control)<suspends>:take_phase =
         for (Beat : Dream.LoopBeats):
-            Log(Beat.LogLine)
-            if (Beat.Murmur.Length > 0):
-                Control.MurmurLine(Beat.Murmur)
-            Sleep(Beat.HoldSeconds)
+            Narrate(Control, Beat.LogLine, Beat.Murmur)
         take_phase.Direct
 
-    # 3. Direct: the player sets up the take on the screen: a role, then up to 2 settings,
-    # then up to 2 items.
+    # One told line: it goes in the log, the client tells it as her own memory, then the player
+    # presses CONTINUE.
+    Narrate(Control:client_control, Line:string, Murmur:string)<suspends>:void =
+        Log(Line)
+        Narrating := Control.NarrateBeat(Line, Murmur)
+        if (Narrating?):
+            Control.AwaitSpeechEnd(SpeechSeconds)
+        Screen.AwaitContinue()
+
+    # After a good ending: the LAYER CLEARED banner, with the debugger's notes listed under it
+    # (not told by the client) and one CONTINUE before the next layer (Chip, 2026-11-13).
+    Celebrate(Dream:dream)<suspends>:void =
+        Screen.SetTitle(ToMessage("LAYER CLEARED"))
+        Log(Join(array{"***  LAYER CLEARED  ***"} + Dream.ClearedLog, "\n"))
+        Screen.AwaitContinue()
+
+    # 3. Direct: the player sets up the take on the screen: who they are, then one item. The
+    # client opens the take by reacting to both. Settings and a second item are off for now
+    # (play test, 2026-11-13: with more choices the client's opening stayed generic, "you're
+    # here early"); PickSettings and PickItems are kept for when they come back.
     DoDirect(Dream:dream)<suspends>:take_phase =
         Director.PlayLine(DirectorLineBeforeTake)
         RoleIndex := PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
         if (Role := Dream.Roles[RoleIndex]):
-            Settings := PickSettings(Dream)
-            Items := PickItems(Dream)
-            set MaybeSetup = option{MakeTakeSetup(Role, Settings, Items)}
+            ItemIndex := PickOne("INJECT ITEM", for (Option : Dream.Items) { Option.Label })
+            Items := if (Item := Dream.Items[ItemIndex]) then array{Item} else array{}
+            set MaybeSetup = option{MakeTakeSetup(Role, array{}, Items)}
             take_phase.RunTake
         else:
             Logger.Print("[flow] {Dream.Id} has no roles to cast", ?Level := log_level.Error)
             take_phase.Done
 
-    # Shows one menu and returns the index the player confirmed. "Next" moves the highlight.
+    # Shows one menu and returns the index the player chose: "next" moves the highlight and
+    # "confirm" takes it, or the screen reports a direct pick (a click on the dream debugger).
     PickOne(Title:string, Labels:[]string)<suspends>:int =
         Options := for (Label : Labels) { ToMessage(Label) }
         var Highlighted:int = 0
         loop:
             Screen.SetMenu(ToMessage(Title), Options, Highlighted)
-            Confirmed := race:
+            # -1: confirm the highlight; -2: next; 0 or more: picked directly.
+            Choice := race:
                 block:
                     Screen.AwaitConfirm()
-                    true
+                    -1
                 block:
                     Screen.AwaitNext()
-                    false
-            if (Confirmed?):
+                    -2
+                Screen.AwaitPick()
+            if (Choice >= 0):
+                set Highlighted = Choice
+                break
+            if (Choice = -1):
                 break
             if (Wrapped := Mod[Highlighted + 1, Max(1, Labels.Length)]):
                 set Highlighted = Wrapped
@@ -237,7 +260,9 @@ take_flow := class(creative_device):
     # 6. Verdict: score the take, pull out what carries forward, then the client says the line.
     DoVerdict(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         set MaybeScore = Control.RequestScore()
-        Control.RequestMemory()
+        Remembered := Control.RequestMemory()
+        if (not Remembered?, Score := MaybeScore?):
+            Control.NudgeFeeling(Score.Verdict)
         if (Feeling := Control.Feeling?):
             Screen.SetClientState(TakeNumber, Feeling)
 
@@ -258,16 +283,20 @@ take_flow := class(creative_device):
             Control.AwaitSpeechEnd(SpeechSeconds)
             take_phase.RetryEnding
 
-    # Good ending: the loop resolves its authored way, the client gives up the dream's fact,
-    # and the next dream begins.
-    DoGoodEnding(Dream:dream)<suspends>:take_phase =
+    # Good ending: the client tells how the loop resolves, says the dream's fact in her own
+    # words, then the debugger's notes, each with CONTINUE; then the next dream begins.
+    DoGoodEnding(Dream:dream, Control:client_control)<suspends>:take_phase =
         Haze.Reset()
         Screen.SetVitals(0)
         for (Line : Dream.GoodEndingLog):
-            Log(Line)
-            Sleep(1.5)
+            Narrate(Control, Line, "")
         set Facts += array{Dream.FactRevealed}
-        Log("RECOVERED {Dream.FactRevealed}")
+        Log(Dream.FactRevealed)
+        Revealing := Control.SpeakLine(Dream.FactRevealed)
+        if (Revealing?):
+            Control.AwaitSpeechEnd(SpeechSeconds)
+        Screen.AwaitContinue()
+        Celebrate(Dream)
         Director.PlayLine("{Dream.Id}_solved")
         set DreamIndex += 1
         take_phase.CaseFile
@@ -275,13 +304,12 @@ take_flow := class(creative_device):
     # Bad or mixed ending, then back to the menu for the next take. A negative verdict plays
     # the authored bad ending. A mixed one (or a missing score) resets with only the hint the
     # client already spoke.
-    DoRetryEnding(Dream:dream)<suspends>:take_phase =
+    DoRetryEnding(Dream:dream, Control:client_control)<suspends>:take_phase =
         if (Score := MaybeScore?, Score.Verdict = take_verdict.Negative):
             Haze.SetDistress(3)
             Screen.SetVitals(3)
             for (Line : Dream.BadEndingLog):
-                Log(Line)
-                Sleep(1.5)
+                Narrate(Control, Line, "")
             Director.PlayLine(DirectorLineFailedTake)
         else:
             Director.PlayLine(DirectorLineMixedTake)

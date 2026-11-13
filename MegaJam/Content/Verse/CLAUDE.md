@@ -52,9 +52,23 @@ play session yet.
   `inject_item`, `risk_level`, `take_setup`. Authored text is `string`.
 - `MakeTakeSetup(Role, Settings, Items)`: builds a `take_setup` capped at `MaxSettings` (2) and
   `MaxItems` (2). `SetupHazeBase(Setup)`: haze base level from the riskiest choice.
-- `MakeDesClient()`: Des, the slice's patient, with the case file's Screen section from
-  `writing/des/case-file.md`; the debugger shows him. Only his dream 1 title is real; the take
-  flow still runs `MakePlaceholderClient()`.
+- `MakeDesClient()` (`des_data.verse`): Des, with the case file's Screen section from
+  `writing/des/case-file.md` and a full dream 1.
+- `MakeNellClient()` (`nell_data.verse`): Nell, the current patient 1 (2026-11-13), with the
+  Screen section of `writing/nell/case-file.md` and a full dream 1 from
+  `writing/nell/dream-1.md`; layers 2 and 3 are placeholders.
+- Patients are data: `game_director`'s `@editable Patient` (`patient_choice`) is the one switch.
+  `MakePatient` gives the client for the debugger and the takes; `SetUpPatient` (first thing in
+  `OnBegin`) sets `PatientRecliner`'s material on the `ReclinerCard` entity and the patient's
+  NPC definition (`NellDefinition` / `DesDefinition`, `Room/NPC/CD_*`; only the voice matters,
+  since `LoadDream` replaces the personality) on the take flow's `ClientSpawner`, then respawns
+  the NPC. A new patient needs a `patient_choice` value, a `Make*Client`, a recliner material
+  and a definition slot.
+- The recliner is a Scene Graph entity (`ReclinerCard`) with a `Room.Meshes.SM_RoomCard` mesh
+  component, whose `Card` material Verse can set. A plain static mesh actor can't be changed
+  from Verse, and "Hidden in Game" doesn't hide one in a session. `SM_RoomCard` is our own copy
+  of the engine plane (`art/meshes/SM_RoomCard.obj`; UEFN won't duplicate `/Engine` assets);
+  each patient's recliner art is the empty recliner with them painted in, one texture.
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
 
@@ -63,6 +77,20 @@ play session yet.
   NPC's spawner. Phases (`take_phase`): CaseFile, Observe, Direct, RunTake, LastLine, Verdict,
   then GoodEnding (next dream), RetryEnding (back to Direct, "Take N+1"), or Finale after a
   positive verdict on the last dream (`DoFinale`, a stub for the scripted ending).
+- Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
+  opening prompt names both, so the client's first line reacts to them. `PickSettings` and
+  `PickItems` are unused until settings or more items come back.
+- Observe (the replay) is paced by the player: each loop beat goes in the log, the client tells
+  it as her own memory (`client_control.NarrateBeat`, first person, past tense, using the beat's
+  murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (row 16 of the dream debugger,
+  a click or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
+- Endings are told the same way: each `GoodEndingLog` / `BadEndingLog` line is narrated with
+  CONTINUE, the client says `FactRevealed` aloud, then `Celebrate` shows the LAYER CLEARED
+  banner with the dream's `ClearedLog` (the debugger's notes, not told by the client) listed
+  under it, and one CONTINUE before the next layer.
+- The dream debugger's take log shows only the newest line (the player reads at their own pace).
+- Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
+  does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,
   "next" moves the highlight, "confirm" picks; a `Done` option ends a list early.
 - Fields `Screen`, `Haze`, `Director` hold the seams; they default to the stubs.
@@ -112,6 +140,12 @@ play session yet.
   lines) and ASSISTANT (face plus preset questions). Invoking and asking only log so far. Shown
   with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
   background (they get the camera's perspective).
+- Input on the debugger (play test, 2026-11-13): the UMG text widget must be Not Hit-Testable
+  (Self & All Children) or its rows catch the mouse above the Verse buttons; "Self Hit-Test
+  Invisible" isn't enough. `input_router.FreeMouse` drops the weapon mapping before it shows.
+  Hovering a line focuses it, Space (Jump) activates the focused button, mouse clicks work.
+  Arrow keys and Enter do nothing: Verse can't hear them and Fortnite's UI doesn't navigate with
+  them.
 - Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
   blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
@@ -131,7 +165,8 @@ play session yet.
   takes travels in `Memories`. Remove that call if retries should remember everything.
 - The haze clock input is ignored while distress is 0 ("unless the client is calm"), and the
   take's starting distress is the client's carried-forward fear until the first `scene_update`.
-- If the verdict prompt fails, the take counts as mixed (the client says the mixed line). The
+- If the verdict prompt fails (moderated, say), `RequestScore` retries once with the shorter
+  `VerdictRetryText`; if that fails too, the take counts as mixed (the client says the mixed line). The
   design's other fallbacks are listed as comments on `RequestScore`, `RegisterSceneUpdate`
   and `StartTake`; each sits behind that one function.
 - A setting pick removes the other settings with the same `Element`. The design's "up to 2 per
@@ -153,6 +188,14 @@ play session yet.
   text in a play session. Nothing documents how widget pixels map to world size.
 - Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it and the spike screen entities
   can go.
+- **Talking to the client needs the persona's conversation UI** (play test, 2026-11-13). It's
+  the HUD Controller device's "Show LLM Conversations UI" (Show Element). That device's "Show
+  HUD" must stay Do Not Override: Hide Element hides everything, the talk UI included, and Verse
+  `ShowElementsForPlayer` can't override the device. The player holds the talk key it shows.
+  During a take the debugger also drops to input mode None so Fortnite gets the keyboard.
+- **The first take works end to end** (2026-11-13): INVOKE layer 1, the replay with Des's
+  murmurs, directing by clicks, talking to Des by voice, his `scene_update` sentences in the
+  log, the verdict and the retry.
 - **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD
   element for the player (`HideFortniteHUD`) and the character the moment it exists
   (`HoldPlayer`), before the black start screen goes on. If a later feature needs one HUD

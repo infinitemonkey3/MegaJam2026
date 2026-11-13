@@ -40,6 +40,14 @@ debug_screen := interface:
     AwaitNext()<suspends>:void
     AwaitConfirm()<suspends>:void
 
+    # Returns the index of a menu option the player picked directly (a click on the dream
+    # debugger). Screens without direct picks never return.
+    AwaitPick()<suspends>:int
+
+    # Shows a CONTINUE prompt under the log, keeping the log on screen, and returns when the
+    # player presses it. The replay waits on it between beats.
+    AwaitContinue()<suspends>:void
+
 # Logs every call. Never presses "next" and presses "confirm" after a moment, so every menu
 # takes its first option and the flow runs unattended. Model-written text shows redacted here.
 stub_debug_screen := class(debug_screen):
@@ -81,3 +89,11 @@ stub_debug_screen := class(debug_screen):
 
     AwaitConfirm<override>()<suspends>:void =
         Sleep(0.5)
+
+    AwaitContinue<override>()<suspends>:void =
+        Logger.Print("[screen] CONTINUE")
+        Sleep(0.5)
+
+    AwaitPick<override>()<suspends>:int =
+        Sleep(Inf)
+        0

@@ -43,6 +43,14 @@ input_router := class:
         else:
             Logger.Print("[input] GetPlayerInput failed; menus won't respond", ?Level := log_level.Error)
 
+    # Gives the mouse buttons back to the UI. The weapon mapping (bound so a click counts as "any
+    # key" on the start screen) takes left and right click before Verse UI buttons see them, so
+    # the dream debugger's clicks never arrive while it's on (play test, 2026-11-13).
+    FreeMouse(Player:player):void =
+        if (PlayerInput := GetPlayerInput[Player]):
+            PlayerInput.RemoveInputMapping(Character.RangedWeaponMapping)
+            Logger.Print("[input] weapon mapping off: the mouse is the UI's")
+
     OnNext(Payload:tuple(player, logic)):void =
         AnyKeyEvent.Signal()
         NextEvent.Signal()

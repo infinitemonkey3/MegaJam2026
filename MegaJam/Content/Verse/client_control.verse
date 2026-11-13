@@ -13,13 +13,27 @@ using { /Verse.org/Simulation }
 # works, the change stays in this file. NOT COMPILED YET: see CLAUDE.md in this folder.
 
 # Placeholder prompts. The writing stream's versions replace these.
-VerdictPromptText:string = "The take is over. Step out of the scene and judge, silently and honestly, how the visitor's take reached you. Score each criterion 0 to 3. Backstory: did they use people, places, moments and loved things from your own life, or call back to something from an earlier dream? Personality: did it appeal to who you are? Environment: did their changes belong in this dream's setting? Common sense: did their choices make sense together and in the moment? Generic comfort scores 0 or 1. Verdict: Positive if the total is 9 or more and no score is 0, Negative if the total is 4 or less, otherwise Mixed. HintForWeakestCriterion: one short sentence, in your own voice, about what was missing."
+# Kept neutral and third person, like MemoryPromptText: the first wording ("judge how the
+# visitor's take reached you", hint "in your own voice") came back moderated on Nell's first take
+# (play test, 2026-11-13), probably by asking for her grief in her own words. The hint is still
+# spoken in character: VerdictInstructions has the client work it into her verdict line.
+VerdictPromptText:string = "Write a short, calm, neutral evaluation of the scene that just ended, for the game's scoring. Score each criterion 0 to 3 for how well the visitor's choices fit the dreamer. Backstory: did the visitor use people, places, moments or loved things from the dreamer's life, or call back to something from an earlier scene? Personality: did it suit who the dreamer is? Environment: did the visitor's changes belong in this scene's setting? Common sense: did the choices make sense together and in the moment? Generic comfort scores 0 or 1. Verdict: Positive if the total is 9 or more and no score is 0, Negative if the total is 4 or less, otherwise Mixed. HintForWeakestCriterion: one short neutral sentence on what would have helped most, without repeating anything sad or unkind from the scene."
 
-MemoryPromptText:string = "Summarize the take that just ended, as you lived it. WhoTheVisitorWas: who you believed the visitor was. KeyMoments: at most 3, one sentence each. PromisesOrRequests: things the visitor or you said that could be called back to later. State: how you feel now, with Trust, Fear and Hope each 0 to 3 and Mood as one short phrase."
+# Asked once if VerdictPromptText fails: the same scoring with as little room as possible for
+# the model to retell the scene.
+VerdictRetryText:string = "Score the visitor's choices in the last scene, 0 to 3 each. BackstoryScore: used the dreamer's own life. PersonalityScore: suited the dreamer. EnvironmentScore: fit the setting. CommonSenseScore: made sense. Verdict: Positive if the total is 9 or more and no score is 0, Negative if 4 or less, otherwise Mixed. HintForWeakestCriterion: a few plain words, like \"more from the dreamer's own life\"."
+
+# Kept neutral and third person: the first wording ("as you lived it") came back moderated in
+# half the takes, probably because it had a child retell being laughed at (play test,
+# 2026-11-13). When it still fails, take_flow moves the client's state by the verdict instead.
+MemoryPromptText:string = "Write a short, calm, factual record of the scene that just ended, for continuity. WhoTheVisitorWas: who the visitor was in the scene. KeyMoments: at most 3 short neutral sentences about what the visitor did and what helped or didn't. PromisesOrRequests: anything the visitor or the dreamer offered or asked for that could come up again. Don't repeat anything unkind. State: how the dreamer feels now, with Trust, Fear and Hope each 0 to 3 and Mood as one short neutral phrase."
 
 # Text written by the model is redacted when it is turned into a string, so it stays a
 # `message` end to end: these build the prompts that carry it, and nothing branches on it.
 MessageSpace<localizes>:message = " "
+MoodSteadier<localizes>:message = "steadier, a little hopeful"
+MoodAlmost<localizes>:message = "close, still stuck"
+MoodShaken<localizes>:message = "shaken"
 VisitorLine<localizes>(Who:message):message = "The visitor was {Who}."
 SaidLine<localizes>(Said:message):message = "It was said: {Said}"
 RecalledLine<localizes>(Recalled:message):message = "Earlier, in another dream, a visitor did these things. They are true for you, unless they conflict with your own life: {Recalled}"
@@ -111,7 +125,7 @@ client_control := class:
 
     # What the model sees when deciding to emit the scene_update action.
     SceneUpdateName<localizes>:message = "scene_update"
-    SceneUpdateDescription<localizes>:message = "Emit with every reply. Distress is how distressed you are right now, 0 (calm) to 3 (panicking). LogLine is one terse debug-log line for anything you do or that changes in the scene, like: LOAF removed / SMOKE clearing. Never say the log line aloud."
+    SceneUpdateDescription<localizes>:message = "Emit with every reply. Distress is how distressed you are right now, 0 (calm) to 3 (panicking). LogLine is one short plain sentence, present tense, saying what you do or what changes in the scene, like: The bread comes out of the oven and the smoke starts to clear. Never say the log line aloud."
 
     # Signaled with every scene_update the model emits. take_flow awaits it during a take.
     SceneUpdateEvent:event(scene_update) = event(scene_update){}
@@ -121,6 +135,8 @@ client_control := class:
     var Feeling:?client_state = false       # false until LoadDream sets the starting state
 
     var MaybeAction:?cancelable = false
+    # The dream's personality from LoadDream; each take adds its own setup to it.
+    var DreamPersonality:message = EmptyText
 
     # ---- Per dream ----
 
@@ -135,6 +151,7 @@ client_control := class:
         CaseText := Join(Subject.CaseFile, " ")
         FactText := Join(Facts, " ")
         Personality := ToMessage("{Dream.Personality}\n\nYour waking life: {CaseText}\n\nAlso true: {FactText}")
+        set DreamPersonality = Personality
         if (Persona.SetPersonality[Personality]):
             Logger.Print("[client] personality set for {Dream.Id}")
         else:
@@ -166,7 +183,10 @@ client_control := class:
     # the whole take, append these lines to the personality in LoadDream-style SetPersonality
     # instead and prompt only "Say your first line".
     StartTake(Dream:dream, Setup:take_setup, TakeNumber:int):logic =
-        var Lines:[]message = array{ToMessage("The dream begins again from the top."), ToMessage(Setup.Role.ContextLine)}
+        # The persona system also passes on the player's own name or outfit, and the client used
+        # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
+        # says it again next to the casting.
+        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
         for (Setting : Setup.Settings):
             set Lines += array{ToMessage(Setting.ContextLine)}
         for (Item : Setup.Items):
@@ -175,11 +195,19 @@ client_control := class:
             set Lines += array{RecalledLine(Join(Memories, MessageSpace))}
         if (Now := Feeling?):
             set Lines += array{StateLine(Now.Mood, Now.Trust, Now.Fear, Now.Hope)}
-        set Lines += array{ToMessage("Say your first line of the dream now.")}
+        # The take's setup goes into the personality, not only the opening prompt: as a one-off
+        # PromptToTalk instruction the client forgot it after the first reply (the father became
+        # "a stranger", play test 2026-11-13). The personality holds for every reply.
+        TakePersonality := Join(array{DreamPersonality, ToMessage("\n\nTHIS TAKE:")} + Lines, MessageSpace)
+        if (not Persona.SetPersonality[TakePersonality]):
+            Logger.Print("[client] SetPersonality failed for take {TakeNumber}", ?Level := log_level.Error)
 
         # The verdict should judge this take only; what matters from earlier takes is in Memories.
         Persona.GetAISession().ClearHistory()
-        Context := Join(Lines, MessageSpace)
+        # The first line reacts to the casting and the item by name, so the take opens on what the
+        # player chose (play test, 2026-11-13: a bare "say your first line" got a generic opening).
+        ItemText := Join(for (Item : Setup.Items) { Item.ContextLine }, " ")
+        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} And react to this, which is new this time: {ItemText} Don't open with the time of day or with the visitor being early.")
         if (Persona.PromptToTalk[Context, VoiceChannel]):
             Logger.Print("[client] take {TakeNumber} of {Dream.Id} started with {Lines.Length} context lines")
             true
@@ -188,8 +216,20 @@ client_control := class:
             false
 
     # Has the client mutter one of the loop's prewritten lines during the observe replay.
+    # The replay: the client tells one beat of the loop as something that happened to her,
+    # first person and past tense, in her own voice. Murmur, if any, is her own line for it.
+    # False if the persona refused (busy).
+    NarrateBeat(LogLine:string, Murmur:string):logic =
+        Words := if (Murmur.Length > 0) then " Work in these words of yours: \"{Murmur}\"" else ""
+        Instructions := ToMessage("Tell the visitor about what happened next as something that happened to you, in the first person and the past tense, in one or two short sentences in your own voice, like you're relating a story. Don't call anyone by name. What happened: {LogLine}{Words}")
+        if (Persona.PromptToTalk[Instructions, VoiceChannel]):
+            true
+        else:
+            Logger.Print("[client] narration skipped (persona busy)", ?Level := log_level.Verbose)
+            false
+
     MurmurLine(Line:string):void =
-        Instructions := ToMessage("Half asleep, murmur exactly this and nothing else: {Line}")
+        Instructions := ToMessage("Half asleep, murmur exactly this and nothing else, and don't call anyone by name: {Line}")
         if (not Persona.PromptToTalk[Instructions, VoiceChannel]):
             Logger.Print("[client] murmur skipped (persona busy)", ?Level := log_level.Verbose)
 
@@ -206,22 +246,44 @@ client_control := class:
     #  2. If the client judges too kindly, a separate judge persona gives the score.
     #  3. Fixed scores per setup option, with the LLM only adding flavor.
     # Any of these can sit behind this function as long as it still returns ?take_score.
+    # A failed first prompt (moderated, for example) gets one shorter retry before the take
+    # counts as mixed.
     RequestScore()<suspends>:?take_score =
         Result := Persona.GetAISession().Prompt(ToMessage(VerdictPromptText), take_score)
         if (Score := Result.GetSuccess[]):
+            return option{Score}
+        LogPromptError("verdict", option{Result.GetError[]})
+        Retry := Persona.GetAISession().Prompt(ToMessage(VerdictRetryText), take_score)
+        if (Score := Retry.GetSuccess[]):
+            Logger.Print("[client] verdict came back on the retry")
             option{Score}
         else:
-            LogPromptError("verdict", option{Result.GetError[]})
+            LogPromptError("verdict retry", option{Retry.GetError[]})
             false
 
     # Asks the session for what to carry forward, and stores it. Call right after RequestScore,
     # while the session still holds the take's conversation. Runs after good and bad takes alike.
-    RequestMemory()<suspends>:void =
+    # True if the record came back; false if the prompt failed (moderated, for example).
+    RequestMemory()<suspends>:logic =
         Result := Persona.GetAISession().Prompt(ToMessage(MemoryPromptText), take_memory)
         if (Recalled := Result.GetSuccess[]):
             Remember(Recalled)
+            true
         else:
             LogPromptError("memory", option{Result.GetError[]})
+            false
+
+    # Fallback when the memory record fails: moves the client's state one step by the verdict,
+    # so the client always changes after a take. Positive: trust and hope up, fear down. Mixed:
+    # hope up. Negative: fear up, hope down.
+    NudgeFeeling(Verdict:take_verdict):void =
+        if (Now := Feeling?):
+            Next := case (Verdict):
+                take_verdict.Positive => client_state{Trust := Clamp(Now.Trust + 1, 0, 3), Fear := Clamp(Now.Fear - 1, 0, 3), Hope := Clamp(Now.Hope + 1, 0, 3), Mood := MoodSteadier}
+                take_verdict.Mixed => client_state{Trust := Now.Trust, Fear := Now.Fear, Hope := Clamp(Now.Hope + 1, 0, 3), Mood := MoodAlmost}
+                take_verdict.Negative => client_state{Trust := Now.Trust, Fear := Clamp(Now.Fear + 1, 0, 3), Hope := Clamp(Now.Hope - 1, 0, 3), Mood := MoodShaken}
+            set Feeling = option{Next}
+            Logger.Print("[client] memory missing; state moved by the verdict: trust={Next.Trust} fear={Next.Fear} hope={Next.Hope}")
 
     Remember(Recalled:take_memory):void =
         set Feeling = option{Recalled.State}

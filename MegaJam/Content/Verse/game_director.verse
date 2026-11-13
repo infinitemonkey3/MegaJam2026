@@ -2,6 +2,9 @@ using { /Fortnite.com/Characters }
 using { /Fortnite.com/Devices }
 using { /Fortnite.com/UI }
 using { /Verse.org/Simulation }
+using { /Verse.org/SceneGraph }
+using { /Verse.org/Assets }
+using { /Fortnite.com/Assets }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 
 # The one device with a script (docs/implementation-plan.md, "Game state management"). Owns
@@ -31,6 +34,15 @@ game_director := class(creative_device):
     @editable StartAt:game_phase = game_phase.PreRollPhase
     # Sprint skips the current phase.
     @editable DevKeys:logic = false
+    # Which client is on the debugger, in the takes and in the recliner. SetUpPatient puts their
+    # art on ReclinerCard and their NPC definition (the voice) on the take flow's ClientSpawner.
+    @editable Patient:patient_choice = patient_choice.NellPatient
+    # The recliner: a Scene Graph entity with a Room.Meshes.SM_RoomCard mesh component.
+    @editable ReclinerCard:entity = entity{}
+    # Each patient's NPC Character Definition. Only its voice matters: LoadDream replaces the
+    # personality. Left empty, the spawner keeps the definition it was placed with.
+    @editable NellDefinition:?npc_character_definition = false
+    @editable DesDefinition:?npc_character_definition = false
 
     # How long the client phase waits for the client NPC's behavior to set up. The opening
     # doesn't wait for it at all.
@@ -43,6 +55,7 @@ game_director := class(creative_device):
 
     OnBegin<override>()<suspends>:void =
         Logger.Print("[game] director started, StartAt={GamePhaseName(StartAt)}")
+        SetUpPatient()
         Player := AwaitPlayer()
         set State.MaybePlayer = option{Player}
         # The player is never a body in this game and never sees Fortnite's HUD: hide both
@@ -101,10 +114,12 @@ game_director := class(creative_device):
 
         # The interactive dream debugger, over the monitor now that the camera is at rest and
         # the boot has played on the in-world screen behind it.
-        DebuggerUI := dream_debugger_ui{Client := MakeDesClient()}
+        Client := MakePatient(Patient)
+        DebuggerUI := dream_debugger_ui{Client := Client}
         if (Monitor := MakeMonitorPanel().ProjectRect[Player]):
             # The in-world screen stays as the dark fill behind; blank its boot text first.
             Debugger.Clear()
+            Input.FreeMouse(Player)
             DebuggerUI.Show(Player, Monitor)
         else:
             Logger.Print("[game] couldn't place the dream debugger over the monitor", ?Level := log_level.Warning)
@@ -113,9 +128,22 @@ game_director := class(creative_device):
         # The tutorial and the room between dreams come here (milestone 4).
 
         EnterPhase(game_phase.ClientPhase)
+        # The take runs on the dream debugger. It starts when the player invokes layer 1 on the
+        # DREAMS tab; the deeper layers are locked until it's solved.
+        set Takes.Screen = DebuggerUI
+        # The persona's talk UI is the HUD Controller device's "Show LLM Conversations UI", set to
+        # Show Element; its "Show HUD" is Do Not Override so it doesn't hide that too. The rest of
+        # the HUD stays hidden by HideFortniteHUD (play test, 2026-11-13).
+        loop:
+            Invoked := DebuggerUI.InvokeEvent.Await()
+            if (Invoked = 0):
+                break
+            DebuggerUI.ShowNotice("LAYER LOCKED  //  CLEAR LAYER 1 FIRST")
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
-            Takes.RunClient(MakePlaceholderClient(), Control)
+            DebuggerUI.BeginTake()
+            Takes.RunClient(Client, Control)
+            DebuggerUI.EndTake()
         else:
             Logger.Print("[game] no client NPC; skipping the client phase", ?Level := log_level.Error)
 
@@ -163,6 +191,23 @@ game_director := class(creative_device):
                 return First
             Sleep(0.2)
 
+    # Puts the chosen patient in the room: their art on the recliner card, and their NPC
+    # definition on the client spawner. The NPC is respawned so the new voice takes; nothing
+    # waits on it until the client phase.
+    SetUpPatient():void =
+        if (Card := ReclinerCard.GetComponent[Room.Meshes.SM_RoomCard]):
+            set Card.Card = PatientRecliner(Patient)
+        else:
+            Logger.Print("[game] ReclinerCard has no SM_RoomCard; the recliner keeps its placed art", ?Level := log_level.Warning)
+        MaybeDefinition := case (Patient):
+            patient_choice.NellPatient => NellDefinition
+            patient_choice.DesPatient => DesDefinition
+        if (Definition := MaybeDefinition?, Takes.ClientSpawner.SetNPCCharacterDefinition[Definition]):
+            Takes.ClientSpawner.DespawnAll(false)
+            Takes.ClientSpawner.Spawn()
+        else:
+            Logger.Print("[game] no NPC definition set for this patient; the client spawner keeps its own", ?Level := log_level.Warning)
+
     AwaitClientControl()<suspends>:?client_control =
         var Found:?client_control = false
         var Waited:float = 0.0
@@ -176,3 +221,20 @@ game_director := class(creative_device):
             Sleep(0.5)
             set Waited += 0.5
         Found
+
+# The patients the game can run. Values carry a suffix so they can't clash with a content
+# folder's module name.
+patient_choice := enum:
+    NellPatient
+    DesPatient
+
+# The recliner art for each patient: the empty recliner with them in it, painted as one image.
+PatientRecliner(Choice:patient_choice)<transacts>:material =
+    case (Choice):
+        patient_choice.NellPatient => Room.Materials.MI_Room_Recliner_Nell{}
+        patient_choice.DesPatient => Room.Materials.MI_Room_Recliner_Des{}
+
+MakePatient(Choice:patient_choice)<transacts>:client =
+    case (Choice):
+        patient_choice.NellPatient => MakeNellClient()
+        patient_choice.DesPatient => MakeDesClient()

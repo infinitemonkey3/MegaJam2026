@@ -64,3 +64,10 @@ dream_debugger_screen := class(debug_screen):
 
     AwaitConfirm<override>()<suspends>:void =
         Input.ConfirmEvent.Await()
+
+    AwaitContinue<override>()<suspends>:void =
+        Input.ConfirmEvent.Await()
+
+    AwaitPick<override>()<suspends>:int =
+        Sleep(Inf)
+        0
