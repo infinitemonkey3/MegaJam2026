@@ -441,10 +441,17 @@ cigarette burn" is gone (jam content guidelines).
 | T_Room_BackWallClean_A.png | 4096x2048 RGB (16:9 stretched to 2:1) | unchanged |
 | T_Room_Desk_A.png | 4096x2048 RGBA, content box x=0 y=358 w=4096 h=1690 (`cutout.py key`, then `fit`) | `Room_Desk` keeps Chip's 214.75 cm width; scale Y 1.07375 for 2:1 |
 
+**Lamp and light removed** (Chip, same day, free and local): `art/tools/remove_lamp.py` makes
+the lamp above the desk transparent, covers its base, shadow and cord with the desk top's plain
+bone colour, turns the amber light pool into bone paper while keeping the ink scratches, and
+copies the far edge and the right end edge back over where the arm and cord crossed them. The
+kept `T_Room_Desk_A.png` is that output; `raw/Desk4K_s2125.png` still has the lamp.
+
 **Texture settings in UEFN.** Imported textures came in with an LOD Bias of 1 (2 on the 4K
 ones), which caps them at 1024 pixels, and the texture streamer kept the desk at a low mip even
 with the bias cleared. Every texture in `Content/Room/Textures` and `Content/ColdOpen/Textures`
-is now LOD Bias 0 with Never Stream on. Set both on any new layer texture after import.
+is now LOD Bias 0 with Never Stream on. Reimporting over a texture resets both, so set them
+again after every import or reimport.
 
 ---
 
