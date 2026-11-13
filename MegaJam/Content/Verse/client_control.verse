@@ -228,6 +228,17 @@ client_control := class:
             Logger.Print("[client] narration skipped (persona busy)", ?Level := log_level.Verbose)
             false
 
+    # The good ending: the client tells the visitor the specific thing they said or did that
+    # turned the dream around. The session still holds the take's conversation (ClearHistory
+    # runs at the next StartTake), so the model can name it. False if the persona refused.
+    CreditLine():logic =
+        Instructions := ToMessage("Tell the visitor, in one or two short sentences in your own voice, the one thing they said or did in this dream that turned it around for you. Name it specifically, their actual words or what they did, not a general thanks.")
+        if (Persona.PromptToTalk[Instructions, VoiceChannel]):
+            true
+        else:
+            Logger.Print("[client] credit line skipped (persona busy)", ?Level := log_level.Warning)
+            false
+
     MurmurLine(Line:string):void =
         Instructions := ToMessage("Half asleep, murmur exactly this and nothing else, and don't call anyone by name: {Line}")
         if (not Persona.PromptToTalk[Instructions, VoiceChannel]):

@@ -290,6 +290,13 @@ take_flow := class(creative_device):
         Screen.SetVitals(0)
         for (Line : Dream.GoodEndingLog):
             Narrate(Control, Line, "")
+        # She says what the player did that worked, in her own words (Chip, 2026-11-13). The log
+        # can't show it: model text is redacted when it becomes a string.
+        Log("She tells you what turned it around.")
+        Crediting := Control.CreditLine()
+        if (Crediting?):
+            Control.AwaitSpeechEnd(SpeechSeconds)
+        Screen.AwaitContinue()
         set Facts += array{Dream.FactRevealed}
         Log(Dream.FactRevealed)
         Revealing := Control.SpeakLine(Dream.FactRevealed)
