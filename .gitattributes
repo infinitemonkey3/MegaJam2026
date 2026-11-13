@@ -4,9 +4,10 @@
 *.sh    text eol=lf
 *.md    text
 
-# Unreal binary assets
-*.uasset filter=lfs diff=lfs merge=lfs -text lockable
-*.umap   filter=lfs diff=lfs merge=lfs -text lockable
+# Unreal binary assets. Not `lockable`: that makes Git LFS check these files out read-only, and
+# UEFN then fails to save or delete them without saying so.
+*.uasset filter=lfs diff=lfs merge=lfs -text
+*.umap   filter=lfs diff=lfs merge=lfs -text
 
 # Art / audio / video sources
 *.png  filter=lfs diff=lfs merge=lfs -text
