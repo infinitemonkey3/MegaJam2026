@@ -11,12 +11,12 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 #  - pre-roll: black with "PRESS ANY KEY TO START" (Chip, 2026-11-13)
 #  - cold open: the overlay comes down under the sequence's own fade from black
 #  - after it: the cold open ends on black, and the room-intro sequence fades up from black and
-#    drifts forward onto the desk camera's view (Chip, 2026-11-13). The overlay stays down, so
-#    the room shows through the boot; the boot's text goes to the hidden overlay for now.
+#    drifts forward onto the desk camera's view (Chip, 2026-11-13). The overlay stays down from
+#    then on; the boot shows on the dream debugger, the in-world screen in the monitor.
 
 # Authored placeholder text; the writing stream's versions replace it.
 PressAnyKeyText<localizes>:message = "PRESS ANY KEY TO START"
-DeadAirTitle<localizes>:message = "DEAD AIR"
+DebuggerTitle<localizes>:message = "DREAM DEBUGGER"
 BootLines:[]string = array:
     "BOOT dbg_link / BUILD unlicensed"
     "IMPLANT bus=found / MODEL budget"
@@ -37,7 +37,8 @@ cold_open_rig := class:
 cold_open := class:
     Rig:cold_open_rig
     Input:input_router
-    Screen:overlay_screen
+    Screen:overlay_screen        # the black full-screen overlay: start screen and hand-offs
+    Debugger:debug_screen        # the dream debugger in the monitor
 
     Logger:log = log{Channel := dead_air_log}
 
@@ -121,19 +122,19 @@ cold_open := class:
     RunBoot()<suspends>:void =
         Rig.BootChime.Play()
         Sleep(0.6)
-        Screen.SetTitle(DeadAirTitle)
+        Debugger.SetTitle(DebuggerTitle)
         for (Line : BootLines):
-            Screen.AppendLogLine(ToMessage(Line))
+            Debugger.AppendLogLine(ToMessage(Line))
             Sleep(0.35)
         Rig.TutorialLine.Play()
         Sleep(TutorialSeconds)
 
     EndBoot():void =
-        Screen.SetTitle(DeadAirTitle)
+        Debugger.SetTitle(DebuggerTitle)
 
     # For debug starts after the cold open: put the player at the desk view of the room as if
     # the opening had played.
     SkipToDesk(Player:player):void =
-        Screen.SetTitle(DeadAirTitle)
+        Debugger.SetTitle(DebuggerTitle)
         GoToDesk(Player)
         Rig.RoomRain.Play()

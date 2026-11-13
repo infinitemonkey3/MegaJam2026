@@ -1,6 +1,6 @@
 # Content/Verse
 
-The game logic for *Dead Air* (`docs/design.md`): the game director and its phases, the
+The game logic for *Wonderwell* (`docs/design.md`): the game director and its phases, the
 pre-roll and cold open, the take loop for one client with three dreams, the wrapper around the
 client's LLM persona, and seams for the screen, haze and director's voice. One file per system.
 All files share one module (the folder's).
@@ -19,6 +19,8 @@ play session yet.
   `ColdOpenPhase` (with the boot), `RoomPhase`, `ClientPhase`, then `DonePhase`, logging
   `[game] A -> B` on each change. Holds every device
   reference as an `@editable` (`Takes`, the cold-open cameras, sequence and audio players).
+- Space (Jump, the router's `ConfirmEvent`) skips the cold open straight to the room intro, for
+  players and for iterating on the room.
 - Debug starts: `@editable StartAt:game_phase` (`PreRollPhase` is the real game;
   `ColdOpenPhase` skips the pre-roll; `RoomPhase` or later starts at the desk) and `@editable DevKeys` (Sprint skips the current
   phase).
@@ -34,10 +36,11 @@ play session yet.
   `RunColdOpen` (plays the Level Sequence and swaps to the desk
   camera underneath it), `RunRoomIntro` (plays `LS_RoomIntro` on the `Room Intro Sequence`
   device: fades up from black and drifts 60 cm forward onto the desk camera's exact spot and
-  90° field of view), `RunBoot` (DEAD AIR, the boot log, the tutorial line). Each has an
-  `End*`/`SkipToDesk` that leaves cameras and sounds right if the phase was skipped.
+  90° field of view), `RunBoot` (DREAM DEBUGGER, the boot log, the tutorial line, on the dream
+  debugger). Each has an `End*`/`SkipToDesk` that leaves cameras and sounds right if the phase
+  was skipped.
 - `cold_open_rig`: the device references it uses. Placeholder text: `PressAnyKeyText`,
-  `DeadAirTitle`, `BootLines`.
+  `DebuggerTitle`, `BootLines`.
 
 ### Data (`dream_data.verse`)
 - `dead_air_log`: the log channel everything prints to (`GetVerseOutput`). Lines are tagged
@@ -49,6 +52,9 @@ play session yet.
   `inject_item`, `risk_level`, `take_setup`. Authored text is `string`.
 - `MakeTakeSetup(Role, Settings, Items)`: builds a `take_setup` capped at `MaxSettings` (2) and
   `MaxItems` (2). `SetupHazeBase(Setup)`: haze base level from the riskiest choice.
+- `MakeDesClient()`: Des, the slice's patient, with the case file's Screen section from
+  `writing/des/case-file.md`; the debugger shows him. Only his dream 1 title is real; the take
+  flow still runs `MakePlaceholderClient()`.
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
 
@@ -81,8 +87,33 @@ play session yet.
   screen backs with `/Verse.org/Input` actions. `EmptyText`.
 - `overlay_screen` (`overlay_screen.verse`): the `debug_screen` as a full-screen Verse UI
   overlay, black with title, log and menu text. `Show(Player)` / `Hide()`. It's the start
-  screen and the stand-in for the room until the 2D room and the real screen exist; text set
-  while it's hidden shows next time.
+  screen and covers the hand-offs around the cold open; text set while it's hidden shows next
+  time. Its text helpers (`OverlayNewLine`, `OverlayPicked`, ...) are shared with the debugger.
+- `dream_debugger_screen` (`dream_debugger_screen.verse`): the `debug_screen` on the in-world
+  dream debugger, the `UW_DreamDebugger` widget (`Content/DreamDebugger/`) placed as a Scene
+  Graph entity 1 cm behind `Room_Monitor`, whose glass is cut out of its texture. Sets the
+  entity's `TitleMessage`, `BodyMessage`, `MenuMessage`. `Clear()` blanks the designer's sample
+  text. `game_director` holds the entity as `@editable DebuggerScreen` and gives this screen to
+  the boot and the take flow.
+- `world_panel` / `monitor_rect` (`monitor_projection.verse`): projects a flat upright
+  rectangle in the world onto the viewport as screen fractions (0..1), for canvas anchors, so
+  screen-space UI can sit exactly over the monitor. `ProjectWorldToViewport` answers in physical
+  screen centimeters (1920 px is 50.8 cm), so it solves the viewport size from the desk
+  camera's known eye, angle (yaw 180, pitch -5) and 90 degree FOV. The eye that
+  `DeprojectViewportToWorld` reports doesn't match the camera (it made the screen 12% small),
+  so it isn't used; valid only while the desk camera is the view. Kept in its own file because
+  `/Verse.org/SpatialMath` and the UI's `/UnrealEngine.com/Temporary/SpatialMath` clash.
+- `dream_debugger_ui` (`dream_debugger_ui.verse`): the interactive dream debugger, shown over
+  the monitor's glass hole once the boot has played (placed by `MakeMonitorPanel().ProjectRect`).
+  Two layers: the text is `UW_DebuggerText` (`Content/DreamDebugger/`), a UMG widget with 18
+  NotoSans rows (`Row00Text`..`Row17Text`, row 4 is `Tab0Text`..`Tab2Text`) in a Scale Box;
+  input is invisible Verse UI buttons over the selectable rows (mouse, arrow keys, D-pad), whose
+  highlight moves the `>` cursor. Tabs: CASE FILE (paged, `[ MORE ]` on row 15), DREAMS (INVOKE
+  lines) and ASSISTANT (face plus preset questions). Invoking and asking only log so far. Shown
+  with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
+  background (they get the camera's perspective).
+- Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
+  blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line
@@ -109,15 +140,19 @@ play session yet.
   a module name clashes with an enumerator of the same name anywhere in this module. That's why
   `game_phase` values carry a `Phase` suffix (`ColdOpenPhase`, `RoomPhase`). Don't add enum
   values named like a content folder.
-- **The room shows from the room intro until the client phase** (2026-11-13). The boot's text
-  goes to the hidden overlay, so only its sounds play over the room; `game_director` shows the
-  overlay again at `ClientPhase` because the take menus still live on it. A `RoomPhase` or later
-  debug start goes straight to the desk camera with no intro. The old rule below still holds
-  for the hand-off out of the cold open.
-- **The 3D world only shows inside the cold-open sequence.** Outside it, `overlay_screen` is up
-  (black). The sequence fades in from and out to black, so the overlay comes down and goes back
-  up under black with no seam. Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it
-  and the spike screen entities can go.
+- **The room shows from the room intro on** (2026-11-13), and everything the player reads is on
+  the dream debugger in the monitor. A `RoomPhase` or later debug start goes straight to the
+  desk camera with no intro.
+- **Before the room intro, the 3D world only shows inside the cold-open sequence.** Outside it,
+  `overlay_screen` is up (black). The sequence fades in from and out to black, so the overlay
+  comes down and goes back up under black with no seam.
+- **Don't name a content folder like a Verse field.** A `Content/Screen/` folder made `Screen`
+  ambiguous in `cold_open.verse` (module vs. field), which is why the widget lives in
+  `Content/DreamDebugger/`.
+- In-world widgets don't render in editor scene captures; check the debugger's size, facing and
+  text in a play session. Nothing documents how widget pixels map to world size.
+- Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it and the spike screen entities
+  can go.
 - **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD
   element for the player (`HideFortniteHUD`) and the character the moment it exists
   (`HoldPlayer`), before the black start screen goes on. If a later feature needs one HUD
