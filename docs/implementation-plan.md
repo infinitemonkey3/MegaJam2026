@@ -252,7 +252,7 @@ prewritten record (no LLM).
 | Game state | `game_state.verse` | the fields above, `PhaseChangedEvent`, `take_record` | everyone reads |
 | Input router | `input_router.verse` | the player's input mappings; `NextEvent`, `ConfirmEvent`, `SkipEvent` | director, take flow |
 | Pre-roll and cold open | `cold_open.verse` | beats 1-10 | director |
-| Take flow | `take_flow.verse` (exists) | the micro state machine, now a class taking `game_state` | director |
+| Take flow | `take_flow.verse` (exists) | the micro state machine, now a class taking `game_state`; the reply-driven beat script, crisis beats, verdict recompute, director-line triggers (section 3b) | director |
 | Client control | `client_control.verse` (exists) | the persona | take flow |
 | Screen | `debug_screen.verse` (seam exists) + `screen_view.verse` | modes: Boot, CaseFile, Log, Menu, Slate, Vitals (a silent trace), Chart, EndCard | director, take flow |
 | Client puppet | `client_puppet.verse` | The 2D client on the recliner: Des's overlay plane, the mouth flipbook (4 cells) driven by the persona's `StartSayEvent` and `StopSayEvent`, the chest overlay's slow ~2% breathing scale. The persona NPC itself is hidden off-set | director, take flow |
@@ -271,6 +271,89 @@ One place to wire in the editor, one place to check when something isn't hooked 
 
 ---
 
+## 3b. The take, as the Des writing defines it
+
+`writing/des/dream-1.md` (on `main`, #15) is more specific than the skeleton in
+`take_flow.verse`, and changes how a take runs. The skeleton is updated to this in milestone 4.
+
+**Beats advance on client replies, not on a clock.** A take is a short script: `B0 Open` at
+take start, then `B1`-`B5` after client replies 1-5, then `B6 Cut` after the client answers the
+last line. Verse counts replies with the persona's `CommitSayEvent`. Each beat is a log line for
+the screen and a context line for the client, with **variants keyed by the chosen option ids**
+(`B1` has a `lights_lamp` variant). The skeleton's `RunClock` timer goes; a long silence
+timeout (about 40 s with no player line) stays as a safety net that moves to the next beat.
+
+**Crisis beats** (`C1 Staying`, `C2 Lamp Light`) trigger on option ids: `C1` replaces `B2` when
+the player cast `cast_father`; `C2` plays with `B3` when `lights_lamp` or `item_brann` is chosen.
+Each has a "turns dark" or "if ignored" follow-up.
+
+**Conditions on what the model wrote become numbers.** Verse only ever gets model text as a
+redacted string (spikes.md), so it can't check "the hall has joined in" or "the visitor promised
+to stay". Each such condition is read from `scene_update.Distress` instead:
+
+| Writing says | Verse checks |
+|---|---|
+| `B3`/`B4`: skip the laugh if the hall is with him | `Distress <= 1` on the last reply |
+| `C2`: if ignored for two replies | `Distress >= 2` on both replies after `C2` |
+| `C1`: turns dark if the visitor promises to stay | The client's own context handles the turn; Verse shows the dark log when `Distress = 3` after `C1` |
+
+**How a beat's context reaches the client is open.** Sending it with `PromptToTalk` makes the
+client speak again right after its own reply, which crowds the player out. Recommendation, to
+test in the spike 1-3 session: send beat context silently with `ai_session.Prompt` and a
+one-field acknowledgement struct, so it lands in the history without speech. Unverified that a
+`Prompt`'s instructions stay in the history. Fallback: `PromptToTalk` the beat only after the
+player has been quiet for about 6 s, which suits beats like `B2 Waiting`.
+
+**Context lines follow `writing/prompts/context-lines.md`'s send order:** Take Start (with the
+dream's `{Time}` and `{Place}`), Role, each Setting, each Item, State, Memory Intro, each
+Memory, Memory Visitor, Authored Facts Win, Opening Cue. This replaces the skeleton's
+hand-written lines in `client_control.StartTake`.
+
+**Haze inputs from the writing:**
+- setup: the sum of the chosen options' `Haze` values, capped at 2 (the skeleton takes the
+  highest; change it)
+- distress: live, as before
+- clock: driven by beats (`B3` = 1, `B4` = 2, `B5` = 3) instead of time, still ignored while
+  distress is 0
+- start: the carried-forward fear, as before
+
+**Verse recomputes the verdict from the scores** with the rubric's `Thresholds`: positive if
+the total is 8 or more and Backstory and Personality are each at least 2; negative if the total
+is 4 or less; mixed otherwise. The model's own `Verdict` field is logged but not trusted. The
+weakest criterion (ties: Backstory, Personality, Environment, Common sense) picks the
+director's mixed line.
+
+**Director lines by trigger** (ids from the dream file):
+
+| When | Line |
+|---|---|
+| Case file | `dir_d1_intro`, then `dir_d1_file` |
+| After the replay | `dir_d1_hint` |
+| Menu open, then confirm | `dir_d1_direct`, then `dir_d1_roll` |
+| A `Risky: yes` option confirmed in the menu | `dir_d1_risky`, once per take |
+| Negative verdict | `dir_d1_bad` the first time in this dream, `dir_d1_bad_2` after (counted from `TakeHistory`) |
+| Mixed verdict | `dir_d1_mixed_<weakest>` |
+| Positive verdict | `dir_d1_good`, `dir_d1_fact`, `dir_d1_next` |
+
+**Endings:** good: the log, the client says `Good Ending Reveal` exactly (the Reveal template),
+the unlock log, the screen adds `U1-01`-`U1-05`, `FactStage` rises. Bad: the log, then the client
+says `Bad Ending Line`. Mixed: the log only. The client's first state in a dream with no takes
+yet comes from the dream file's `First Take State`.
+
+**Data shapes this needs** (`dream_data.verse`, M4): options gain `Class`, `Risky` and a
+numeric `Haze`; a `take_beat` (id, after-reply, log, context, variants by option id); a
+`crisis_beat` (trigger option ids, replaces or joins a beat, log, context, dark log and
+context, escalation rule); the dream gains `Time`, `Place`, `FirstTakeState`, the reveal line,
+the unlock log and entries, the bad-ending line, the mixed-ending log and its director line
+ids. Option groups use the writing's elements (`Lighting`, `Hall`), one value each, as the menu
+already does.
+
+**Murmurs in the replay:** a voiced "say exactly" murmur costs 2-3 s per line (spikes.md
+timing) and may be paraphrased. Show each `MURMUR` on the screen as the client's subtitle line;
+voice it only if a play test shows it keeps pace.
+
+---
+
 ## 4. Milestones
 
 Each milestone ends in a launched session that shows it working, and a PR.
@@ -281,7 +364,7 @@ Each milestone ends in a launched session that shows it working, and a PR.
 | **1** | Game shell | `game_director` runs empty phases with logs; `StartAt` works | Place the device | `game_state`, `game_director`, `input_router`; take flow as a class |
 | **2** | Cold open | "Cold-open done when" above | Pre-roll rig, Level Sequence, cameras, VO tracks, boot screen | `cold_open.verse`; the test-pattern image |
 | **3** | Screen wired | Spike 4 result in; `screen_view` shows case file, log, menu, slate; input picks a setup | The final UMG widget with every field | `screen_view.verse` against the field list |
-| **4** | Dream 1 end to end (**Friday goal**) | Des dream 1: case file, replay, direct, take, last line, verdict, good and retry endings, with Des on the recliner and his mouth moving when he talks | Hidden client NPC (voice for a 13-year-old, from the voice test), the 2D client planes | `data_des.verse` from `writing/des/`; real prompts from `writing/prompts/`; `client_puppet.verse`. **Needs art first:** the client overlays drawn so far are Nell; Des needs an empty recliner, his overlay, and his own mouth and chest pieces (paid, Chip approves) |
+| **4** | Dream 1 end to end (**Friday goal**) | Des dream 1: case file, replay, direct, a take whose beats advance on his replies (with `C1` and `C2`), last line, verdict recomputed from scores, good, mixed and bad endings with their director lines, with Des on the recliner and his mouth moving when he talks | Hidden client NPC (voice for a 13-year-old, from the voice test), the 2D client planes | the new data shapes and `data_des.verse` from `writing/des/` (section 3b); beat-driven take flow; context lines in the writing's order; real prompts from `writing/prompts/`; `client_puppet.verse`. **Needs art first:** the client overlays drawn so far are Nell; Des needs an empty recliner, his overlay, and his own mouth and chest pieces (paid, Chip approves) |
 | **5** | Danger and feel | Take start (house lights down, projector click, light flickers up on Des, dream hum); haze at 3 levels (post process, overlays, drones); the screen's "Take N" slate; the silent vitals trace; presets mode for no-mic players | Post-process devices, overlay planes, audio players | `room_light.verse`, `room_audio.verse`, haze hookup; presets menu |
 | **5b** | Ask the software | Holding the query key asks the software; it answers from stages 0..`FactStage` and session records, says "No record." otherwise; the answer shows in the log; the client doesn't react to queries | Software NPC definition and spawner, voice | `software_query.verse`; fact sheets from `writing/des/case-file.md` as data |
 | **6** | Dreams 2-3 and the ending | Full slice plays through; dream 3's break-in (with `AMB_AI_NeonBuzz` and the corruption sounds), director's reaction, end card | Ending assets | data for dreams 2-3 (Friday's writing); `finale.verse` |
@@ -310,4 +393,5 @@ nothing and keep `SetConversationTarget` in one place from the start.
 | Read-only `.uasset` from LFS `lockable` (spikes.md) | every editor save | Chip's call on removing `lockable` from `.gitattributes` |
 | A 13-year-old voice from the persona voice list | M4 | Pick the youngest-sounding voice; the stutter carries more than pitch |
 | Spike 6: two personas, target switching, shared history | M5b | Separate channels; else the screen-only keyword search |
-| Model text is redacted as a string | any logic on model text | Already designed around: only numbers and enums are branched on |
+| Model text is redacted as a string | any logic on model text | Already designed around: only numbers and enums are branched on; the writing's text conditions map to `Distress` (section 3b) |
+| Beat context without making the client speak twice | M4 | Silent `Prompt` if it stays in history; else `PromptToTalk` after a player silence |
