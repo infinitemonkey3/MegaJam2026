@@ -1,6 +1,6 @@
 # art/
 
-Source images and models for *Dead Air*, owned by the art stream (stream 3 in
+Source images and models for *Wonderwell*, owned by the art stream (stream 3 in
 `docs/workstreams.md`). Import into UEFN is done by the orchestrator session, not from here.
 
 ## Rule: no generation without approval

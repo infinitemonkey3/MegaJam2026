@@ -1,6 +1,6 @@
 # Content/Verse
 
-The game logic for *Dead Air* (`docs/design.md`): the game director and its phases, the
+The game logic for *Wonderwell* (`docs/design.md`): the game director and its phases, the
 pre-roll and cold open, the take loop for one client with three dreams, the wrapper around the
 client's LLM persona, and seams for the screen, haze and director's voice. One file per system.
 All files share one module (the folder's).
