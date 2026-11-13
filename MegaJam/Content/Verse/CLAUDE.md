@@ -57,13 +57,18 @@ play session yet.
 - `MakeNellClient()` (`nell_data.verse`): Nell, the current patient 1 (2026-11-13), with the
   Screen section of `writing/nell/case-file.md` and a full dream 1 from
   `writing/nell/dream-1.md`; layers 2 and 3 are placeholders.
-- Patients are data: `game_director`'s `@editable Patient` (`patient_choice`, `MakePatient`)
-  picks which client the debugger and the takes run. Switching also needs the client spawner's
-  NPC definition (`Room/NPC/CD_Nell` or `CD_Des`; only its voice matters, since `LoadDream`
-  replaces the personality) and the recliner art (`Room_Recliner`'s material,
-  `MI_Room_Recliner_Nell`, or the empty recliner plus the `Room_Des` overlay). Hidden in Game
-  does nothing on these actors in a session, so `Room_Des` is parked at Z -10000 while Nell is
-  the patient; it goes back to (-399.5, -443, 134).
+- Patients are data: `game_director`'s `@editable Patient` (`patient_choice`) is the one switch.
+  `MakePatient` gives the client for the debugger and the takes; `SetUpPatient` (first thing in
+  `OnBegin`) sets `PatientRecliner`'s material on the `ReclinerCard` entity and the patient's
+  NPC definition (`NellDefinition` / `DesDefinition`, `Room/NPC/CD_*`; only the voice matters,
+  since `LoadDream` replaces the personality) on the take flow's `ClientSpawner`, then respawns
+  the NPC. A new patient needs a `patient_choice` value, a `Make*Client`, a recliner material
+  and a definition slot.
+- The recliner is a Scene Graph entity (`ReclinerCard`) with a `Room.Meshes.SM_RoomCard` mesh
+  component, whose `Card` material Verse can set. A plain static mesh actor can't be changed
+  from Verse, and "Hidden in Game" doesn't hide one in a session. `SM_RoomCard` is our own copy
+  of the engine plane (`art/meshes/SM_RoomCard.obj`; UEFN won't duplicate `/Engine` assets);
+  each patient's recliner art is the empty recliner with them painted in, one texture.
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
 
