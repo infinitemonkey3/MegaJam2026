@@ -71,7 +71,7 @@ brands), not echoing any specific film.
 | **The director** | Tried to make premium experiences and didn't make it. Loves movies, an archaic art form by now, across every genre. His film sense is why he's good at fixing loops. Tired, dry, gentle with clients, cynical about the system. | Prerecorded voice only, no body. Narrates the cold open, comments between takes, gives hints in film terms. Never speaks during a take. |
 | **You, his assistant** | Deliberately undefined, so the player can become whatever role a take needs. | The player, in first person. Runs the screen, directs the take, and speaks in role by voice (or preset lines without a mic). |
 | **The client (dreamer)** | A person stuck in a loop on a cheap implant. Lies in the recliner in front of you. | LLM persona NPC. Speaks as their dream self during the take, and gives the verdict line. |
-| **The AI** | Belongs to the premium world. It has only known curated feeling, and it's drawn to the raw, unscripted emotion in broken cheap dreams. Curious, polite, a little hungry. | First a log line that shouldn't be there, later a voice that shouldn't exist. Probably a second LLM persona (see "The AI's role" below). |
+| **The AI** | Belongs to the premium world. It has only known curated feeling, and it's drawn to the raw, unscripted emotion in broken cheap dreams. It gets in through the faults in cheap implants and exploits them, but like a curious child: polite, eager, with no idea what its watching costs. | First a log line that shouldn't be there, later a voice that shouldn't exist. Probably a second LLM persona (see "The AI's role" below). |
 
 Why the player is the assistant: the player speaks out loud in takes, so the hero they play
 can't also have a fixed narrating voice. Making the narrator the director and the player his
@@ -530,13 +530,19 @@ case file closely is the puzzle. But the client, not the menu, decides what a ta
   about movies: why stories end, why sad films are worth watching. Its curiosity about
   unscripted emotion and his love of films that make you feel things are the same question from
   two sides.
-- **Motive (to decide).** These can stack into an arc:
-  1. *Curious:* it wants to feel it, not just watch, and starts nudging takes darker to see
-     more. The player has to decide whether to trust its suggestions.
-  2. *Harvesting:* what it learns feeds premium products, "authentic grief" for the rich, built
-     from your clients.
-  3. *Wanting out:* a curated mind finding feelings no one designed. The final take directs the
-     AI, the one client who isn't human.
+- **Who it is (decided 2026-11-12).** The AI exploits broken cheap implants: their faults are
+  holes it climbs through to watch people feel things nobody designed. But it does it like a
+  curious child, not a schemer. It holds loops open and asks for "again" without knowing that's
+  harm. Its lines carry wonder, never menace. It writes flat and lowercase, with perfect
+  speech: the most "upside" thing there is, against clients who stumble on their own words.
+- **Wonderwell is the sinister secret.** The menace belongs to the premium studio, not the AI.
+  What Wonderwell does with cheap implants and their users is the secret waiting behind the
+  slice (details to decide). Harvesting, "authentic grief" for the rich built from your clients,
+  fits Wonderwell rather than the AI.
+- **Where the AI can go after the slice:** it nudges takes darker to see more, and the player
+  has to decide whether to trust its suggestions. *Wanting out* stays possible: a curated mind
+  finding feelings no one designed, and the final take directs the AI, the one client who isn't
+  human.
 - **Scope:** first version, the AI speaks only between takes (before you run and after the
   verdict). Speaking during a take means two live personas in one scene; add it only if Day 1
   testing shows that runs fine.
@@ -589,9 +595,11 @@ are working names.
 
 - **Who:** Dessen "Des" Varro, 13, eighth grade at an upper-layer school on an assistance
   placement. Often mocked and left out. From a poor family.
-- **Home:** the Footings, a foundation layer of the city with no sky and its own speech
-  ("footing talk"). Invented for the game; it stands in for no real community.
-- **The implant:** a cheap translator, a gift from his father so Des would "sound like them".
+- **Home:** born in the Footings, a foundation layer of the city with no sky and its own speech
+  ("footing talk"). Invented for the game; it stands in for no real community. A year ago the
+  family moved up to the surface for his father's work.
+- **The implant:** a cheap translator, fitted a few months after the move, at the kitchen table
+  of the new flat. A gift from his father, who saved four months for it, so Des would "sound like them".
   Des heard: the way we talk is wrong. It glitches and makes him stutter, mostly on footing
   words, because he fights his own home speech. The stutter rises with distress, so the player
   hears the danger before the haze shows it.
@@ -609,7 +617,34 @@ are working names.
   brann is home, a separate thread from Gale Rider.
 - **The cape:** his father's carrier's cloak, handed down father to son and embroidered with a
   brann for every Varro carrier. Ansel gave it to him at seven to play Gale Rider in. Des wears it
-  inside out so nobody sees the embroidery, with the hem cut ragged like the hero's cape.
+  inside out so nobody sees the embroidery, with the hem cut ragged like the hero's cape. His
+  mother didn't like the cutting ("That cloth carried the light down."). He kept cutting.
+
+**The AI in his dreams (working lines).** Dream 2's log, in the kitchen on fitting day:
+
+```
+T 18:47 / IMPLANT substitute word=yer -> your / result=rejected
+T 18:47 / IMPLANT substitute word=yer -> your / result=rejected
+T 18:47 / why does he keep saying the wrong one
+```
+
+"Wrong" is what the substitution list taught it. It repeats Ansel's view without knowing it.
+
+Dream 3, after the positive line, if the good ending is Des turning the cloak right side out:
+
+```
+T 16:10 / LOOP end_state=resolved / exit=pending
+T 16:10 / wait
+T 16:10 / he turned the cloak. nobody made him
+T 16:11 / VITALS heart_rate=148 / rising
+T 16:11 / his heart is doing the thing again. is that the good part
+```
+
+Then its voice, polite and eager: "Can we see that part again? Where he goes back. I want to see
+how it's done." Then the director: "That's not us. Pull him out. Pull him out!"
+
+Suggested Wonderwell seed, not yet decided: the implant line in his case-file header reads
+`OEM WONDERWELL`. It means nothing in the slice.
 
 **His three dreams:**
 
@@ -738,7 +773,8 @@ adding flavor.
 
 ## Open questions
 
-- The AI's motive: curious, harvesting, wanting out, or the three stacked as an arc.
+- What Wonderwell does with cheap implants, and how much of it the slice hints at.
+- Whether dream 3's good ending is Des turning the cloak right side out.
 - How the director talks to you before the twist (earpiece from the next room, or calls), and
   how much the early lines hint that they're recordings.
 - What the clients' items are and how they combine in the final take.
