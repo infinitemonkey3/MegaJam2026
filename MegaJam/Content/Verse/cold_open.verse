@@ -10,8 +10,9 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 # Everything outside the Level Sequence is the full-screen overlay (overlay_screen):
 #  - pre-roll: black with "PRESS ANY KEY TO START" (Chip, 2026-11-13)
 #  - cold open: the overlay comes down under the sequence's own fade from black
-#  - after it: the sequence ends on black and the overlay goes back up as the stand-in for the
-#    room, where DEAD AIR boots. The 3D world is never shown outside the sequence.
+#  - after it: the cold open ends on black, and the room-intro sequence fades up from black and
+#    drifts forward onto the desk camera's view (Chip, 2026-11-13). The overlay stays down, so
+#    the room shows through the boot; the boot's text goes to the hidden overlay for now.
 
 # Authored placeholder text; the writing stream's versions replace it.
 PressAnyKeyText<localizes>:message = "PRESS ANY KEY TO START"
@@ -27,6 +28,7 @@ cold_open_rig := class:
     MonitorCamera:gameplay_camera_fixed_point_device    # a fixed view under the start screen
     DeskCamera:gameplay_camera_fixed_point_device       # the seated desk view the game plays from
     Sequence:cinematic_sequence_device                  # the cold-open Level Sequence
+    RoomIntro:cinematic_sequence_device                 # LS_RoomIntro: fade up, drift onto the desk view
     NoSignalSound:audio_player_device                   # AMB_No_Signal, looping
     RoomRain:audio_player_device                        # AMB_Rain_Window, looping
     BootChime:audio_player_device                       # SFX_Boot_Chime
@@ -81,12 +83,32 @@ cold_open := class:
                 Logger.Print("[cold_open] sequence never stopped; moving on", ?Level := log_level.Warning)
         Logger.Print("[cold_open] sequence done")
 
-    # The sequence ends on black; the overlay goes straight back up as the room stand-in.
+    # The sequence ends on black. The overlay goes up for the hand-off so nothing flashes while
+    # the cold open lets go of the view, then comes down under the room intro's own black.
     EndColdOpen(Player:player):void =
         Screen.Show(Player)
         Rig.Sequence.GoToEndAndStop(Player)
         GoToDesk(Player)
         Rig.RoomRain.Play()
+
+    # ---- Room intro ----
+
+    # Fades up from black and drifts forward, ending exactly on the desk camera (same spot and
+    # field of view), so the hand-off back to the desk camera doesn't show.
+    RunRoomIntro(Player:player)<suspends>:void =
+        Rig.RoomIntro.Play(Player)
+        Sleep(0.0)
+        Screen.Hide()
+        race:
+            Rig.RoomIntro.StoppedEvent.Await()
+            block:
+                Sleep(SequenceTimeoutSeconds)
+                Logger.Print("[cold_open] room intro never stopped; moving on", ?Level := log_level.Warning)
+        Logger.Print("[cold_open] room intro done")
+
+    EndRoomIntro(Player:player):void =
+        Rig.RoomIntro.GoToEndAndStop(Player)
+        Screen.Hide()
 
     GoToDesk(Player:player):void =
         if (not OnDesk?):
@@ -109,10 +131,9 @@ cold_open := class:
     EndBoot():void =
         Screen.SetTitle(DeadAirTitle)
 
-    # For debug starts after the cold open: put the player at the room stand-in as if it had
-    # played.
+    # For debug starts after the cold open: put the player at the desk view of the room as if
+    # the opening had played.
     SkipToDesk(Player:player):void =
         Screen.SetTitle(DeadAirTitle)
-        Screen.Show(Player)
         GoToDesk(Player)
         Rig.RoomRain.Play()

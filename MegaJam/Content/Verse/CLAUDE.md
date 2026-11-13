@@ -32,7 +32,9 @@ play session yet.
 - `cold_open`: `RunPreRoll` (a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
   ended by `input_router.AnyKeyEvent`; lifted under the sequence's own fade from black),
   `RunColdOpen` (plays the Level Sequence and swaps to the desk
-  camera underneath it), `RunBoot` (DEAD AIR, the boot log, the tutorial line). Each has an
+  camera underneath it), `RunRoomIntro` (plays `LS_RoomIntro` on the `Room Intro Sequence`
+  device: fades up from black and drifts 60 cm forward onto the desk camera's exact spot and
+  90° field of view), `RunBoot` (DEAD AIR, the boot log, the tutorial line). Each has an
   `End*`/`SkipToDesk` that leaves cameras and sounds right if the phase was skipped.
 - `cold_open_rig`: the device references it uses. Placeholder text: `PressAnyKeyText`,
   `DeadAirTitle`, `BootLines`.
@@ -107,6 +109,11 @@ play session yet.
   a module name clashes with an enumerator of the same name anywhere in this module. That's why
   `game_phase` values carry a `Phase` suffix (`ColdOpenPhase`, `RoomPhase`). Don't add enum
   values named like a content folder.
+- **The room shows from the room intro until the client phase** (2026-11-13). The boot's text
+  goes to the hidden overlay, so only its sounds play over the room; `game_director` shows the
+  overlay again at `ClientPhase` because the take menus still live on it. A `RoomPhase` or later
+  debug start goes straight to the desk camera with no intro. The old rule below still holds
+  for the hand-off out of the cold open.
 - **The 3D world only shows inside the cold-open sequence.** Outside it, `overlay_screen` is up
   (black). The sequence fades in from and out to black, so the overlay comes down and goes back
   up under black with no seam. Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it
