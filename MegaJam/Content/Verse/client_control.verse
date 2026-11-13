@@ -121,6 +121,8 @@ client_control := class:
     var Feeling:?client_state = false       # false until LoadDream sets the starting state
 
     var MaybeAction:?cancelable = false
+    # The dream's personality from LoadDream; each take adds its own setup to it.
+    var DreamPersonality:message = EmptyText
 
     # ---- Per dream ----
 
@@ -135,6 +137,7 @@ client_control := class:
         CaseText := Join(Subject.CaseFile, " ")
         FactText := Join(Facts, " ")
         Personality := ToMessage("{Dream.Personality}\n\nYour waking life: {CaseText}\n\nAlso true: {FactText}")
+        set DreamPersonality = Personality
         if (Persona.SetPersonality[Personality]):
             Logger.Print("[client] personality set for {Dream.Id}")
         else:
@@ -169,7 +172,7 @@ client_control := class:
         # The persona system also passes on the player's own name or outfit, and the client used
         # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
         # says it again next to the casting.
-        var Lines:[]message = array{ToMessage("The dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. Any other name or rank you have been told for them is wrong; never say it.")}
+        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. Any other name or rank you have been told for them is wrong; never say it.")}
         for (Setting : Setup.Settings):
             set Lines += array{ToMessage(Setting.ContextLine)}
         for (Item : Setup.Items):
@@ -178,11 +181,16 @@ client_control := class:
             set Lines += array{RecalledLine(Join(Memories, MessageSpace))}
         if (Now := Feeling?):
             set Lines += array{StateLine(Now.Mood, Now.Trust, Now.Fear, Now.Hope)}
-        set Lines += array{ToMessage("Say your first line of the dream now.")}
+        # The take's setup goes into the personality, not only the opening prompt: as a one-off
+        # PromptToTalk instruction the client forgot it after the first reply (the father became
+        # "a stranger", play test 2026-11-13). The personality holds for every reply.
+        TakePersonality := Join(array{DreamPersonality, ToMessage("\n\nTHIS TAKE:")} + Lines, MessageSpace)
+        if (not Persona.SetPersonality[TakePersonality]):
+            Logger.Print("[client] SetPersonality failed for take {TakeNumber}", ?Level := log_level.Error)
 
         # The verdict should judge this take only; what matters from earlier takes is in Memories.
         Persona.GetAISession().ClearHistory()
-        Context := Join(Lines, MessageSpace)
+        Context := ToMessage("Say your first line of the dream now.")
         if (Persona.PromptToTalk[Context, VoiceChannel]):
             Logger.Print("[client] take {TakeNumber} of {Dream.Id} started with {Lines.Length} context lines")
             true
@@ -192,7 +200,7 @@ client_control := class:
 
     # Has the client mutter one of the loop's prewritten lines during the observe replay.
     MurmurLine(Line:string):void =
-        Instructions := ToMessage("Half asleep, murmur exactly this and nothing else: {Line}")
+        Instructions := ToMessage("Half asleep, murmur exactly this and nothing else, and don't call anyone by name: {Line}")
         if (not Persona.PromptToTalk[Instructions, VoiceChannel]):
             Logger.Print("[client] murmur skipped (persona busy)", ?Level := log_level.Verbose)
 
