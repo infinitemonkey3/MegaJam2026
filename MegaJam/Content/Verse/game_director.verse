@@ -48,7 +48,8 @@ game_director := class(creative_device):
         HoldPlayer(Player)
         Input.Bind(Player, DevKeys)
 
-        Screen:debug_screen = if (Sim := GetSimulationEntity[]) then entity_screen{Root := Sim, Input := Input} else stub_debug_screen{}
+        # The debug screen is a full-screen overlay until the real screen and 2D room exist.
+        Screen := overlay_screen{Input := Input}
         set Takes.Screen = Screen
 
         Opening := cold_open:

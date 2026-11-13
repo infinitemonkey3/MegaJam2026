@@ -5,7 +5,9 @@ pre-roll and cold open, the take loop for one client with three dreams, the wrap
 client's LLM persona, and seams for the screen, haze and director's voice. One file per system.
 All files share one module (the folder's).
 
-**Status: compiles clean, not yet run.** Every file builds with no errors or warnings
+**Status:** the start screen, cold open and boot have been played in a session (2026-11-13).
+**`overlay_screen` and its use in `cold_open` and `game_director` have not been compiled yet**
+(the editor's MCP server was down); build them first. Before that change: Every file builds with no errors or warnings
 (2026-11-12; 43.00 for the take flow, 43.10 for the cold open), and the editor loads the classes
 as `/<guid>/_Verse.Verse-<class>` (for example `_Verse.Verse-game_director`). A `Game Director`
 and a `Take Flow` device are placed and wired in the editor's level, but nothing has run in a
@@ -76,10 +78,10 @@ play session yet.
   `SetCaseFile`, `AppendLogLine`, `SetMenu`, `ShowSlate`, `SetVitals`, `SetClientState`,
   `AwaitNext`, `AwaitConfirm`. Display takes `message`s only; input is two waits the real
   screen backs with `/Verse.org/Input` actions. `EmptyText`.
-- `entity_screen` (`entity_screen.verse`): **temporary** `debug_screen` over the spike's
-  in-world widget (`Content/Spikes/UW_SpikeScreen`: Title, Body, Menu fields), so the cold open
-  shows on a real screen before stream 5's widget exists. Writes to every `UW_SpikeScreen`
-  entity under the director's simulation entity.
+- `overlay_screen` (`overlay_screen.verse`): the `debug_screen` as a full-screen Verse UI
+  overlay, black with title, log and menu text. `Show(Player)` / `Hide()`. It's the start
+  screen and the stand-in for the room until the 2D room and the real screen exist; text set
+  while it's hidden shows next time.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line
@@ -106,9 +108,10 @@ play session yet.
   a module name clashes with an enumerator of the same name anywhere in this module. That's why
   `game_phase` values carry a `Phase` suffix (`ColdOpenPhase`, `RoomPhase`). Don't add enum
   values named like a content folder.
-- `entity_screen` depends on `Content/Spikes/UW_SpikeScreen` (module `Spikes`), the one spike
-  asset kept after the test-content purge. It and the spike screen entities go when the real
-  screen lands.
+- **The 3D world only shows inside the cold-open sequence.** Outside it, `overlay_screen` is up
+  (black). The sequence fades in from and out to black, so the overlay comes down and goes back
+  up under black with no seam. Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it
+  and the spike screen entities can go.
 - **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD
   element for the player (`HideFortniteHUD`) and the character the moment it exists
   (`HoldPlayer`), before the black start screen goes on. If a later feature needs one HUD
@@ -199,7 +202,7 @@ Cold open and game shell (43.10 lines):
 | `GetFortCharacter` | `(InAgent:agent).GetFortCharacter<native><public>()<transacts><decides>:fort_character` | FN:905 |
 | `fort_character.Hide` | `Hide<public>():void` | FN:875 |
 | `fort_hud_controller` | `(Playspace:fort_playspace).GetHUDController<native><public>():fort_hud_controller`; `HideElementsForPlayer<public>(Player:player, HUDElements:[]hud_element_identifier):void`; `creative_hud_identifier_all`, `player_hud_identifier_all`, `hud_identifier_visual_sound_effect_all` | FN:12424, 12418, 12426, 12478, 12502 |
-| `UW_SpikeScreen_entity` | `var TitleMessage`, `var BodyMessage`, `var MenuMessage<public>:message` (generated from the spike widget) | `Digests/<guid>-Assets/<guid>-Assets.digest.verse`, module `/invaliddomain/MegaJam/Spikes` |
+| `stack_box`, `stack_box_slot` | `stack_box` (`Orientation`, `Slots`); `stack_box_slot` (`Widget`, `HorizontalAlignment`, `Padding`) | UE:2171, 2185 |
 
 Not called yet: `CommitSayEvent<native><public>:listenable(tuple(?agent, message))` (UE:111 in 43.00, for the verdict fallback).
 
