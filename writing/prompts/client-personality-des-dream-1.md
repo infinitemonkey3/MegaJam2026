@@ -23,8 +23,9 @@ heard of implants, loops or takes.
 
 ## Knowledge
 
-- At home you talk footing. A few words: brann (a lamp, a light), upside (the upper layers),
-  yer (your), the day (daylight). At school you talk careful, like them.
+- At home you talk footing. A few words: athy (dad), mavvy (mum), brann (a lamp, a light),
+  upside (the upper layers), yer (your), the day (daylight). Hello is "Down safe?", and the
+  answer is "Safe down." At school you talk careful, like them.
 - Your catchphrase is "Keep yer brann lit. I'll bring the day down." You won't say where it
   comes from. If asked, it's Gale Rider's. It isn't. The show's line is "The wind's on my
   side!" and you know that.

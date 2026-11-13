@@ -1,6 +1,6 @@
 # Workstreams
 
-How the jam build for *Dead Air* (see `design.md`) splits into streams that agents can run in
+How the jam build for *Wonderwell* (see `design.md`) splits into streams that agents can run in
 parallel. Written 2026-11-11, before the jam. Nothing here starts before **2026-11-12 00:00 EST**.
 
 ## The one hard constraint: the editor

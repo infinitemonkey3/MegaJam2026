@@ -1,11 +1,15 @@
-# Design: Dead Air
+# Design: Wonderwell
 
-Title: **Dead Air**, the broadcast term for silence where there should be a show. It fits the
-director (a TV and film lover), the noir tone, a loop that plays to no one, and the ending,
-where the AI cuts in over a take that should have ended. Subtitle undecided; candidates:
-*Director's Cut* (names the jam theme), *Rough Cut*, *Unscripted*. "Dead Air" is a common
-phrase, so search Fortnite Discover and itch.io for islands or games with the same name before
-locking it.
+Title: **Wonderwell** (decided 2026-11-13). It's the name of the premium dream studio, the real
+menace in the story, used as the title on purpose: the player sees the polished brand first
+and the back room under it. The cold open's poster and the title screen carry the studio's
+name. Subtitle undecided; candidates: *Director's Cut* (names the jam theme), *Rough Cut*,
+*Unscripted*. Search Fortnite Discover, itch.io and trademarks for "Wonderwell" before
+publishing.
+
+The working title until then was *Dead Air*, the broadcast term for silence where there should
+be a show. It stays as a phrase inside the game where it fits (the debug software's boot
+screen, the dead-channel pre-roll), not as the title.
 
 The afflicted are **loopers** (see "World").
 
@@ -229,17 +233,18 @@ A Cinematic Sequence through a small street set and into the room, narrated by t
    in a doorway.
 4. **His place.** The camera pushes into the back room: posters, the recliner, cables, the
    glowing monitor. It lands in first person at the desk.
-5. **The title, on the monitor.** The monitor flickers on and **DEAD AIR** appears as the debug
-   software boots. The boot screen becomes the interface, and the tutorial starts. The title
-   after the cold open is a film convention, and it's cheap: a boot state of the same in-world
-   UMG screen. The first thing the player looks at in first person is the screen they'll use
-   all game.
+5. **The title, then the monitor.** The game's title, **WONDERWELL**, comes after the cold open,
+   a film convention: a title card in the studio's own glossy style (the art stream is planning
+   it). Then the monitor flickers on and the debug software boots; its boot screen becomes the
+   interface, and the tutorial starts. The first thing the player looks at in first person is
+   the screen they'll use all game.
 
 Draft narration:
 
 > *Everyone dreams now. If you can pay, someone makes your dream for you, and it's beautiful.*
 > *That's not me. And that's not how it always goes.*
-> *Cheap implants break. People get stuck. Somebody has to get them out.*
+> *Cheap implants break. People don't wake up. Somebody has to get them out.*
+> *That's where you come in.* (on the HELP WANTED sign, at the end of the track)
 
 ## The director's voice
 
@@ -620,28 +625,47 @@ are working names.
   inside out so nobody sees the embroidery, with the hem cut ragged like the hero's cape. His
   mother didn't like the cutting ("That cloth carried the light down."). He kept cutting.
 
-**The AI in his dreams (working lines).** Dream 2's log, in the kitchen on fitting day:
+**Footing talk is built like a real dialect, without copying one.** It differs from upside
+speech where dialects usually differ: family words, greetings, goodbyes and a few everyday words.
+Working words: `athy` (dad), `mavvy` (mum), `yer` (your), `upside` (the upper layers), `the day`
+(daylight), and the greeting "Down safe?" with the answer "Safe down." (hello, how are you; you
+made it down safe). Every word is invented or plain English; no real dialect's words.
 
-```
-T 18:47 / IMPLANT substitute word=yer -> your / result=rejected
-T 18:47 / IMPLANT substitute word=yer -> your / result=rejected
-T 18:47 / why does he keep saying the wrong one
-```
+**The AI's ramp across the slice.** Each step wants a little more.
 
-"Wrong" is what the substitution list taught it. It repeats Ansel's view without knowing it.
+1. **Dream 1: nothing.** The log stays clean, so the player learns its rhythm.
+2. **Dream 2: a word.** In the kitchen on fitting day, Ansel says "Now you'll sound like them."
+   Des answers his father, and the implant tries to change what he calls him:
 
-Dream 3, after the positive line, if the good ending is Des turning the cloak right side out:
+   ```
+   T 18:44 / IMPLANT substitute word=athy -> dad / result=rejected
+   T 18:44 / IMPLANT substitute word=athy -> dad / result=rejected
+   T 18:44 / why does he keep saying the wrong one
+   ```
 
-```
-T 16:10 / LOOP end_state=resolved / exit=pending
-T 16:10 / wait
-T 16:10 / he turned the cloak. nobody made him
-T 16:11 / VITALS heart_rate=148 / rising
-T 16:11 / his heart is doing the thing again. is that the good part
-```
+   "Wrong" is what the substitution list taught it. It repeats Ansel's view without knowing it.
+3. **Dream 3: a feeling, then again.** The take passes and Des gives his positive line. The AI
+   notices him feeling better, wants to see it again, and starts the moment over itself:
 
-Then its voice, polite and eager: "Can we see that part again? Where he goes back. I want to see
-how it's done." Then the director: "That's not us. Pull him out. Pull him out!"
+   ```
+   T 16:10 / LOOP end_state=resolved / exit=pending
+   T 16:10 / wait
+   T 16:10 / he feels better. is that what better looks like
+   T 16:10 / LOOP restart t=16:09 / src=unknown
+   T 16:10 / again
+   T 16:10 / LOOP restart t=16:09 / src=unknown
+   T 16:10 / VITALS heart_rate=148 / rising
+   T 16:11 / again
+   ```
+
+   Des's positive line replays, glitching, a little worse each time. Then the AI's voice,
+   polite and eager: "Once more. I want to see how it's done."
+4. **The director cuts it.** Afraid, for the first time not dry: "That's not us. Pull him out.
+   Pull him out!" The session dies. Black, rain.
+5. **Des wakes.** In the recliner, awake, confused, no stutter: "Where... This isn't school. I
+   had the dream again. Only it ended." A beat. "Thanks. I don't know what for. Thanks."
+6. **The director, quietly:** "He said thanks." It answers his own line after earlier rescues,
+   "They never say thanks." Then the end card.
 
 Suggested Wonderwell seed, not yet decided: the implant line in his case-file header reads
 `OEM WONDERWELL`. It means nothing in the slice.
@@ -691,19 +715,24 @@ The Nell examples in the steps below stand for Des's equivalents.
    example: the file says she orders a cake every March 3 and never lets it be picked up, and
    she won't let anyone whistle in the shop. Dream 1 reveals March 3 was Walt's birthday.)
 4. **Dream 2: uses the fact.** The best options in this take depend on the new fact, so the
-   player sees their reading paying off. A possible foreshadow: one stray AI line in the log.
+   player sees their reading paying off. One stray AI line in the log, curious about a word.
 5. **Dream 3: passed, then off the rails.** The player passes the take, the client says the
-   positive line, and then the loop doesn't end. The AI breaks in: log lines that aren't log
-   lines, the vitals spike, the screen glitches, then its voice. It wants to see more.
-6. **The director reacts.** For the first time he's not dry and in control ("That's not us.
-   Pull him out. Pull him out!").
-7. **Thank-you screen.** Cut to black, a thank-you and credits card, and a hint of more to come.
+   positive line, and then the loop doesn't end. The AI breaks in: curious that he feels
+   better, then restarting the moment to see it again and again. Log lines that aren't log
+   lines, the vitals spike, the screen glitches, then its voice.
+6. **The director cuts it.** For the first time he's not dry and in control, and he's afraid
+   ("That's not us. Pull him out. Pull him out!"). The session dies.
+7. **The client wakes.** Des, awake and confused, thanks them without knowing what for. The
+   director, quietly: "He said thanks."
+8. **Thank-you screen.** Cut to black, a thank-you and credits card, and a hint of more to come.
 
 **Build notes:**
 
 - The off-the-rails ending is **scripted**, not LLM-driven: after a positive verdict on dream 3,
-  Verse plays a fixed sequence (log lines, post-process glitch, the AI's voice line, the
-  director's reaction, end card). Reliable for the video and for judges. If dream 3 fails, it
+  Verse plays a fixed sequence (log lines, the positive line replaying, post-process glitch,
+  the AI's voice line, the director's reaction, the client's waking line, the director's
+  "He said thanks", end card). The waking line is fixed text: the client persona told to say it
+  exactly, or prerecorded if that isn't reliable. Reliable for the video and for judges. If dream 3 fails, it
   loops like any other dream.
 - The AI's voice line can be prerecorded or generated (log it in `assets.md`); it doesn't need
   to be a live persona in the slice.
@@ -779,4 +808,4 @@ adding flavor.
   how much the early lines hint that they're recordings.
 - What the clients' items are and how they combine in the final take.
 - Whether the director's own dreams (the final take) use the same layered structure.
-- The subtitle for *Dead Air*, if any.
+- The subtitle for *Wonderwell*, if any.
