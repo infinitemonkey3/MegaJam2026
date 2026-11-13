@@ -1,4 +1,4 @@
-# Implementation plan: Dead Air jam slice
+# Implementation plan: Wonderwell jam slice
 
 Written 2026-11-12 (jam day 1, evening) while UEFN reinstalls. Builds on `design.md` (the Des
 client and the jam slice), `spikes.md`, the art run log (`art/style-test/runs.md`: cold-open
@@ -123,7 +123,7 @@ replacing the visual hard cut; the jingle's stop keeps the cut in the sound):
 | 6 | The track | The jingle **stops dead** as VO 02 "That's not me" (4.4 s) starts, about 11.5 s in; only street rain is left. The camera tracks right past the flyer to the Help Wanted sign | ~6 s |
 | 7 | Street | VO 03 (6.8 s) over the peeling ad, warning sticker, the doorway figure | ~7 s |
 | 8 | His room | Push into the back room: posters, recliner with Des, cables, monitor. Room rain (`AMB_Rain_Window`) takes over from street rain. Lands at the desk | ~5 s |
-| 9 | Boot | The monitor flickers on, a boot chime, the screen boots, **DEAD AIR** | ~3 s |
+| 9 | Title and boot | The WONDERWELL title card, then the monitor flickers on, a boot chime, the screen boots | ~5 s |
 | 10 | Hand-off | Tutorial VO 01 ("Got a looper in the chair...") and the Room phase begins | |
 
 ### How each piece is built
@@ -167,14 +167,14 @@ replacing the visual hard cut; the jingle's stop keeps the cut in the sound):
 - The player is teleported to the desk spot (`fort_character.TeleportTo`) during the black at
   beat 4, so they are already in place.
 
-**The boot (beats 9-10).** The debug screen in `Boot` mode: title message "DEAD AIR", a short
+**The boot (beats 9-10).** The title card, then the debug screen in `Boot` mode: a short
 fake boot log appended line by line, then `VO_Director_Tutorial_01`. The screen is the same
 entity the whole game uses, so the first thing the player looks at is the interface.
 
 ### Cold-open done when
 
 A launched session goes: black, NO SIGNAL, mic light reacts to speech, the choice, Start, the
-sequence with all three lines in sync, lands at the desk with no camera pop, DEAD AIR boots, the
+sequence with all three lines in sync, lands at the desk with no camera pop, the title card shows and the screen boots, the
 tutorial line plays, and the log shows `[game] Boot -> PreRoll -> ColdOpen -> Room`. With
 `StartAt = Room` the session skips straight to the desk.
 

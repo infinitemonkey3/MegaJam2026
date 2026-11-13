@@ -1,11 +1,15 @@
-# Design: Dead Air
+# Design: Wonderwell
 
-Title: **Dead Air**, the broadcast term for silence where there should be a show. It fits the
-director (a TV and film lover), the noir tone, a loop that plays to no one, and the ending,
-where the AI cuts in over a take that should have ended. Subtitle undecided; candidates:
-*Director's Cut* (names the jam theme), *Rough Cut*, *Unscripted*. "Dead Air" is a common
-phrase, so search Fortnite Discover and itch.io for islands or games with the same name before
-locking it.
+Title: **Wonderwell** (decided 2026-11-13). It's the name of the premium dream studio, the real
+menace in the story, used as the title on purpose: the player sees the polished brand first
+and the back room under it. The cold open's poster and the title screen carry the studio's
+name. Subtitle undecided; candidates: *Director's Cut* (names the jam theme), *Rough Cut*,
+*Unscripted*. Search Fortnite Discover, itch.io and trademarks for "Wonderwell" before
+publishing.
+
+The working title until then was *Dead Air*, the broadcast term for silence where there should
+be a show. It stays as a phrase inside the game where it fits (the debug software's boot
+screen, the dead-channel pre-roll), not as the title.
 
 The afflicted are **loopers** (see "World").
 
@@ -229,17 +233,18 @@ A Cinematic Sequence through a small street set and into the room, narrated by t
    in a doorway.
 4. **His place.** The camera pushes into the back room: posters, the recliner, cables, the
    glowing monitor. It lands in first person at the desk.
-5. **The title, on the monitor.** The monitor flickers on and **DEAD AIR** appears as the debug
-   software boots. The boot screen becomes the interface, and the tutorial starts. The title
-   after the cold open is a film convention, and it's cheap: a boot state of the same in-world
-   UMG screen. The first thing the player looks at in first person is the screen they'll use
-   all game.
+5. **The title, then the monitor.** The game's title, **WONDERWELL**, comes after the cold open,
+   a film convention: a title card in the studio's own glossy style (the art stream is planning
+   it). Then the monitor flickers on and the debug software boots; its boot screen becomes the
+   interface, and the tutorial starts. The first thing the player looks at in first person is
+   the screen they'll use all game.
 
 Draft narration:
 
 > *Everyone dreams now. If you can pay, someone makes your dream for you, and it's beautiful.*
 > *That's not me. And that's not how it always goes.*
-> *Cheap implants break. People get stuck. Somebody has to get them out.*
+> *Cheap implants break. People don't wake up. Somebody has to get them out.*
+> *That's where you come in.* (on the HELP WANTED sign, at the end of the track)
 
 ## The director's voice
 
@@ -803,4 +808,4 @@ adding flavor.
   how much the early lines hint that they're recordings.
 - What the clients' items are and how they combine in the final take.
 - Whether the director's own dreams (the final take) use the same layered structure.
-- The subtitle for *Dead Air*, if any.
+- The subtitle for *Wonderwell*, if any.

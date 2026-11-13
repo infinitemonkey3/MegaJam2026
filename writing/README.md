@@ -1,6 +1,6 @@
 # Writing
 
-All the words in the *Dead Air* jam slice, in the shape the Verse data needs. This is stream 2
+All the words in the *Wonderwell* jam slice, in the shape the Verse data needs. This is stream 2
 in `docs/workstreams.md`. The text here was written by an AI agent (Claude) during the jam, from
 `docs/design.md`.
 
