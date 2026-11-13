@@ -168,7 +168,7 @@ element, and at most two items. Starting haze is the sum of `Haze`, capped at 2.
 - Risky: no
 - Haze: 0
 - Log: `CAST visitor=gale_rider role=hero`
-- Context: `The visitor is Gale Rider, the real one from the show. He says "The wind's on my side!"`
+- Context: `The visitor is Gale Rider, the real hero from the show, actually here. Not a costume, and nobody's joke: he came for you. You're thrilled, even if you'd never show it in front of the whole year. He says "The wind's on my side!"`
 - Why: `L-01`. He loves it, but it feeds the escape, and it's the wrong catchphrase.
 
 ### Scene Settings
