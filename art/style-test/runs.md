@@ -447,11 +447,19 @@ bone colour, turns the amber light pool into bone paper while keeping the ink sc
 copies the far edge and the right end edge back over where the arm and cord crossed them. The
 kept `T_Room_Desk_A.png` is that output; `raw/Desk4K_s2125.png` still has the lamp.
 
-**Texture settings in UEFN.** Imported textures came in with an LOD Bias of 1 (2 on the 4K
-ones), which caps them at 1024 pixels, and the texture streamer kept the desk at a low mip even
-with the bias cleared. Every texture in `Content/Room/Textures` and `Content/ColdOpen/Textures`
-is now LOD Bias 0 with Never Stream on. Reimporting over a texture resets both, so set them
-again after every import or reimport.
+**Texture settings in UEFN.** Every layer texture (`Content/Room/Textures`,
+`Content/ColdOpen/Textures`) is in Texture Group **UI** with LOD Bias 0 (Chip's find,
+2026-11-13). In the World group the streamer held the room layers at low mips, and imports came
+in with an LOD Bias that capped them at 1024. Both of the obvious fixes fail UEFN's publish
+validation, so Refresh Session stops with "Validation failed":
+- Never Stream on the texture: "Texture needs to support streaming".
+- Force Mip Streaming on the mesh component: "Illegal property override".
+
+The UI group has a size limit, so the 4K desk and back wall have Maximum Texture Size 2048 ("This
+UI texture has an in-game dimension that is too big" otherwise). The 4K source stays in the asset.
+At 1080p 2048 is about one texel per pixel for these planes; if they need more, split each into
+two 2048 halves on two planes. Reimporting resets these settings, so set them again after every
+import or reimport.
 
 ---
 
