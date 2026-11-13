@@ -94,8 +94,8 @@ First person, one room, three things with one job each:
   cables taped down. Present, but the screen is the focus until the take starts.
 
 **The room** is a low-rent space, not a clinic: discarded electronics piled around (gutted
-monitors, loose boards, tangled cable), paper case files on the desk, a cigarette stubbed out in
-a saucer, his movie posters on the walls. Cheap, cluttered, lived in. The clutter is good for
+monitors, loose boards, tangled cable), paper case files on the desk, a chipped saucer of loose screws,
+his movie posters on the walls. Cheap, cluttered, lived in. The clutter is good for
 the art budget: lots of small junk props that read fine without being detailed.
 
 **Art path: 2D layers.** The view is mostly fixed (seated at the desk), so the room doesn't have
