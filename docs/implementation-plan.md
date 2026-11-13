@@ -6,7 +6,8 @@ layout, camera path, dream-transition masks, client overlays), `audio/narration/
 `audio/sound-list.md` (on `feature/sound-list`) and the Verse skeleton on `main`
 (`MegaJam/Content/Verse/`, not compiled yet). Deadline: **Sun 2026-11-15 5:59 PM PST**.
 
-**Decisions since `design.md` was last edited, which this plan follows:**
+**Decisions made on Day 1 that this plan follows** (`design.md` is updated to match in the same
+change):
 
 - The room is **2D layers on planes**. All art so far is built that way (back wall, junk pile,
   recliner, desk, monitor, clutter, posters), so "light" in the room is blended overlay planes,
@@ -19,10 +20,9 @@ layout, camera path, dream-transition masks, client overlays), `audio/narration/
   dream hum bed (`AMB_Dream_Hum`). No slate clap sound; the "Take N" slate stays on the screen.
 - **Vitals:** the trace stays on the screen, silent. No vitals beep.
 - The **harsh neon buzz belongs to the AI break-in** (`AMB_AI_NeonBuzz`), not the room.
-- Des's later writing (Gale Rider, the brann as a separate thread, the cape as his father's
-  carrier's cloak, Ansel working for a better life) is on `claude/nell-dream1-999d1c`, not yet on
-  `main`; `design.md` still has the older details. `data_des.verse` is converted from the latest
-  writing.
+- Des's latest writing (Gale Rider, the brann as a separate thread, the cape as his father's
+  carrier's cloak, Ansel working for a better life) is on `main` (#15). `data_des.verse` is
+  converted from it.
 
 The order is cold open first, as asked, but the first thing built is the **game shell** that
 the cold open runs inside, because every later piece hangs off it.

@@ -94,8 +94,13 @@ monitors, loose boards, tangled cable), paper case files on the desk, a cigarett
 a saucer, his movie posters on the walls. Cheap, cluttered, lived in. The clutter is good for
 the art budget: lots of small junk props that read fine without being detailed.
 
-**Art path: undecided, try both on Day 1.** The view is mostly fixed (seated at the desk), so
-the room doesn't have to be full 3D.
+**Art path: 2D layers.** The view is mostly fixed (seated at the desk), so the room doesn't have
+to be full 3D. All art built on Day 1 is 2D layers in one "two-ink print" style (see
+`art/style-test/`), so that's the path; the comparison below is kept for the record. Because the
+room is 2D, its "light" is blended overlay planes (a vignette for house lights down, a glow mask
+on the recliner for light on the client), not UEFN lights. The client is an illustrated overlay
+on an empty recliner, with a mouth flipbook that moves when they talk and a chest piece that
+breathes; the talking persona NPC is hidden off-set.
 
 | Path | How | Strengths | Risks |
 |---|---|---|---|
@@ -185,9 +190,15 @@ screen, as if it searched the records.
 - **Scope:** after the slice works. It depends on two personas sharing a voice channel cleanly
   (Day 1 test).
 
-**Starting a take:** the room dims, a slate shows "Take 2", and the debug readout takes over the
-view. Film grain and a letterbox can come from the post-process devices planned in
-`research/art-style.md`. This replaces the old "dream fuzz": it's the implant syncing in.
+**Starting a take:** movie night. The house lights go down, a film projector clicks and spins up,
+a light flickers up on the client, the screen's slate shows "Take 2", and the readout takes over
+the view while a low dream hum settles in. Film grain and a letterbox can come from the
+post-process devices planned in `research/art-style.md`. No clapperboard sound: too heavy-handed.
+This replaces the old "dream fuzz": it's the implant syncing in.
+
+**Sound:** the player talks to the client out loud, so voice stays clear. The room's own sounds
+carry the mood (rain on the window, the dream hum in a take), and music stays out of the takes.
+The full list, with what's kept and its timing, is in `audio/sound-list.md`.
 
 ## Pre-roll: "NO SIGNAL"
 
@@ -208,9 +219,11 @@ It looks like the game, not a menu. Start cuts to black, then the cold open.
 
 A Cinematic Sequence through a small street set and into the room, narrated by the director.
 
-1. **The flyer.** The camera pans down a wet wall to a glossy premium ad, or a studio job
-   posting with a "rejected" stamp or his crumpled application. Smooth, ad-like music.
-2. **The cut.** Hard cut on "That's not me." The music drops to rain and a buzzing sign.
+1. **The poster.** The camera drifts down a wet wall over a glossy Wonderwell poster ("MAKE
+   DREAMS HAPPEN"), the premium studio, to the Wonderwell ad jingle.
+2. **The cut.** On "That's not me" the jingle stops dead, leaving only rain, and the camera
+   tracks right past the director's photocopied flyer to a hand-made HELP WANTED sign. The cut
+   is in the sound; the camera keeps moving (Chip's camera path, `art/style-test/runs.md`).
 3. **The truth.** A cheap implant ad peeling off the wall, a warning sticker, someone slumped
    in a doorway.
 4. **His place.** The camera pushes into the back room: posters, the recliner, cables, the
@@ -260,7 +273,7 @@ model and log it in `assets.md`.
      to the log and the client's context.
    - **Inject items:** up to 2 from the case file (for example a music box, a dog).
    You direct; the director only advises. The player keeps the puzzle.
-4. **Run the take.** The slate, the room dims, the readout takes over. The loop restarts from
+4. **Run the take.** House lights down, the projector, the slate, the readout takes over. The loop restarts from
    the top with your changes. Speak in role to the client; the dialogue drives the take forward.
 5. **Last line.** The take runs toward the moment the loop always ends (the lights going out).
    When it gets there, you get one last line or action before the take is judged.
@@ -386,9 +399,9 @@ only live feedback before the verdict: it tells the player they're in trouble, n
 **How it looks (3 levels, all switchable from Verse):** one Post Process device per level (for
 example light *Vignette*, then *Desolate*, then *Horror Movie* plus *Simple Blur*), blended in
 and out with `BlendInForAll`/`BlendOutForAll`, since Verse can't set a device's strength. The
-room lamp dims with `customizable_light_device.DimLight`. The vitals trace on the screen speeds
-up, and the log text can start to corrupt at the top level. Room tone and the client's breathing
-can rise with it.
+room's light overlays dim. The vitals trace on the screen speeds up (silently: no vitals beep),
+and the log text can start to corrupt at the top level. A low drone thickens over the three
+levels, and the client's chest piece breathes faster.
 
 **In the slice:** dream 3 subverts it. The take passes and the haze clears, then it floods back
 to maximum when the AI breaks in, even though the player did everything right.
@@ -567,26 +580,34 @@ are working names.
   Des heard: the way we talk is wrong. It glitches and makes him stutter, mostly on footing
   words, because he fights his own home speech. The stutter rises with distress, so the player
   hears the danger before the haze shows it.
-- **The hero:** he uses the implant to be the hero of a little kids' superhero show, and is
-  ashamed of liking it at 13. The show's name is still open: "Miracle Man" is too close to an
-  existing comic, so pick an invented name and search it.
-- **His father:** his hero, mostly absent, working a string of dead-end jobs up-layer to keep
-  the house. Leaves before Des wakes, with the same line every morning.
-- **His mother:** keeps the Footings' traditions (suggested: lamp nights, where families hang
-  hand-made lamps and tell who carried the light down). Des loved them and now won't let her
-  mention them near school.
+- **The hero:** he uses the implant to be **Gale Rider**, a kids' show (ages 5 to 8 on the box)
+  about a boy from under the clouds who learns to fly, and is ashamed of liking it at 13. The
+  show's catchphrase is "The wind's on my side!" One web search found no clash; Fortnite
+  Discover and trademarks are not checked yet. Gale Rider is his escape.
+- **His father, Ansel:** his hero. Moved the family up for the school placement and a flat with
+  a window, and works three jobs to keep it: a better life, at the cost of their traditions and
+  of being there. Leaves before Des wakes, with the same goodbye at the door every morning:
+  "Keep yer brann lit. I'll bring the day down."
+- **His mother, Maren:** a night cleaner who keeps the Footings' traditions, above all
+  brann-hang, the winter night when families hang hand-made lamps (a brann is a light) and tell
+  who carried the light down. Des loved it and now won't let her mention it near school. The
+  brann is home, a separate thread from Gale Rider.
+- **The cape:** his father's carrier's cloak, handed down father to son and embroidered with a
+  brann for every Varro carrier. Ansel gave it to him at seven to play Gale Rider in. Des wears it
+  inside out so nobody sees the embroidery, with the hem cut ragged like the hero's cape.
 
 **His three dreams:**
 
 | Layer | The loop | What it reveals |
 |---|---|---|
-| **1. Surface** | As the hero, he lands in front of the whole year at an assembly, opens his mouth for the catchphrase, stutters, and the laughter puts the lights out. | His catchphrase isn't the show's. It's his father's line leaving for work. The hero is his dad. |
+| **1. Surface** | As Gale Rider, he lands in front of the whole year at an assembly, opens his mouth for the catchphrase, stutters, and the laughter puts the lights out. | His catchphrase isn't the show's. It's his father's goodbye at the door. The hero is his dad, and the cape is his father's cloak. |
 | **2. Under it** | The day he got the implant. His father, proud, fitting it: "Now you'll sound like them." | The stutter makes sense: the implant chokes on the words his family gave him. |
 | **3. Core** | The school gate. His mother calls to him in footing talk, holding a lamp, and he walks past as if he doesn't know her. | What he's never faced is what he did to her, not what the class did to him. |
 
 **Planted oddities for the case file:** speech faults cluster at dinner time; no faults at all
-during hero play; the cape is sewn from lamp-night cloth; the catchphrase isn't one the show
-ever used.
+during hero play; the cape is old dark wool worn inside out; the catchphrase isn't one the show
+ever used; the household hung lamps at brann-hang last winter, one with his name, and he went to
+none. The full staged fact sheet is in `writing/des/case-file.md`.
 
 **Directing him:** casting as a teacher (safe), a classmate (specific if it's the right one), his
 father (strongest and riskiest: promise what Dad can't keep and the dream turns), or the hero
@@ -609,8 +630,8 @@ What we ship for the jam: one client (Des, see above), three dreams, ending on a
 The Nell examples in the steps below stand for Des's equivalents.
 
 1. **Cold open.** The "NO SIGNAL" pre-roll with the mic check, then the director's narration
-   over the flyer, the hard cut, the street and his room. Lands in first person at the desk,
-   and the title boots up on the monitor.
+   over the Wonderwell poster, the jingle's hard cut and the track past his flyer, the street and
+   his room. Lands in first person at the desk, and the title boots up on the monitor.
 2. **Tutorial.** The director instructs you, his assistant, on the screen: how to read a case
    file, how the dream debugger shows a loop, and how to set up and run a take. Short and in his
    voice; it can run alongside dream 1 rather than before it.
@@ -625,7 +646,7 @@ The Nell examples in the steps below stand for Des's equivalents.
    positive line, and then the loop doesn't end. The AI breaks in: log lines that aren't log
    lines, the vitals spike, the screen glitches, then its voice. It wants to see more.
 6. **The director reacts.** For the first time he's not dry and in control ("That's not us.
-   Pull her out. Pull her out!").
+   Pull him out. Pull him out!").
 7. **Thank-you screen.** Cut to black, a thank-you and credits card, and a hint of more to come.
 
 **Build notes:**
