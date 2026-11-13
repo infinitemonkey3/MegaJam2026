@@ -24,15 +24,17 @@ play session yet.
 - `game_state`: `Phase`, `MaybePlayer`, `VoiceMode` (`voice_mode{Mic, Presets}`),
   `PhaseChangedEvent`. `game_phase`, `GamePhaseName`, `GamePhaseIndex`.
 - `input_router`: `Bind(Player, DevKeys)`; `NextEvent` (Crouch), `ConfirmEvent` (Jump),
-  `SkipEvent` (Sprint, dev keys only).
+  `SkipEvent` (Sprint, dev keys only), `AnyKeyEvent` (movement, Jump, Crouch, Sprint, Interact,
+  Reload, both mouse buttons: Verse only hears Fortnite's input actions, not raw keys).
 
 ### Cold open (`cold_open.verse`)
-- `cold_open`: `RunPreRoll` (NO SIGNAL on the monitor, the mic check, the Talk or Preset-lines
-  choice, which doubles as Start), `RunColdOpen` (plays the Level Sequence and swaps to the desk
+- `cold_open`: `RunPreRoll` (a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
+  ended by `input_router.AnyKeyEvent`; lifted under the sequence's own fade from black),
+  `RunColdOpen` (plays the Level Sequence and swaps to the desk
   camera underneath it), `RunBoot` (DEAD AIR, the boot log, the tutorial line). Each has an
   `End*`/`SkipToDesk` that leaves cameras and sounds right if the phase was skipped.
-- `cold_open_rig`: the device references it uses. Placeholder text: `NoSignalTitle`,
-  `MicPrompt`, `VoiceMenuTitle`, `BootLines`.
+- `cold_open_rig`: the device references it uses. Placeholder text: `PressAnyKeyText`,
+  `DeadAirTitle`, `BootLines`.
 
 ### Data (`dream_data.verse`)
 - `dead_air_log`: the log channel everything prints to (`GetVerseOutput`). Lines are tagged
@@ -108,15 +110,14 @@ play session yet.
   asset kept after the test-content purge. It and the spike screen entities go when the real
   screen lands.
 - **The player never has a body.** `game_director` hides the player's character the moment it
-  exists (`HoldPlayer`), before the pre-roll camera goes on, so the first thing seen is NO
-  SIGNAL. **Don't put the character in stasis:** `PutInStasis` also blocks Crouch and Jump,
-  which drive every menu, and the game sits waiting with no control. Nothing waits on the client NPC before the opening: the mic check
-  finds its voice channel whenever the NPC is ready, and the client phase waits for it then.
+  exists (`HoldPlayer`), before the black start screen goes on. **Don't put the character in stasis:** `PutInStasis` also blocks Crouch and Jump,
+  which drive every menu, and the game sits waiting with no control. Nothing waits on the client
+  NPC before the opening; the client phase waits for it.
+- The pre-roll no longer has the design's mic check or the Talk/Preset-lines choice (Chip
+  wanted a plain black start screen). `game_state.VoiceMode` stays `Mic` until that choice gets
+  a new home.
 - Only one `take_flow` may run: it's started by `game_director`, so keep its `RunOnBegin` off
   whenever a director is placed.
-- The pre-roll's "signal detected" check listens on the client's voice channel
-  (`BeginBroadcastEvent`). With no `client_npc_behavior` NPC in the level it never starts
-  listening; the voice choice still works.
 - Verse devices render as consoles in a play session too. Keep `Game Director` and `Take Flow`
   out of every camera's view (they sit behind the cameras, at +X).
 - `audio_player_device` has no finished event, so `cold_open.TutorialSeconds` is the WAV's
@@ -184,7 +185,9 @@ Cold open and game shell (43.10 lines):
 | `player_input` | `AddInputMapping<native><public>(InputMapping:input_mapping):void`; `GetInputEvents<native><public>(ActionToBind:input_action(t) where t:type):input_events(t)` | V:3653, 3659 |
 | `input_events.TriggerActivationEvent` | `TriggerActivationEvent<native><public>:listenable(tuple(player, t))` | V:3623 |
 | `Character` inputs | `TraversalMapping<public>:input_mapping`; `Crouch`, `Sprint`, `Jump<public>:input_action(logic)` | FN:35, 38, 41, 44 |
-| `voice_channel.BeginBroadcastEvent` | `BeginBroadcastEvent<public>():listenable(agent)` | V:3871 |
+| `GetPlayerUI`, `player_ui` | `GetPlayerUI<native><public>(Player:player)<transacts><decides>:player_ui`; `AddWidget<native><public>(Widget:widget, Slot:player_ui_slot):void`; `RemoveWidget<native><public>(Widget:widget):void` | UE:1837, 1845, 1848 |
+| `canvas_slot`, `color_block`, `text_base` | `canvas_slot` (`Anchors`, `Offsets`, `SizeToContent`, `Alignment`, `Widget`); `color_block` (`DefaultColor`, `DefaultOpacity`); `text_base` (`DefaultText`, `DefaultTextColor`, `DefaultJustification`) | UE:2007, 2038, 2231 |
+| `Character` extra inputs | `InteractMapping`, `RangedWeaponMapping:input_mapping`; `Interact`, `Reload`, `WeaponPrimary`, `WeaponSecondary:input_action(logic)`; `Move:input_action(vector3)` | FN:18-60 |
 | `entity.FindDescendantEntities` | `(InEntity:entity).FindDescendantEntities<native><public>(entity_type:castable_subtype(entity))<transacts>:generator(entity_type)` | V:766 |
 | `creative_device.GetSimulationEntity` | `(CreativeDevice:creative_device).GetSimulationEntity<native><public>()<transacts><decides>:entity` | FN:9045 |
 | `GetPlayspace`, `GetPlayers` | `(CreativeObject:creative_object_interface).GetPlayspace<native><public>()<transacts>:fort_playspace`; `GetPlayers<public>()<transacts>:[]player` | FN:9116, 1615 |

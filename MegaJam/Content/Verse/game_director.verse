@@ -64,7 +64,7 @@ game_director := class(creative_device):
         if (Runs[game_phase.PreRollPhase]):
             EnterPhase(game_phase.PreRollPhase)
             race:
-                Opening.RunPreRoll(State, Player, Takes)
+                Opening.RunPreRoll(Player)
                 Input.SkipEvent.Await()
             Opening.EndPreRoll()
 

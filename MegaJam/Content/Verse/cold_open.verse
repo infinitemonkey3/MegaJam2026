@@ -1,23 +1,23 @@
 using { /Fortnite.com/Devices }
+using { /Fortnite.com/UI }
+using { /Verse.org/Colors }
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /UnrealEngine.com/Temporary/SpatialMath }
+using { /UnrealEngine.com/Temporary/UI }
 
 # The pre-roll and the cold open (docs/implementation-plan.md, section 2). game_director runs
 # RunPreRoll, RunColdOpen and RunBoot in order, each raced against the dev skip, and calls the
 # matching End* function afterwards either way, so a skipped phase still leaves the cameras
 # and sounds right.
 #
-# The pre-roll is the desk monitor seen up close through MonitorCamera: a dead broadcast, the
-# mic check and the voice choice. The cinematic is one Level Sequence (camera path, narration,
-# jingle and rain on its own tracks). It ends on the desk view, where the same monitor boots.
+# The pre-roll is a solid black full screen with "PRESS ANY KEY TO START" (Chip, 2026-11-13).
+# The cinematic is one Level Sequence (camera path, narration, jingle and rain on its own
+# tracks); it fades in from black, so the black screen lifts under it without a seam. It ends
+# on the desk view, where the monitor boots.
 
 # Authored placeholder text; the writing stream's versions replace it.
-NoSignalTitle<localizes>:message = "NO SIGNAL"
-MicPrompt<localizes>:message = "Say something."
-MicHeard<localizes>:message = "SIGNAL DETECTED"
-VoiceMenuTitle<localizes>:message = "HOW DO YOU TALK TO THEM?  [crouch] change  [jump] start"
-TalkOption<localizes>:message = "Out loud (microphone)"
-PresetOption<localizes>:message = "Preset lines (no microphone)"
+PressAnyKeyText<localizes>:message = "PRESS ANY KEY TO START"
 DeadAirTitle<localizes>:message = "DEAD AIR"
 BootLines:[]string = array:
     "BOOT dbg_link / BUILD unlicensed"
@@ -48,66 +48,47 @@ cold_open := class:
     TutorialSeconds:float = 5.6
 
     var OnDesk:logic = false
+    var MaybeBlackScreen:?canvas = false
 
     # ---- Pre-roll ----
 
-    # Takes is only used to find the client NPC's voice channel for the mic check, whenever the
-    # NPC finishes setting up; the pre-roll doesn't wait for it.
-    RunPreRoll(State:game_state, Player:player, Takes:take_flow)<suspends>:void =
-        Rig.MonitorCamera.AddTo(Player)
+    # Solid black with "PRESS ANY KEY TO START"; any key the input router hears starts the game.
+    # Voice mode stays at its default (mic); the preset-lines choice needs a new home.
+    RunPreRoll(Player:player)<suspends>:void =
+        Rig.MonitorCamera.AddTo(Player)    # a fixed view under the black, so nothing shows when it lifts
+        ShowBlackScreen(Player)
         Rig.NoSignalSound.Play()
-        Screen.ClearLog()
-        Screen.SetTitle(NoSignalTitle)
-        Screen.AppendLogLine(MicPrompt)
-        race:
-            WatchMic(Takes)
-            ChooseVoiceMode(State)
+        Input.AnyKeyEvent.Await()
         Logger.Print("[cold_open] pre-roll done")
-
-    # Shows "SIGNAL DETECTED" whenever someone speaks on the client's voice channel. In a solo
-    # island that's the player. Waits for the client NPC to set up first, however long that
-    # takes. Unverified: whether a player broadcasts on that channel before anyone is their
-    # conversation target. Never returns.
-    WatchMic(Takes:take_flow)<suspends>:void =
-        var MaybeControl:?client_control = false
-        loop:
-            if (Found := Takes.FindClientControl[]):
-                set MaybeControl = option{Found}
-                break
-            Sleep(0.5)
-        if (Control := MaybeControl?):
-            Logger.Print("[cold_open] mic check listening on the client's voice channel")
-            loop:
-                Control.VoiceChannel.BeginBroadcastEvent().Await()
-                Screen.AppendLogLine(MicHeard)
-
-    # The voice choice doubles as the start prompt: confirming a choice starts the game.
-    ChooseVoiceMode(State:game_state)<suspends>:void =
-        Options := array{TalkOption, PresetOption}
-        var Highlighted:int = 0
-        loop:
-            Screen.SetMenu(VoiceMenuTitle, Options, Highlighted)
-            Confirmed := race:
-                block:
-                    Input.ConfirmEvent.Await()
-                    true
-                block:
-                    Input.NextEvent.Await()
-                    false
-            if (Confirmed?):
-                break
-            set Highlighted = if (Highlighted = 0) then 1 else 0
-        set State.VoiceMode = if (Highlighted = 0) then voice_mode.Mic else voice_mode.Presets
-        if (Highlighted = 0):
-            Logger.Print("[cold_open] voice mode: mic")
-        else:
-            Logger.Print("[cold_open] voice mode: presets")
 
     EndPreRoll():void =
         Rig.NoSignalSound.Stop()
-        Screen.SetMenu(EmptyText, array{}, 0)
-        Screen.ClearLog()
-        Screen.SetTitle(EmptyText)
+
+    ShowBlackScreen(Player:player):void =
+        if (not MaybeBlackScreen?, PlayerUI := GetPlayerUI[Player]):
+            Prompt := text_block:
+                DefaultText := PressAnyKeyText
+                DefaultTextColor := NamedColors.White
+                DefaultJustification := text_justification.Center
+            Black := canvas:
+                Slots := array:
+                    canvas_slot:
+                        Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.0}, Maximum := vector2{X := 1.0, Y := 1.0}}
+                        Offsets := margin{}
+                        Widget := color_block{DefaultColor := NamedColors.Black, DefaultOpacity := 1.0}
+                    canvas_slot:
+                        Anchors := anchors{Minimum := vector2{X := 0.5, Y := 0.5}, Maximum := vector2{X := 0.5, Y := 0.5}}
+                        Alignment := vector2{X := 0.5, Y := 0.5}
+                        SizeToContent := true
+                        Widget := Prompt
+            # InputMode None: the overlay takes no input, so the keys still reach the input router.
+            PlayerUI.AddWidget(Black, player_ui_slot{ZOrder := 1000, InputMode := ui_input_mode.None})
+            set MaybeBlackScreen = option{Black}
+
+    HideBlackScreen(Player:player):void =
+        if (Black := MaybeBlackScreen?, PlayerUI := GetPlayerUI[Player]):
+            PlayerUI.RemoveWidget(Black)
+        set MaybeBlackScreen = false
 
     # ---- Cinematic ----
 
@@ -115,8 +96,10 @@ cold_open := class:
         Rig.Sequence.Play(Player)
         # Swap to the desk camera underneath the sequence's camera, one tick in, so the pre-roll
         # view never shows between the two and the sequence's last frame hands straight over.
+        # The sequence opens on its own fade from black, so the black screen lifts under it.
         Sleep(0.0)
         GoToDesk(Player)
+        HideBlackScreen(Player)
         race:
             Rig.Sequence.StoppedEvent.Await()
             block:
@@ -127,6 +110,7 @@ cold_open := class:
     EndColdOpen(Player:player):void =
         Rig.Sequence.GoToEndAndStop(Player)
         GoToDesk(Player)
+        HideBlackScreen(Player)
         Rig.RoomRain.Play()
 
     GoToDesk(Player:player):void =
@@ -152,6 +136,7 @@ cold_open := class:
 
     # For debug starts after the cold open: put the player at the desk as if it had played.
     SkipToDesk(Player:player):void =
+        HideBlackScreen(Player)
         GoToDesk(Player)
         Rig.RoomRain.Play()
         Screen.SetTitle(DeadAirTitle)
