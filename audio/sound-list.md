@@ -71,7 +71,7 @@ trimming the jingle's opening.
 |---|---|---|---|---|---|
 | `MUS_Wonderwell_Jingle` | The studio's ad jingle (music model) | 15 s | no | A | A glossy, smooth luxury advertisement jingle: warm synth pads, soft bells, an airy wordless female vocal, gentle uplifting chord progression, polished and expensive, no lyrics. |
 | `AMB_Street_Rain` | Street rain, wider and wetter | 30 s | yes | - | Rain falling on a narrow city back street at night, water running in gutters, drips from awnings, a puddle splash, distant traffic, no voices. |
-| `SFX_Jingle_Cut` | The hard cut on "That's not me" | n/a | n/a | - | No file: the jingle stops dead and the street rain and the buzzing sign carry on. |
+| `SFX_Jingle_Cut` | The hard cut on "That's not me" | n/a | n/a | - | No file: the jingle stops dead and only the street rain carries on (the buzzing sign is the AI's now). |
 
 ## The debug screen
 
