@@ -12,7 +12,7 @@ using { /Verse.org/Simulation }
 EmptyText<localizes>:message = ""
 
 debug_screen := interface:
-    # The screen's title line: "NO SIGNAL", "DEAD AIR", the client's name.
+    # The screen's title line: "DREAM DEBUGGER", "TAKE 2", the client's name.
     SetTitle(Title:message):void
 
     # Empties the log.

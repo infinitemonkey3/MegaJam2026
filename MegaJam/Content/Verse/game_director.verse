@@ -19,6 +19,8 @@ game_director := class(creative_device):
     @editable DeskCamera:gameplay_camera_fixed_point_device = gameplay_camera_fixed_point_device{}
     @editable ColdOpenSequence:cinematic_sequence_device = cinematic_sequence_device{}
     @editable RoomIntroSequence:cinematic_sequence_device = cinematic_sequence_device{}
+    # The dream debugger: the in-world screen entity inside the monitor.
+    @editable DebuggerScreen:DreamDebugger.UW_DreamDebugger_entity = DreamDebugger.UW_DreamDebugger_entity{}
     @editable NoSignalSound:audio_player_device = audio_player_device{}
     @editable RoomRain:audio_player_device = audio_player_device{}
     @editable BootChime:audio_player_device = audio_player_device{}
@@ -49,9 +51,12 @@ game_director := class(creative_device):
         HoldPlayer(Player)
         Input.Bind(Player, DevKeys)
 
-        # The debug screen is a full-screen overlay until the real screen and 2D room exist.
+        # The black full-screen overlay is the start screen and covers hand-offs; everything the
+        # player reads after that is on the dream debugger in the monitor.
         Screen := overlay_screen{Input := Input}
-        set Takes.Screen = Screen
+        Debugger := dream_debugger_screen{Entity := DebuggerScreen, Input := Input}
+        Debugger.Clear()
+        set Takes.Screen = Debugger
 
         Opening := cold_open:
             Rig := cold_open_rig:
@@ -65,6 +70,7 @@ game_director := class(creative_device):
                 TutorialLine := TutorialLine
             Input := Input
             Screen := Screen
+            Debugger := Debugger
 
         if (Runs[game_phase.PreRollPhase]):
             EnterPhase(game_phase.PreRollPhase)
@@ -75,14 +81,19 @@ game_director := class(creative_device):
 
         if (Runs[game_phase.ColdOpenPhase]):
             EnterPhase(game_phase.ColdOpenPhase)
+            # Space (Jump, the router's confirm) skips the cold open to the room intro (Chip,
+            # 2026-11-13), for players and for iterating on the room.
             race:
                 Opening.RunColdOpen(Player)
                 Input.SkipEvent.Await()
+                Input.ConfirmEvent.Await()
             Opening.EndColdOpen(Player)
             race:
                 Opening.RunRoomIntro(Player)
                 Input.SkipEvent.Await()
             Opening.EndRoomIntro(Player)
+            # TRACKING TEST: a box locked to the monitor by projection, once the camera is at rest.
+            spawn{ monitor_tracker{}.Run(Player) }
             race:
                 Opening.RunBoot()
                 Input.SkipEvent.Await()
@@ -94,8 +105,6 @@ game_director := class(creative_device):
         # The tutorial and the room between dreams come here (milestone 4).
 
         EnterPhase(game_phase.ClientPhase)
-        # The take menus still live on the black overlay until the in-world screen exists.
-        Screen.Show(Player)
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
             Takes.RunClient(MakePlaceholderClient(), Control)
