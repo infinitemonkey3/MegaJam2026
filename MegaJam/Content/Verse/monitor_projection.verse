@@ -14,6 +14,17 @@ using { /Verse.org/SpatialMath }
 # Measured in the first session: those fit the projection exactly. The eye that
 # DeprojectViewportToWorld returns does not (it made the screen 12% too small), so it isn't used.
 
+# Room_Monitor: an 80 cm plane at (-235, -243, 115), facing the camera (yaw -90).
+MakeMonitorPanel()<transacts>:world_panel =
+    world_panel:
+        CentreX := -235.0
+        CentreY := -243.0
+        CentreZ := 115.0
+        HalfWidth := 40.0
+        HalfHeight := 40.0
+        AxisX := 0.0
+        AxisY := 1.0
+
 monitor_rect := struct:
     Left:float
     Top:float

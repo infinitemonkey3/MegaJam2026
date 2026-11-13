@@ -52,6 +52,9 @@ play session yet.
   `inject_item`, `risk_level`, `take_setup`. Authored text is `string`.
 - `MakeTakeSetup(Role, Settings, Items)`: builds a `take_setup` capped at `MaxSettings` (2) and
   `MaxItems` (2). `SetupHazeBase(Setup)`: haze base level from the riskiest choice.
+- `MakeDesClient()`: Des, the slice's patient, with the case file's Screen section from
+  `writing/des/case-file.md`; the debugger shows him. Only his dream 1 title is real; the take
+  flow still runs `MakePlaceholderClient()`.
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
 
@@ -100,9 +103,17 @@ play session yet.
   `DeprojectViewportToWorld` reports doesn't match the camera (it made the screen 12% small),
   so it isn't used; valid only while the desk camera is the view. Kept in its own file because
   `/Verse.org/SpatialMath` and the UI's `/UnrealEngine.com/Temporary/SpatialMath` clash.
-- `monitor_tracker` (`monitor_tracker.verse`): TRACKING TEST, a magenta box on the monitor once
-  the room intro ends. Matched the monitor in play (2026-11-13). Replace with the real
-  screen-space dream debugger.
+- `dream_debugger_ui` (`dream_debugger_ui.verse`): the interactive dream debugger, shown over
+  the monitor's glass hole once the boot has played (placed by `MakeMonitorPanel().ProjectRect`).
+  Two layers: the text is `UW_DebuggerText` (`Content/DreamDebugger/`), a UMG widget with 18
+  NotoSans rows (`Row00Text`..`Row17Text`, row 4 is `Tab0Text`..`Tab2Text`) in a Scale Box;
+  input is invisible Verse UI buttons over the selectable rows (mouse, arrow keys, D-pad), whose
+  highlight moves the `>` cursor. Tabs: CASE FILE (paged, `[ MORE ]` on row 15), DREAMS (INVOKE
+  lines) and ASSISTANT (face plus preset questions). Invoking and asking only log so far. Shown
+  with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
+  background (they get the camera's perspective).
+- Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
+  blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line

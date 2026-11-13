@@ -92,14 +92,22 @@ game_director := class(creative_device):
                 Opening.RunRoomIntro(Player)
                 Input.SkipEvent.Await()
             Opening.EndRoomIntro(Player)
-            # TRACKING TEST: a box locked to the monitor by projection, once the camera is at rest.
-            spawn{ monitor_tracker{}.Run(Player) }
             race:
                 Opening.RunBoot()
                 Input.SkipEvent.Await()
             Opening.EndBoot()
         else:
             Opening.SkipToDesk(Player)
+
+        # The interactive dream debugger, over the monitor now that the camera is at rest and
+        # the boot has played on the in-world screen behind it.
+        DebuggerUI := dream_debugger_ui{Client := MakeDesClient()}
+        if (Monitor := MakeMonitorPanel().ProjectRect[Player]):
+            # The in-world screen stays as the dark fill behind; blank its boot text first.
+            Debugger.Clear()
+            DebuggerUI.Show(Player, Monitor)
+        else:
+            Logger.Print("[game] couldn't place the dream debugger over the monitor", ?Level := log_level.Warning)
 
         EnterPhase(game_phase.RoomPhase)
         # The tutorial and the room between dreams come here (milestone 4).

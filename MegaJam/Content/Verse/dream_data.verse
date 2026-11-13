@@ -149,6 +149,65 @@ SetupHazeBase(Setup:take_setup)<transacts>:int =
     Highest
 
 # ---------------------------------------------------------------------------------------------
+# Des, the slice's patient (writing/des/case-file.md). The case file is the file's "Screen"
+# section, as the dream debugger shows it: header, personality, likes, dislikes, key moments
+# (ANOMALY flags kept, the "Pays off" notes for us left out) and the loop note. The hidden fact
+# sheet unlocks by dream and isn't here. Only dream 1 is written; dreams 2 and 3 are the
+# placeholder dream under locked titles, and their loop data is still Nell's until the take
+# flow is moved onto Des.
+# ---------------------------------------------------------------------------------------------
+
+MakeDesClient()<transacts>:client =
+    client:
+        Id := "des"
+        Name := "VARRO, DESSEN  AKA \"DES\""
+        CaseFile := array:
+            "SUBJECT  VARRO, DESSEN  AKA \"DES\""
+            "AGE  13"
+            "IMPLANT  VOXA CLEAR / SPEECH ASSIST / 2ND-HAND / WARRANTY NONE"
+            "FAULT  PERSISTENT SESSION FAULT / 11 NIGHTS"
+            "PACKAGE  HERO HOUR (KIDS) / LICENSED: GALE RIDER"
+            "BROUGHT IN  VARRO, MAREN (MOTHER)"
+            "-- PERSONALITY --"
+            "P-01  Quiet at school. Loud at home, before."
+            "P-02  Watches a room before he speaks in it."
+            "P-03  Funny when he forgets to be careful."
+            "P-04  Hates being singled out. Fine in a crowd that's doing the same thing."
+            "P-05  Answers to \"Des\". Teachers use \"Dessen\"."
+            "-- LIKES --"
+            "L-01  Gale Rider. A kids' show. Ages 5 to 8 on the box. He is 13."
+            "L-02  Drawing Gale Rider, in the margins of every school book."
+            "L-03  Being in on a joke. Not being the joke."
+            "L-04  His father. Listed by subject as \"favorite person\". Same answer since age 6."
+            "L-05  Flying, in the hero package. Logged hours: 214."
+            "-- DISLIKES --"
+            "D-01  Assemblies. Absent from 6 of the last 9."
+            "D-02  Being asked to repeat himself."
+            "D-03  His mother talking footing near the school gate."
+            "D-04  Being told he's doing fine."
+            "-- KEY MOMENTS --"
+            "K-01  Born in the Footings, Lower Varr ward. No sky on record."
+            "K-02  1 yr ago. Household moved upside, to the surface, for the father's work. Assistance placement, Corran Heights School. Eighth grade."
+            "K-03  8 mo ago. After the move. Implant fitted. Gift from father, VARRO, ANSEL. Reason given at purchase: \"So he sounds like them.\""
+            "K-04  ANOMALY  Speech faults since fitting: 1,140. 71% between 18:00 and 19:30."
+            "K-05  ANOMALY  Speech faults during hero play: 0."
+            "K-06  ANOMALY  Hero catchphrase, as spoken by subject: \"Keep yer brann lit. I'll bring the day down.\" No match in show transcripts, 412 episodes."
+            "K-07  ANOMALY  Hero package costume: cape. Material: old dark wool, hem cut ragged, worn inside out. Embroidery on the hidden face, not read. Not licensed merchandise."
+            "K-08  Father works upside. Three jobs on record. Leaves home 05:10, before subject wakes. Brann-hang attendance, last 2 winters: 0."
+            "K-09  ANOMALY  Brann-hang, last winter: household Varro hung 3 lamps. One tag reads \"DESSEN\". Subject not present."
+            "-- LOOP --"
+            "LOOP  SCENE school_assembly / START T 08:40 / END T 08:44 / END STATE lights=off"
+            "RUNS  11 NIGHTS / NO VARIATION"
+            "VITALS  HEART RATE CLIMBS FROM 08:41 / SPEECH FAULTS CLIMB WITH IT"
+            "AUDIO  CROWD LAUGHTER / SOURCE NOT RENDERED"
+            "CAST  1 PRINCIPAL / 120 EXTRAS, FACES NOT RENDERED"
+            "DEPTH  3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED"
+        Dreams := array:
+            MakePlaceholderDream("des_d1", "LAYER 1  Catchphrase  /  school_assembly 08:40", "The catchphrase is his father's goodbye.")
+            MakePlaceholderDream("des_d2", "LAYER 2  [LOCKED]", "The implant chokes on the words his family gave him.")
+            MakePlaceholderDream("des_d3", "LAYER 3  [LOCKED]", "What he never faced is what he did to his mother at the gate.")
+
+# ---------------------------------------------------------------------------------------------
 # Placeholder content, from the Nell paper demo in docs/design.md. The writing stream's text in
 # writing/ replaces this. The same dream is used three times so the three-dream flow can run.
 # ---------------------------------------------------------------------------------------------
