@@ -20,6 +20,9 @@ no real community. Not shown as a list; the words appear in the file and in his 
 - `the day`: daylight, which the Footings never get. "Bring the day down" is what you say to
   someone going up-layer to work.
 - `brann-hang`: lamp night. Families hang hand-made lamps and tell who carried the light down.
+- `carrier's cloak`: a long dark cloak worn at brann-hang by whoever carries the family's brann.
+  Handed down, father to son. Embroidered on the outside with a small brann for every carrier
+  before, and their names.
 
 ## Screen
 
@@ -60,17 +63,22 @@ BROUGHT IN VARRO, MAREN (MOTHER)
 ### Key Moments
 
 - `K-01` Born in the Footings, Lower Varr ward. No sky on record.
-- `K-02` 1 yr ago. Assistance placement, Corran Heights School, upside. Eighth grade.
-- `K-03` 8 mo ago. Implant fitted. Gift from father, VARRO, ANSEL. Reason given at purchase:
+- `K-02` 1 yr ago. Household moved upside, to the surface, for the father's work. Assistance
+  placement, Corran Heights School. Eighth grade.
+- `K-03` 8 mo ago. After the move. Implant fitted. Gift from father, VARRO, ANSEL. Reason given at purchase:
   "So he sounds like them."
 - `K-04` `ANOMALY` Speech faults since fitting: 1,140. 71% between 18:00 and 19:30.
   → Pays off in dream 2.
 - `K-05` `ANOMALY` Speech faults during hero play: 0. → Pays off in dream 1.
 - `K-06` `ANOMALY` Hero catchphrase, as spoken by subject: "Keep yer brann lit. I'll bring the
   day down." No match in show transcripts, 412 episodes. → Pays off in dream 1.
-- `K-07` `ANOMALY` Hero package costume: cape. Material: hand-dyed cloth, not licensed
-  merchandise. → Pays off in dream 3.
+- `K-07` `ANOMALY` Hero package costume: cape. Material: old dark wool, hem cut ragged, worn
+  inside out. Embroidery on the hidden face, not read. Not licensed merchandise.
+  → Pays off in dream 1 (whose it is) and dream 3 (why it's inside out).
 - `K-08` Father works upside. Three jobs on record. Leaves home 05:10, before subject wakes.
+  Brann-hang attendance, last 2 winters: 0.
+- `K-09` `ANOMALY` Brann-hang, last winter: household Varro hung 3 lamps. One tag reads
+  "DESSEN". Subject not present. → Pays off in dream 3.
 
 ### Loop Note
 
@@ -92,6 +100,8 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 - `U1-02` `K-06` ANOMALY CLEARED. The catchphrase is his father's goodbye.
 - `U1-03` `K-05` ANOMALY CLEARED. In hero play he is his father. The implant doesn't fight it.
 - `U1-04` LAYER 2 UNLOCKED. SCENE varro_kitchen / T 18:40 / DATE fitting_day.
+- `U1-05` `K-07` PARTIAL. Source object identified: carrier's cloak, VARRO, ANSEL. Embroidery
+  still not read.
 
 ### After Dream 2
 
@@ -99,7 +109,7 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 
 ### After Dream 3
 
-- To write Friday. Clears `D-03` and `K-07`.
+- To write Friday. Clears `D-03` and `K-09`.
 
 ## Full Fact Sheet
 
@@ -111,8 +121,12 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
   meant. Did not laugh. Moved sets in year 8.
 - `F0-03` Assembly teacher: MS. ADEYEMI-ROSS. Head of year. Kind on record. Says "Dessen".
 - `F0-04` Subject's school speech: careful, upside accent. Home speech: footing.
-- `F0-05` Subject draws Gale Rider with a lamp in one hand. The show's Gale Rider carries nothing.
+- `F0-05` Subject draws Gale Rider climbing out of the top of the page. Never the ground under
+  him.
 - `F0-06` Mother: VARRO, MAREN. Night cleaner. Keeps the brann-hang every winter.
+- `F0-07` Father: VARRO, ANSEL. Moved the household up for the school placement and a flat
+  with a window. Works three jobs to keep it. Missed the last two brann-hangs: shifts. Wants
+  more for them than he had, and says so.
 
 ### Stage 1: Unlocked By Dream 1
 
@@ -120,22 +134,31 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
   lit. I'll bring the day down."
 - `F1-02` Des wakes up early most days to hear it. He keeps his eyes shut.
 - `F1-03` In hero play, Des is Gale Rider, but he says his father's line. The hero is his dad.
+- `F1-04` The cape is Ansel's carrier's cloak. He gave it to Des at seven, in the Footings, to
+  play Gale Rider in. "Every hero needs one."
 
 ### Stage 2: Unlocked By Dream 2
 
-- `F2-01` The fitting was at the kitchen table, at dinner. Ansel was proud. "Now you'll sound
-  like them."
+- `F2-01` The fitting was at the kitchen table of the new flat upside, at dinner, a few months
+  after the move. Ansel was proud. "Now you'll sound like them."
 - `F2-02` Des heard: the way we talk is wrong.
 - `F2-03` The implant tries to replace footing words. Des fights it. The fight is the stutter.
   Dinner is when the house talks footing.
+- `F2-04` Ansel saved four months for the implant. He meant it as the best thing he could give.
+  He thinks footing talk is part of what kept him on the bottom layer.
 
 ### Stage 3: Unlocked By Dream 3
 
-- `F3-01` Last winter, the school gate. Maren came up-layer with a brann for brann-hang. She
-  called to him in footing.
+- `F3-01` Last winter, the school gate. Maren came with a brann for brann-hang. She called to
+  him in footing.
 - `F3-02` He walked past her as if he didn't know her. His year was watching.
-- `F3-03` She cut up the brann-hang cloth that night and sewed him the cape. She never
+- `F3-03` At brann-hang she hung a lamp for him anyway, with his name on the tag. She never
   mentioned the gate.
+- `F3-04` The cloak's outside is embroidered with a brann for every Varro carrier, and their
+  names. Ansel's is the last. There's room for one more. Des wears it inside out so nobody at
+  school sees.
+- `F3-05` He cut the hem ragged to look like Gale Rider's cape. Maren didn't like it. "That
+  cloth carried the light down." He kept cutting.
 
 ## Dream Reveals
 

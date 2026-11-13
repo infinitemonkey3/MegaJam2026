@@ -138,7 +138,7 @@ element, and at most two items. Starting haze is the sum of `Haze`, capped at 2.
 - Risky: yes
 - Haze: 1
 - Log: `CAST visitor=ansel_varro role=father`
-- Context: `The visitor is your dad, Ansel. He talks footing, like at home. He should be at work upside. You've never seen him at school.`
+- Context: `The visitor is your dad, Ansel. He talks footing, like at home. He works three jobs so you can have a better life up here. He should be at work. You've never seen him at school.`
 - Why: `L-04`, `K-08`. The strongest choice and the riskiest. Triggers `C1 Staying`.
 
 #### cast_juno
@@ -222,13 +222,15 @@ element, and at most two items. Starting haze is the sum of `Haze`, capped at 2.
 
 #### item_cape
 
-- Label: `The cape`
+- Label: `The cape / dad's cloak`
 - Class: specific
 - Risky: no
 - Haze: 0
-- Log: `INJECT item=cape detail=handsewn`
-- Context: `Your cape is the one from home, the hand-dyed one, not the shop one.`
-- Why: `K-07`. His, and his family's. It pays off fully in dream 3.
+- Log: `INJECT item=cape src=carrier_cloak side=inside_out`
+- Context: `Your cape is your dad's old cloak from the Footings, not a shop one. He gave it to you to be Gale Rider in. You wear it inside out.`
+- Why: `K-07`. His dad's, so it backs up the dream 1 reveal. Why it's inside out (the
+  embroidery) and what his mother thought of the ragged hem are dream 3. If the visitor asks to
+  turn it right side out, that's a push on a painful memory: let it turn dark.
 
 #### item_work_cap
 
@@ -311,7 +313,7 @@ SESSION fault persists
 LAYER 2 detected / SCENE varro_kitchen / T 18:40 / DATE fitting_day
 ```
 
-The screen adds `U1-01` to `U1-04` from the case file.
+The screen adds `U1-01` to `U1-05` from the case file.
 
 ## Bad Ending
 
@@ -385,7 +387,18 @@ Prerecorded. The design's "her" lines become "him".
 - The fault cluster at dinner (`K-04`) and "So he sounds like them" (`K-03`): dream 2.
 - Why the implant overrides only footing words: the player hears it in every take. Dream 2
   explains it.
-- The hand-dyed cape (`K-07`), the brann (`item_brann`, `C2`) and his dislike of footing at the
+- The lamp hung for him at brann-hang (`K-09`), the brann (`item_brann`, `C2`) and his dislike of footing at the
   gate (`D-03`): dream 3.
-- Gale Rider carries a lamp in Des's drawings (`F0-05`) and not on the show: dream 3.
+- Gale Rider and the brann stay apart. The hero is escape (up, away, his dad's road); the brann
+  is his mother and the ground. Only his father crosses them: he gave Des his carrier's cloak to
+  play Gale Rider in (`K-07`, `F1-04`). Des turned it inside out to hide the embroidery and cut
+  the hem ragged, and his mother didn't like it (`F3-04`, `F3-05`): dream 3. Nothing else
+  mixes the two.
+- Timeline: born in the Footings; the cloak at seven; the move to the surface a year ago; the
+  implant a few months after the move.
+- In his drawings Gale Rider climbs out of the top of the page (`F0-05`): dream 2 can use it
+  when his dad says "Now you'll sound like them."
+- Ansel is never the villain. He wants a better life for them and works hard for it; what it
+  costs is the traditions and his being there (`F0-07`, `K-08`). In dream 2 his pride in the
+  implant is sincere. The player should understand him and still see what it cost Des.
 - Dream 1's log stays clean of the AI.
