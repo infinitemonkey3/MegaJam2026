@@ -32,6 +32,7 @@ art/
     cutout.py          magenta key, edge bleed, trim and fit to power-of-two (needs Pillow, numpy)
     client_parts.py    cuts the client's mouth flipbook and chest overlay from the recliner drawing
     fx_masks.py        makes the greyscale spotlight and vignette masks for 2D "lighting"
+    des_parts.py       splits Des from the empty seat; cuts his mouth flipbook and chest overlay
   room/                production room layers (same refs/raw/cutout/final split), after the test
   client/              production client frames
   posters/             posters and wall dressing
