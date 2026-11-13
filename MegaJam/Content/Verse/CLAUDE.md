@@ -151,7 +151,8 @@ play session yet.
   takes travels in `Memories`. Remove that call if retries should remember everything.
 - The haze clock input is ignored while distress is 0 ("unless the client is calm"), and the
   take's starting distress is the client's carried-forward fear until the first `scene_update`.
-- If the verdict prompt fails, the take counts as mixed (the client says the mixed line). The
+- If the verdict prompt fails (moderated, say), `RequestScore` retries once with the shorter
+  `VerdictRetryText`; if that fails too, the take counts as mixed (the client says the mixed line). The
   design's other fallbacks are listed as comments on `RequestScore`, `RegisterSceneUpdate`
   and `StartTake`; each sits behind that one function.
 - A setting pick removes the other settings with the same `Element`. The design's "up to 2 per

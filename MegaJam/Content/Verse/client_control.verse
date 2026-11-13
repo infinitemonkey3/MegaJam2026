@@ -13,7 +13,15 @@ using { /Verse.org/Simulation }
 # works, the change stays in this file. NOT COMPILED YET: see CLAUDE.md in this folder.
 
 # Placeholder prompts. The writing stream's versions replace these.
-VerdictPromptText:string = "The take is over. Step out of the scene and judge, silently and honestly, how the visitor's take reached you. Score each criterion 0 to 3. Backstory: did they use people, places, moments and loved things from your own life, or call back to something from an earlier dream? Personality: did it appeal to who you are? Environment: did their changes belong in this dream's setting? Common sense: did their choices make sense together and in the moment? Generic comfort scores 0 or 1. Verdict: Positive if the total is 9 or more and no score is 0, Negative if the total is 4 or less, otherwise Mixed. HintForWeakestCriterion: one short sentence, in your own voice, about what was missing."
+# Kept neutral and third person, like MemoryPromptText: the first wording ("judge how the
+# visitor's take reached you", hint "in your own voice") came back moderated on Nell's first take
+# (play test, 2026-11-13), probably by asking for her grief in her own words. The hint is still
+# spoken in character: VerdictInstructions has the client work it into her verdict line.
+VerdictPromptText:string = "Write a short, calm, neutral evaluation of the scene that just ended, for the game's scoring. Score each criterion 0 to 3 for how well the visitor's choices fit the dreamer. Backstory: did the visitor use people, places, moments or loved things from the dreamer's life, or call back to something from an earlier scene? Personality: did it suit who the dreamer is? Environment: did the visitor's changes belong in this scene's setting? Common sense: did the choices make sense together and in the moment? Generic comfort scores 0 or 1. Verdict: Positive if the total is 9 or more and no score is 0, Negative if the total is 4 or less, otherwise Mixed. HintForWeakestCriterion: one short neutral sentence on what would have helped most, without repeating anything sad or unkind from the scene."
+
+# Asked once if VerdictPromptText fails: the same scoring with as little room as possible for
+# the model to retell the scene.
+VerdictRetryText:string = "Score the visitor's choices in the last scene, 0 to 3 each. BackstoryScore: used the dreamer's own life. PersonalityScore: suited the dreamer. EnvironmentScore: fit the setting. CommonSenseScore: made sense. Verdict: Positive if the total is 9 or more and no score is 0, Negative if 4 or less, otherwise Mixed. HintForWeakestCriterion: a few plain words, like \"more from the dreamer's own life\"."
 
 # Kept neutral and third person: the first wording ("as you lived it") came back moderated in
 # half the takes, probably because it had a child retell being laughed at (play test,
@@ -223,12 +231,19 @@ client_control := class:
     #  2. If the client judges too kindly, a separate judge persona gives the score.
     #  3. Fixed scores per setup option, with the LLM only adding flavor.
     # Any of these can sit behind this function as long as it still returns ?take_score.
+    # A failed first prompt (moderated, for example) gets one shorter retry before the take
+    # counts as mixed.
     RequestScore()<suspends>:?take_score =
         Result := Persona.GetAISession().Prompt(ToMessage(VerdictPromptText), take_score)
         if (Score := Result.GetSuccess[]):
+            return option{Score}
+        LogPromptError("verdict", option{Result.GetError[]})
+        Retry := Persona.GetAISession().Prompt(ToMessage(VerdictRetryText), take_score)
+        if (Score := Retry.GetSuccess[]):
+            Logger.Print("[client] verdict came back on the retry")
             option{Score}
         else:
-            LogPromptError("verdict", option{Result.GetError[]})
+            LogPromptError("verdict retry", option{Retry.GetError[]})
             false
 
     # Asks the session for what to carry forward, and stores it. Call right after RequestScore,
