@@ -85,9 +85,9 @@ play session yet.
   murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (row 16 of the dream debugger,
   a click or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
 - Endings are told the same way: each `GoodEndingLog` / `BadEndingLog` line is narrated with
-  CONTINUE, the client says `FactRevealed` aloud, then `Celebrate` has her narrate the dream's
-  `ClearedLog` (the debugger's notes) the same way and ends on a LAYER CLEARED banner before
-  the next layer.
+  CONTINUE, the client says `FactRevealed` aloud, then `Celebrate` shows the LAYER CLEARED
+  banner with the dream's `ClearedLog` (the debugger's notes, not told by the client) listed
+  under it, and one CONTINUE before the next layer.
 - The dream debugger's take log shows only the newest line (the player reads at their own pace).
 - Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
   does ("I light the oven") is true, and she builds on it rather than refusing or arguing.

@@ -135,13 +135,11 @@ take_flow := class(creative_device):
             Control.AwaitSpeechEnd(SpeechSeconds)
         Screen.AwaitContinue()
 
-    # After a good ending: the client tells the debugger's notes one by one, with CONTINUE, then
-    # the LAYER CLEARED banner closes the layer before the next one (Chip, 2026-11-13).
-    Celebrate(Dream:dream, Control:client_control)<suspends>:void =
-        for (Line : Dream.ClearedLog):
-            Narrate(Control, Line, "")
+    # After a good ending: the LAYER CLEARED banner, with the debugger's notes listed under it
+    # (not told by the client) and one CONTINUE before the next layer (Chip, 2026-11-13).
+    Celebrate(Dream:dream)<suspends>:void =
         Screen.SetTitle(ToMessage("LAYER CLEARED"))
-        Log("***  LAYER CLEARED  ***")
+        Log(Join(array{"***  LAYER CLEARED  ***"} + Dream.ClearedLog, "\n"))
         Screen.AwaitContinue()
 
     # 3. Direct: the player sets up the take on the screen: who they are, then one item. The
@@ -298,7 +296,7 @@ take_flow := class(creative_device):
         if (Revealing?):
             Control.AwaitSpeechEnd(SpeechSeconds)
         Screen.AwaitContinue()
-        Celebrate(Dream, Control)
+        Celebrate(Dream)
         Director.PlayLine("{Dream.Id}_solved")
         set DreamIndex += 1
         take_phase.CaseFile
