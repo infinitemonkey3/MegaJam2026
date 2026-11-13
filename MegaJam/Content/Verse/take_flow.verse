@@ -37,8 +37,12 @@ take_flow := class(creative_device):
     @editable
     ClientSpawner:npc_spawner_device = npc_spawner_device{}
 
+    # Off when game_director runs the game (it calls RunClient). On to test the take loop alone.
+    @editable RunOnBegin:logic = false
+
     # Seams. Swap the stubs for the real screen, haze devices and audio when they exist.
-    Screen:debug_screen = stub_debug_screen{}
+    # game_director replaces Screen with the in-world screen.
+    var Screen:debug_screen = stub_debug_screen{}
     Haze:haze_controller = haze_controller{}
     Director:director_voice = stub_director_voice{}
 
@@ -54,6 +58,8 @@ take_flow := class(creative_device):
     var MaybeScore:?take_score = false  # the last take's score, if the verdict prompt worked
 
     OnBegin<override>()<suspends>:void =
+        if (not RunOnBegin?):
+            return
         Logger.Print("[flow] waiting for the client NPC")
         loop:
             if (Control := FindClientControl[]):

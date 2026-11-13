@@ -1,15 +1,38 @@
 # Content/Verse
 
-The game logic for *Dead Air* (`docs/design.md`): the take loop for one client with three
-dreams, the wrapper around the client's LLM persona, and seams for the screen, haze and
-director's voice. One file per system. All files share one module (the folder's).
+The game logic for *Dead Air* (`docs/design.md`): the game director and its phases, the
+pre-roll and cold open, the take loop for one client with three dreams, the wrapper around the
+client's LLM persona, and seams for the screen, haze and director's voice. One file per system.
+All files share one module (the folder's).
 
-**Status: compiles clean, not yet run.** The first `BuildAll` (2026-11-12, Fortnite 43.00)
-returned no errors or warnings, and the editor loads the classes as
-`/<guid>/_Verse.Verse-<class>` (for example `_Verse.Verse-take_flow`). Nothing has run in a play
-session yet, and no `take_flow` device is placed.
+**Status: compiles clean, not yet run.** Every file builds with no errors or warnings
+(2026-11-12; 43.00 for the take flow, 43.10 for the cold open), and the editor loads the classes
+as `/<guid>/_Verse.Verse-<class>` (for example `_Verse.Verse-game_director`). A `Game Director`
+and a `Take Flow` device are placed and wired in the editor's level, but nothing has run in a
+play session yet.
 
 ## Provides
+
+### Game (`game_director.verse`, `game_state.verse`, `input_router.verse`)
+- `game_director`: the one `creative_device` with a script. Runs `PreRollPhase`,
+  `ColdOpenPhase` (with the boot), `RoomPhase`, `ClientPhase`, then `DonePhase`, logging
+  `[game] A -> B` on each change. Holds every device
+  reference as an `@editable` (`Takes`, the cold-open cameras, sequence and audio players).
+- Debug starts: `@editable StartAt:game_phase` (`PreRollPhase` is the real game;
+  `ColdOpenPhase` skips the pre-roll; `RoomPhase` or later starts at the desk) and `@editable DevKeys` (Sprint skips the current
+  phase).
+- `game_state`: `Phase`, `MaybePlayer`, `VoiceMode` (`voice_mode{Mic, Presets}`),
+  `PhaseChangedEvent`. `game_phase`, `GamePhaseName`, `GamePhaseIndex`.
+- `input_router`: `Bind(Player, DevKeys)`; `NextEvent` (Crouch), `ConfirmEvent` (Jump),
+  `SkipEvent` (Sprint, dev keys only).
+
+### Cold open (`cold_open.verse`)
+- `cold_open`: `RunPreRoll` (NO SIGNAL on the monitor, the mic check, the Talk or Preset-lines
+  choice, which doubles as Start), `RunColdOpen` (plays the Level Sequence and swaps to the desk
+  camera underneath it), `RunBoot` (DEAD AIR, the boot log, the tutorial line). Each has an
+  `End*`/`SkipToDesk` that leaves cameras and sounds right if the phase was skipped.
+- `cold_open_rig`: the device references it uses. Placeholder text: `NoSignalTitle`,
+  `MicPrompt`, `VoiceMenuTitle`, `BootLines`.
 
 ### Data (`dream_data.verse`)
 - `dead_air_log`: the log channel everything prints to (`GetVerseOutput`). Lines are tagged
@@ -32,6 +55,9 @@ session yet, and no `take_flow` device is placed.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,
   "next" moves the highlight, "confirm" picks; a `Done` option ends a list early.
 - Fields `Screen`, `Haze`, `Director` hold the seams; they default to the stubs.
+  `game_director` replaces `Screen` with the in-world screen.
+- `@editable RunOnBegin` (default off): `game_director` calls `RunClient`; turn it on only to
+  test the take loop without the director.
 
 ### Client control (`client_control.verse`)
 - `client_npc_behavior`: the `npc_behavior` for the client's NPC Character Definition (which
@@ -44,10 +70,14 @@ session yet, and no `take_flow` device is placed.
 - `VerdictPromptText`, `MemoryPromptText`, the `scene_update` description: placeholder prompts.
 
 ### Seams (stubs that log)
-- `debug_screen` / `stub_debug_screen` (`debug_screen.verse`): `SetCaseFile`,
-  `AppendLogLine`, `SetMenu`, `ShowSlate`, `SetVitals`, `SetClientState`, `AwaitNext`,
-  `AwaitConfirm`. Display takes `message`s only; input is two waits the real screen backs with
-  `/Verse.org/Input` actions.
+- `debug_screen` / `stub_debug_screen` (`debug_screen.verse`): `SetTitle`, `ClearLog`,
+  `SetCaseFile`, `AppendLogLine`, `SetMenu`, `ShowSlate`, `SetVitals`, `SetClientState`,
+  `AwaitNext`, `AwaitConfirm`. Display takes `message`s only; input is two waits the real
+  screen backs with `/Verse.org/Input` actions. `EmptyText`.
+- `entity_screen` (`entity_screen.verse`): **temporary** `debug_screen` over the spike's
+  in-world widget (`Content/Spikes/UW_SpikeScreen`: Title, Body, Menu fields), so the cold open
+  shows on a real screen before stream 5's widget exists. Writes to every `UW_SpikeScreen`
+  entity under the director's simulation entity.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line
@@ -70,15 +100,32 @@ session yet, and no `take_flow` device is placed.
   and `StartTake`; each sits behind that one function.
 - A setting pick removes the other settings with the same `Element`. The design's "up to 2 per
   element" could also mean 2 per element; this reads it as 2 in total, one per element.
+- **Content folder names become Verse modules** (`Content/ColdOpen/` is module `ColdOpen`), and
+  a module name clashes with an enumerator of the same name anywhere in this module. That's why
+  `game_phase` values carry a `Phase` suffix (`ColdOpenPhase`, `RoomPhase`). Don't add enum
+  values named like a content folder.
+- `entity_screen` depends on `Content/Spikes/UW_SpikeScreen` (module `Spikes`), the one spike
+  asset kept after the test-content purge. It and the spike screen entities go when the real
+  screen lands.
+- Only one `take_flow` may run: it's started by `game_director`, so keep its `RunOnBegin` off
+  whenever a director is placed.
+- The pre-roll's "signal detected" check listens on the client's voice channel
+  (`BeginBroadcastEvent`). With no `client_npc_behavior` NPC in the level it can't listen, and
+  logs a warning; the voice choice still works.
+- `audio_player_device` has no finished event, so `cold_open.TutorialSeconds` is the WAV's
+  length (5.36 s) plus a margin. Change it with the line.
 - The folder is named `Verse`, so its module is `Verse` and class paths carry a `Verse-` prefix.
   It compiles alongside the implicit `/Verse.org/Verse`; don't add `using { /Verse.org/Verse }`
   in these files without building, since that path was not tried.
 
 ## Engine APIs relied on
 
-Digest files: `%LOCALAPPDATA%\UnrealEditorFortnite\Saved\VerseProject\MegaJam\Digests\BuiltIn\`,
-build `++Fortnite+Release-43.00-CL-59596594`. UE = `UnrealEngine\UnrealEngine.digest.verse`,
-V = `Verse\Verse.digest.verse`, FN = `Fortnite\Fortnite.digest.verse`.
+Digest files: `%LOCALAPPDATA%\UnrealEditorFortnite\Saved\VerseProject\MegaJam\Digests\BuiltIn\`.
+UE = `UnrealEngine\UnrealEngine.digest.verse`, V = `Verse\Verse.digest.verse`,
+FN = `Fortnite\Fortnite.digest.verse`. The first table's lines are from build
+`++Fortnite+Release-43.00-CL-59596594`; the editor is now on 43.10 and the digests were
+regenerated, so those line numbers have moved (the signatures still compile). The cold-open
+table's lines are from `++Fortnite+Release-43.10-CL-60458657`.
 
 | API | Signature (from the digest) | Where |
 |---|---|---|
@@ -122,7 +169,24 @@ V = `Verse\Verse.digest.verse`, FN = `Fortnite\Fortnite.digest.verse`.
 | `fort_playspace` | `GetPlayers<public>()<transacts>:[]player`; `PlayerAddedEvent<public>():listenable(player)` | FN:10385, 10391 |
 | `GetPlayspaceForEntity` | `(InEntity:entity).GetPlayspaceForEntity<native><public>()<transacts><decides>:fort_playspace` | FN:10406 |
 
-Not called yet, read for the seams: `GetPlayerInput<native><public>(Player:player)<transacts><decides>:player_input` (V:2713), `GetInputEvents<native><public>(ActionToBind:input_action(t) where t:type):input_events(t)` (V:2767), `TriggerActivationEvent<native><public>:listenable(tuple(player, t))` (V:2731), `CommitSayEvent<native><public>:listenable(tuple(?agent, message))` (UE:111, for the verdict fallback).
+Cold open and game shell (43.10 lines):
+
+| API | Signature (from the digest) | Where |
+|---|---|---|
+| `GetPlayerInput` | `GetPlayerInput<native><public>(Player:player)<transacts><decides>:player_input` | V:3605 |
+| `player_input` | `AddInputMapping<native><public>(InputMapping:input_mapping):void`; `GetInputEvents<native><public>(ActionToBind:input_action(t) where t:type):input_events(t)` | V:3653, 3659 |
+| `input_events.TriggerActivationEvent` | `TriggerActivationEvent<native><public>:listenable(tuple(player, t))` | V:3623 |
+| `Character` inputs | `TraversalMapping<public>:input_mapping`; `Crouch`, `Sprint`, `Jump<public>:input_action(logic)` | FN:35, 38, 41, 44 |
+| `voice_channel.BeginBroadcastEvent` | `BeginBroadcastEvent<public>():listenable(agent)` | V:3871 |
+| `entity.FindDescendantEntities` | `(InEntity:entity).FindDescendantEntities<native><public>(entity_type:castable_subtype(entity))<transacts>:generator(entity_type)` | V:766 |
+| `creative_device.GetSimulationEntity` | `(CreativeDevice:creative_device).GetSimulationEntity<native><public>()<transacts><decides>:entity` | FN:9045 |
+| `GetPlayspace`, `GetPlayers` | `(CreativeObject:creative_object_interface).GetPlayspace<native><public>()<transacts>:fort_playspace`; `GetPlayers<public>()<transacts>:[]player` | FN:9116, 1615 |
+| `cinematic_sequence_device` | `Play<public>(Agent:agent):void`; `GoToEndAndStop<public>(Agent:agent):void`; `StoppedEvent<public>:listenable(tuple())` | FN:6242, 6260, 6236 |
+| `gameplay_camera_device` | `AddTo<public>(Agent:agent):void`; `RemoveFrom<public>(Agent:agent):void` | FN:4473, 4479 |
+| `audio_player_device` | `Play<public>():void`; `Stop<public>():void` (no finished event) | FN:2758, 2764 |
+| `UW_SpikeScreen_entity` | `var TitleMessage`, `var BodyMessage`, `var MenuMessage<public>:message` (generated from the spike widget) | `Digests/<guid>-Assets/<guid>-Assets.digest.verse`, module `/invaliddomain/MegaJam/Spikes` |
+
+Not called yet: `CommitSayEvent<native><public>:listenable(tuple(?agent, message))` (UE:111 in 43.00, for the verdict fallback).
 
 ## Checked by the first compile
 
@@ -158,6 +222,10 @@ stay in the session history for the take; `ClearHistory()` leaves the personalit
 `PromptToTalk` is accepted while the persona is idle after `SetPersonality`.
 
 ## Depends on / used by
+- The level (in the editor's checkout): `Game Director` and `Take Flow` devices (outliner folder
+  `Game`), the cold-open devices (`ColdOpen/Devices`) and the street set and sequence camera
+  (`ColdOpen/Street`). Assets in `Content/ColdOpen/` (Textures, Audio, Materials,
+  `Sequences/LS_ColdOpen`).
 - Text comes from `writing/` (converted by hand into `dream_data.verse` shapes).
 - `Content/UI/` (screen) will implement `debug_screen`; the level provides the NPC spawner, the
   client's NPC Character Definition (Persona modifier + `client_npc_behavior`) and a placed
