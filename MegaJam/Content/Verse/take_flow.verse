@@ -243,7 +243,9 @@ take_flow := class(creative_device):
     # 6. Verdict: score the take, pull out what carries forward, then the client says the line.
     DoVerdict(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         set MaybeScore = Control.RequestScore()
-        Control.RequestMemory()
+        Remembered := Control.RequestMemory()
+        if (not Remembered?, Score := MaybeScore?):
+            Control.NudgeFeeling(Score.Verdict)
         if (Feeling := Control.Feeling?):
             Screen.SetClientState(TakeNumber, Feeling)
 

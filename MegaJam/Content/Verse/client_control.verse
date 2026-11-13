@@ -15,11 +15,17 @@ using { /Verse.org/Simulation }
 # Placeholder prompts. The writing stream's versions replace these.
 VerdictPromptText:string = "The take is over. Step out of the scene and judge, silently and honestly, how the visitor's take reached you. Score each criterion 0 to 3. Backstory: did they use people, places, moments and loved things from your own life, or call back to something from an earlier dream? Personality: did it appeal to who you are? Environment: did their changes belong in this dream's setting? Common sense: did their choices make sense together and in the moment? Generic comfort scores 0 or 1. Verdict: Positive if the total is 9 or more and no score is 0, Negative if the total is 4 or less, otherwise Mixed. HintForWeakestCriterion: one short sentence, in your own voice, about what was missing."
 
-MemoryPromptText:string = "Summarize the take that just ended, as you lived it. WhoTheVisitorWas: who you believed the visitor was. KeyMoments: at most 3, one sentence each. PromisesOrRequests: things the visitor or you said that could be called back to later. State: how you feel now, with Trust, Fear and Hope each 0 to 3 and Mood as one short phrase."
+# Kept neutral and third person: the first wording ("as you lived it") came back moderated in
+# half the takes, probably because it had a child retell being laughed at (play test,
+# 2026-11-13). When it still fails, take_flow moves the client's state by the verdict instead.
+MemoryPromptText:string = "Write a short, calm, factual record of the scene that just ended, for continuity. WhoTheVisitorWas: who the visitor was in the scene. KeyMoments: at most 3 short neutral sentences about what the visitor did and what helped or didn't. PromisesOrRequests: anything the visitor or the dreamer offered or asked for that could come up again. Don't repeat anything unkind. State: how the dreamer feels now, with Trust, Fear and Hope each 0 to 3 and Mood as one short neutral phrase."
 
 # Text written by the model is redacted when it is turned into a string, so it stays a
 # `message` end to end: these build the prompts that carry it, and nothing branches on it.
 MessageSpace<localizes>:message = " "
+MoodSteadier<localizes>:message = "steadier, a little hopeful"
+MoodAlmost<localizes>:message = "close, still stuck"
+MoodShaken<localizes>:message = "shaken"
 VisitorLine<localizes>(Who:message):message = "The visitor was {Who}."
 SaidLine<localizes>(Said:message):message = "It was said: {Said}"
 RecalledLine<localizes>(Recalled:message):message = "Earlier, in another dream, a visitor did these things. They are true for you, unless they conflict with your own life: {Recalled}"
@@ -227,12 +233,27 @@ client_control := class:
 
     # Asks the session for what to carry forward, and stores it. Call right after RequestScore,
     # while the session still holds the take's conversation. Runs after good and bad takes alike.
-    RequestMemory()<suspends>:void =
+    # True if the record came back; false if the prompt failed (moderated, for example).
+    RequestMemory()<suspends>:logic =
         Result := Persona.GetAISession().Prompt(ToMessage(MemoryPromptText), take_memory)
         if (Recalled := Result.GetSuccess[]):
             Remember(Recalled)
+            true
         else:
             LogPromptError("memory", option{Result.GetError[]})
+            false
+
+    # Fallback when the memory record fails: moves the client's state one step by the verdict,
+    # so the client always changes after a take. Positive: trust and hope up, fear down. Mixed:
+    # hope up. Negative: fear up, hope down.
+    NudgeFeeling(Verdict:take_verdict):void =
+        if (Now := Feeling?):
+            Next := case (Verdict):
+                take_verdict.Positive => client_state{Trust := Clamp(Now.Trust + 1, 0, 3), Fear := Clamp(Now.Fear - 1, 0, 3), Hope := Clamp(Now.Hope + 1, 0, 3), Mood := MoodSteadier}
+                take_verdict.Mixed => client_state{Trust := Now.Trust, Fear := Now.Fear, Hope := Clamp(Now.Hope + 1, 0, 3), Mood := MoodAlmost}
+                take_verdict.Negative => client_state{Trust := Now.Trust, Fear := Clamp(Now.Fear + 1, 0, 3), Hope := Clamp(Now.Hope - 1, 0, 3), Mood := MoodShaken}
+            set Feeling = option{Next}
+            Logger.Print("[client] memory missing; state moved by the verdict: trust={Next.Trust} fear={Next.Fear} hope={Next.Hope}")
 
     Remember(Recalled:take_memory):void =
         set Feeling = option{Recalled.State}
