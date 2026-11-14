@@ -43,6 +43,13 @@ VerdictInstructions<localizes>(Line:string, Hint:message):message = "Back in the
 # How many carried-forward memory items the client is told at take start (design: "the last 6").
 MaxMemories:int = 6
 
+# The cake carried from Nell's dream 2 into dream 3. It stays a message: model text can't
+# become a string, so it goes straight back into the personality and the case file.
+DefaultCake<localizes>:message = "a lemon cake"
+CakeKnowledge<localizes>(Cake:message):message = "The cake: the night you said yes to Walt, he told you the birthday cake he'd want: {Cake}. You've baked him that cake every March 3 since, and it's the cake in the case today. His order slip asks for it, in his handwriting."
+CakeEntry<localizes>(Cake:message):message = "ORDER  1 birthday cake: {Cake}. W. Price. Pick up 5 PM."
+CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like. Give the cake he asked for in a few plain words, like \"a lemon cake\" or \"a chocolate cake with walnuts\". If he never said, give \"a lemon cake\"."
+
 LastN(Input:[]t, Count:int where t:type)<transacts>:[]t =
     if (Tail := Input.Slice[Input.Length - Count]):
         Tail
@@ -132,6 +139,7 @@ client_control := class:
 
     # Carried forward between takes and dreams (design: "Continuity").
     var Memories:[]message = array{}        # oldest first, at most MaxMemories
+    var MaybeCake:?message = false          # the birthday cake named in a dream with AsksForCake
     var Feeling:?client_state = false       # false until LoadDream sets the starting state
 
     var MaybeAction:?cancelable = false
@@ -150,7 +158,8 @@ client_control := class:
             set Feeling = option{Start}
         CaseText := Join(Subject.CaseFile, " ")
         FactText := Join(Facts, " ")
-        Personality := ToMessage("{Dream.Personality}\n\nYour waking life: {CaseText}\n\nAlso true: {FactText}")
+        Base := ToMessage("{Dream.Personality}\n\nYour waking life: {CaseText}\n\nAlso true: {FactText}")
+        Personality := if (Dream.UsesCake?) then Join(array{Base, CakeKnowledge(TheCake())}, MessageSpace) else Base
         set DreamPersonality = Personality
         if (Persona.SetPersonality[Personality]):
             Logger.Print("[client] personality set for {Dream.Id}")
@@ -182,11 +191,17 @@ client_control := class:
     # Spike 2 fallback: if a PromptToTalk context line doesn't stay in the session history for
     # the whole take, append these lines to the personality in LoadDream-style SetPersonality
     # instead and prompt only "Say your first line".
+    # Part of the opening cue: put the scene's want on the table in the first line.
+    WantCue(Dream:dream)<transacts>:string =
+        if (Dream.Want.Length > 0) then "Then say what you need from the visitor now. " else ""
+
     StartTake(Dream:dream, Setup:take_setup, TakeNumber:int):logic =
         # The persona system also passes on the player's own name or outfit, and the client used
         # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
         # says it again next to the casting.
         var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
+        if (Dream.Want.Length > 0):
+            set Lines += array{ToMessage("What you want in this scene: {Dream.Want} What's in the way: {Dream.Obstacle} Say what you want early, as something the visitor can work with. Make statements and offers; don't ask the visitor open questions.")}
         for (Setting : Setup.Settings):
             set Lines += array{ToMessage(Setting.ContextLine)}
         for (Item : Setup.Items):
@@ -207,7 +222,8 @@ client_control := class:
         # The first line reacts to the casting and the item by name, so the take opens on what the
         # player chose (play test, 2026-11-13: a bare "say your first line" got a generic opening).
         ItemText := Join(for (Item : Setup.Items) { Item.ContextLine }, " ")
-        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} And react to this, which is new this time: {ItemText} Don't open with the time of day or with the visitor being early.")
+        ItemCue := if (Setup.Items.Length > 0) then "And react to this, which is new this time: {ItemText} " else ""
+        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} {ItemCue}{WantCue(Dream)}Don't open with the time of day or with the visitor being early.")
         if (Persona.PromptToTalk[Context, VoiceChannel]):
             Logger.Print("[client] take {TakeNumber} of {Dream.Id} started with {Lines.Length} context lines")
             true
@@ -227,6 +243,32 @@ client_control := class:
         else:
             Logger.Print("[client] narration skipped (persona busy)", ?Level := log_level.Verbose)
             false
+
+    # The good ending: the client tells the visitor the specific thing they said or did that
+    # turned the dream around. The session still holds the take's conversation (ClearHistory
+    # runs at the next StartTake), so the model can name it. False if the persona refused.
+    CreditLine():logic =
+        Instructions := ToMessage("Tell the visitor, in one or two short sentences in your own voice, the one thing they said or did in this dream that turned it around for you. Name it specifically, their actual words or what they did, not a general thanks.")
+        if (Persona.PromptToTalk[Instructions, VoiceChannel]):
+            true
+        else:
+            Logger.Print("[client] credit line skipped (persona busy)", ?Level := log_level.Warning)
+            false
+
+    # A take phase: the dream's clock moves to the next part of the scene. The client reacts in a
+    # line or two and carries on with the visitor; what the visitor has already changed holds.
+    # Waits while the client is talking (PromptToTalk is refused then), up to TimeoutSeconds.
+    MoveScene(Context:string, TimeoutSeconds:float)<suspends>:void =
+        Instructions := ToMessage("{Context} Move the scene on to this now. Anything the visitor has already changed stays changed; this is only the dream pushing on. React in one or two short sentences, in your own voice, and keep playing along with the visitor.")
+        var Waited:float = 0.0
+        loop:
+            if (Persona.PromptToTalk[Instructions, VoiceChannel]):
+                break
+            if (Waited >= TimeoutSeconds):
+                Logger.Print("[client] scene move skipped (persona busy)", ?Level := log_level.Warning)
+                break
+            Sleep(0.5)
+            set Waited += 0.5
 
     MurmurLine(Line:string):void =
         Instructions := ToMessage("Half asleep, murmur exactly this and nothing else, and don't call anyone by name: {Line}")
@@ -260,6 +302,23 @@ client_control := class:
         else:
             LogPromptError("verdict retry", option{Retry.GetError[]})
             false
+
+    # Asks the session which birthday cake Walt named, while it still holds the take. Call at the
+    # start of a good ending of a dream with AsksForCake. If it fails, TheCake stays the default.
+    RequestCake()<suspends>:void =
+        Result := Persona.GetAISession().Prompt(ToMessage(CakePromptText), birthday_cake)
+        if (Cake := Result.GetSuccess[]):
+            set MaybeCake = option{Cake.CakeWaltAskedFor}
+            Logger.Print("[client] the birthday cake is recorded")
+        else:
+            LogPromptError("cake", option{Result.GetError[]})
+
+    TheCake()<transacts>:message =
+        if (Cake := MaybeCake?) then Cake else DefaultCake
+
+    # Case-file entries that carry model text: the cake order, for a dream with UsesCake.
+    CakeEntries(Dream:dream):[]message =
+        if (Dream.UsesCake?) then array{CakeEntry(TheCake())} else array{}
 
     # Asks the session for what to carry forward, and stores it. Call right after RequestScore,
     # while the session still holds the take's conversation. Runs after good and bad takes alike.

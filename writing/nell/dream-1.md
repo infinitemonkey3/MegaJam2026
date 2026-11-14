@@ -4,49 +4,81 @@ Client `nell`, layer 1, dream id `nell_d1`. The surface loop. It teaches the gam
 one clear right casting, and two ways to get into trouble that the player can talk their way
 back out of.
 
-What the player should learn here: read the file, cast someone she knows, bring something that
-belongs to her, and give her a job instead of comfort.
+**The surreal surface** (Chip, 2026-11-13). The shop has gone strange, and every strange thing is
+the same symbol: a two-person shop with one person in it. Each problem is work that needs more
+hands than she has. The faceless people at the glass are those hands. They've come to help, and
+she's afraid to let them in. Let one in and they get a face as they step through, one of her
+regulars, and take a job.
+
+- The dough won't stop rising: over the bench, across the floor, toward the door. Four hands to
+  knead it; she has two.
+- The oven has grown a second door, Walt's. It won't open for her.
+- Order slips fall from the ceiling like snow, the whole street's orders.
+- Half the bench is his, thick with dust.
+
+She's overwhelmed and won't say so. Anything the client invents should be work for two.
+
+What the player should learn here: give her a job instead of comfort, and get the door open.
+
+## Your Role
+
+The dream assigns the player's role (Chip, 2026-11-13: choosing who to be was the hardest call
+and caused most bad takes). The director sends them in with a prerecorded line, and they pick
+only the item. Built as an improv prompt: who you are, what she wants, what's in the way. The
+case file opens with it.
+
+- You are: Teddy, Walt's nephew, 34. She taught you to bake at nine, on a flour crate. Two years ago you asked her to reopen and she said no. You pay for this session. This morning you've turned up at five to help her open anyway.
+- She wants: `To open the shop at six, the way it's always opened.`
+- In the way: `The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in.`
+- Director on the case file, `nell_d1_intro`: `Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you.`
+- Director on the role, `nell_d1_sendin`: `You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready.`
+- Approaches that should all work: remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
 
 ## Loop Beats
 
-What happens every night, in order. The loop is seven minutes of dream time.
-
-1. **05:00** Nell is alone in the shop. The lights are on. She has to open.
-2. **05:01** The oven won't light.
-3. **05:02** The dough won't hold its shape.
-4. **05:03** Customers are at the glass. They have no faces. The door is locked.
-5. **05:04** She notices how quiet the shop is. Something that belongs here is missing.
-6. **05:05** More customers. The glass creaks.
+1. **05:00** Nell is alone in the shop with the lights on.
+2. **05:01** The dough won't stop rising. It spills onto the floor. It takes four hands.
+3. **05:02** The oven has grown a second door, Walt's. It won't open for her.
+4. **05:03** Order slips fall from the ceiling like snow.
+5. **05:04** Faceless people at the glass hold up floury hands, ready to work. The door is locked.
+6. **05:05** The dough reaches the door. More people. The glass creaks.
 7. **05:06** The lights flicker. She says somebody ought to be here by now.
 8. **05:07** The lights go out. The loop restarts.
 
-What the loop is about: she is waiting for Walt to come in and start the bread. The quiet is his
-whistling, gone. She can't open the shop alone, and she won't ask anyone to help.
+What the loop is about: the shop was always two people's work, and she has been doing it alone
+since Walt. The help is at the door, and she keeps it locked.
 
 ## Observe Replay
 
-Played once after the case file, before the first directing step. `LOG` lines are screen text.
-`MURMUR` lines are Nell's, heard from the recliner and shown as a waveform.
-
 ```
-LOG     SCENE bakery_interior / T 05:00 / LIGHTS state=on / OVEN state=cold
+LOG     Five o'clock. Nell is alone in the bakery with the lights on.
 MURMUR  Five o'clock. Bread doesn't wait.
-LOG     T 05:01 / OVEN ignite=fail count=1 / PILOT state=out
-MURMUR  Come on, you old mule.
-LOG     T 05:02 / DOUGH proof=fail / BENCH flour=dry
-MURMUR  It won't hold. It always held.
-LOG     T 05:03 / DOOR state=locked / CUSTOMERS count=11 faces=null / GLASS pressure=rising
-MURMUR  I'm not open. I'm not ready.
-LOG     T 05:04 / OVEN ignite=fail count=4 / AUDIO whistle=absent
-MURMUR  It's too quiet in here.
-LOG     T 05:05 / CUSTOMERS count=19 faces=null / GLASS pressure=high
-LOG     T 05:06 / LIGHTS flicker=1 / HEART rate=118
+LOG     The dough on the bench won't stop rising. It spills over the edge and onto the floor. It takes four hands to knead, and she has two.
+MURMUR  It won't stop. It needs four hands.
+LOG     The oven has grown a second door, Walt's. It won't open for her.
+MURMUR  That's his door. It doesn't answer to me.
+LOG     Order slips fall from the ceiling like snow, the whole street's orders, more than she could fill in a week.
+MURMUR  I can't do all these. Not on my own.
+LOG     People with no faces stand at the glass. They hold up floury hands, ready to work. The door is locked.
+MURMUR  Don't. I'm not open. I don't need anyone.
+LOG     The dough reaches the door. More of them at the glass now. The glass creaks.
+LOG     The lights flicker. Her heart is racing.
 MURMUR  Somebody ought to be here by now.
-LOG     T 05:07 / LIGHTS state=off / SCENE end
-LOG     LOOP restart / RUN 20
+LOG     The lights go out. The dream starts over.
 ```
+
+## Take Phases
+
+| Log | Context |
+|---|---|
+| `The dough is rising past the bench and across the floor.` | `The dream moves on: the dough won't stop rising. It's over the bench and across the floor now, and it takes four hands to knead. The people outside are watching through the glass with their floury hands up.` |
+| `Order slips fall from the ceiling, faster and faster.` | `The dream moves on: order slips are falling from the ceiling faster now, drifts of them, the whole street's orders. Walt's oven door still won't open for you. It's far too much for one pair of hands.` |
+| `The dough has reached the door. Six o'clock is coming, and the people outside press their hands to the glass.` | `The dream moves on: the dough has reached the door, and six o'clock is coming. The people with no faces press their floury hands to the glass. They could help. The door is still locked.` |
 
 ## Take Beats
+
+Superseded by the surreal loop and the take phases above; kept for reference.
+
 
 The fixed beats of a take. Each has a prewritten log line and a context line sent to the client
 so she knows the dream moved. Between beats, the log shows the client's live `LogLine` output.
@@ -167,6 +199,9 @@ Every element can also be left unset. The player picks one role, at most one val
 element, and at most two items.
 
 ### Casting
+
+Replaced by the assigned role above. The game uses only the role in `Your Role`; the
+alternatives below are kept for reference.
 
 #### cast_teddy
 
@@ -349,9 +384,10 @@ Nell whistles.
 ### Good Ending Log
 
 ```
-T 05:07 / LIGHTS state=on / FLICKER cleared
-OVEN state=lit / TEMP steady
-DOOR state=open / CUSTOMERS faces=resolved
+The lights stay on.
+The door opens, and the people come in. Each one has a face as they step through.
+Many hands knead the dough down. The order slips get filled.
+Walt's oven door swings open.
 AUDIO whistle=present src=nell
 HEART rate=74
 LOOP exit / LAYER 1 cleared

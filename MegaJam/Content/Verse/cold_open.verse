@@ -8,7 +8,8 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 # the overlay and the sounds right.
 #
 # Everything outside the Level Sequence is the full-screen overlay (overlay_screen):
-#  - pre-roll: black with "PRESS ANY KEY TO START" (Chip, 2026-11-13)
+#  - pre-roll: the Wonderwell title card (title_card) over the black, "PRESS ANY KEY TO START"
+#    low on it (Chip, 2026-11-13)
 #  - cold open: the overlay comes down under the sequence's own fade from black
 #  - after it: the cold open ends on black, and the room-intro sequence fades up from black and
 #    drifts forward onto the desk camera's view (Chip, 2026-11-13). The overlay stays down from
@@ -32,7 +33,7 @@ cold_open_rig := class:
     NoSignalSound:audio_player_device                   # AMB_No_Signal, looping
     RoomRain:audio_player_device                        # AMB_Rain_Window, looping
     BootChime:audio_player_device                       # SFX_Boot_Chime
-    TutorialLine:audio_player_device                    # VO_Director_Tutorial_01
+    TutorialLine:audio_player_device                    # VO_Director_Tutorial_02 ("where she's stuck")
 
 cold_open := class:
     Rig:cold_open_rig
@@ -44,10 +45,13 @@ cold_open := class:
 
     # Safety net in case the sequence never signals StoppedEvent.
     SequenceTimeoutSeconds:float = 60.0
-    # VO_Director_Tutorial_01.wav is 5.36 s; audio_player_device has no finished event.
+    # VO_Director_Tutorial_02.wav is 5.32 s; audio_player_device has no finished event.
     TutorialSeconds:float = 5.6
 
     var OnDesk:logic = false
+    # The Wonderwell title card over the start screen's black (not named TitleCard: that's the
+    # content folder's module).
+    StartCard:title_card = title_card{}
 
     # ---- Pre-roll ----
 
@@ -57,14 +61,16 @@ cold_open := class:
         Rig.MonitorCamera.AddTo(Player)    # a fixed view under the black, so nothing shows when it lifts
         Screen.ClearLog()
         Screen.SetMenu(EmptyText, array{}, 0)
-        Screen.SetTitle(PressAnyKeyText)
+        Screen.SetTitle(EmptyText)
         Screen.Show(Player)
+        StartCard.Show(Player, PressAnyKeyText)
         Rig.NoSignalSound.Play()
         Input.AnyKeyEvent.Await()
         Logger.Print("[cold_open] pre-roll done")
 
     EndPreRoll():void =
         Rig.NoSignalSound.Stop()
+        StartCard.Hide()
         Screen.SetTitle(EmptyText)
 
     # ---- Cinematic ----

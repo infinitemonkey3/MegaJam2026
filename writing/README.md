@@ -18,6 +18,7 @@ end card come Friday.
 | `prompts/client-personality-des-dream-1.md` | Des's dream-self personality for dream 1, with the stutter rule |
 | `nell/case-file.md` | Nell's case file as the screen shows it, the entries the screen adds after each dream, the hidden fact sheet staged by dream, and the fact each dream reveals |
 | `nell/dream-1.md` | Dream 1: loop beats, the observe replay, take beats and crisis beats with their log and context lines, the directing options, the three endings, the client's verdict lines and the director's lines |
+| `nell/dream-2.md`, `nell/dream-3.md` | Nell's dreams 2 (young Nell interviews Walt off her order pad) and 3 (March 3, 4:30 PM). Cut to what the game runs: one casting, one item, timed take phases. Their personalities are in `nell_data.verse` |
 | `prompts/client-personality-dream-1.md` | Nell's dream-self personality for `SetPersonality` in dream 1 |
 | `prompts/verdict-rubric.md` | The silent verdict prompt that fills `take_score`, and the thresholds |
 | `prompts/scene-update.md` | The `scene_update` action text: when and how to fill `Distress` and `LogLine` |

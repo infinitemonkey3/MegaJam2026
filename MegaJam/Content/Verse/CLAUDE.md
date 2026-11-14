@@ -31,7 +31,10 @@ play session yet.
   Reload, both mouse buttons: Verse only hears Fortnite's input actions, not raw keys).
 
 ### Cold open (`cold_open.verse`)
-- `cold_open`: `RunPreRoll` (a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
+- `title_card` (`title_card.verse`): the Wonderwell title card (`Content/TitleCard/T_TitleCard`,
+  from `art/style-test/mockup-title.jpg`) full screen with the prompt low under the recliner.
+  The pre-roll shows it over the black overlay and `EndPreRoll` takes it down.
+- `cold_open`: `RunPreRoll` (the title card over a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
   ended by `input_router.AnyKeyEvent`; lifted under the sequence's own fade from black),
   `RunColdOpen` (plays the Level Sequence and swaps to the desk
   camera underneath it), `RunRoomIntro` (plays `LS_RoomIntro` on the `Room Intro Sequence`
@@ -55,8 +58,9 @@ play session yet.
 - `MakeDesClient()` (`des_data.verse`): Des, with the case file's Screen section from
   `writing/des/case-file.md` and a full dream 1.
 - `MakeNellClient()` (`nell_data.verse`): Nell, the current patient 1 (2026-11-13), with the
-  Screen section of `writing/nell/case-file.md` and a full dream 1 from
-  `writing/nell/dream-1.md`; layers 2 and 3 are placeholders.
+  Screen section of `writing/nell/case-file.md` and all three dreams from
+  `writing/nell/dream-1.md`..`dream-3.md` (2: young Nell interviews Walt at Hollis's Tea Room; 3: March 3, 4:30 PM,
+  quiet). Dreams 2 and 3 have no scene settings (`Settings := array{}`), since Direct skips them.
 - Patients are data: `game_director`'s `@editable Patient` (`patient_choice`) is the one switch.
   `MakePatient` gives the client for the debugger and the takes; `SetUpPatient` (first thing in
   `OnBegin`) sets `PatientRecliner`'s material on the `ReclinerCard` entity and the patient's
@@ -77,18 +81,43 @@ play session yet.
   NPC's spawner. Phases (`take_phase`): CaseFile, Observe, Direct, RunTake, LastLine, Verdict,
   then GoodEnding (next dream), RetryEnding (back to Direct, "Take N+1"), or Finale after a
   positive verdict on the last dream (`DoFinale`, a stub for the scripted ending).
+- **Each dream opens like a spy learning a target** (Chip, 2026-11-13). `DoCaseFile` shows the
+  patient's case file (`debug_screen.ShowFile`: case file, revealed facts, loop note, any cake
+  entry) with ATTACH TO DREAMER, while the director's `<dream id>_intro` plays (in a `branch`).
+  The file is gone once the player attaches: the client then recounts the loop (Observe).
+- A dream with exactly one role assigns it: `DoDirect` shows the role (`RoleFile`: YOU ARE,
+  `dream.RoleFile`, SHE WANTS `dream.Want`, IN THE WAY `dream.Obstacle`) with ENTER DREAM, while
+  the director's `<dream id>_sendin` plays (first take only; `dream.SendIn` is its text). No
+  item pick then; the opening cue skips the item. `StartTake` tells the client her want and to
+  state it early, in offers, not questions. Nell's roles: Teddy, young Walt, Walt. Des still
+  casts from three, with the item pick.
+- **The player's words can carry between dreams** as messages (they can't become strings).
+  Nell's dream 2 has `AsksForCake`: `DoGoodEnding` first calls `client_control.RequestCake`, a
+  silent prompt that fills `birthday_cake.CakeWaltAskedFor` from the take. Dream 3 has
+  `UsesCake`: `LoadDream` adds `CakeKnowledge(TheCake())` to the personality, and the case file
+  shows `CakeEntry` (`ORDER  1 birthday cake: ...`). `TheCake` falls back to `DefaultCake` (a
+  lemon cake). `<localizes>` functions with parameters are `no_rollback`, so helpers that call
+  them can't be `<transacts>`.
 - Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
   opening prompt names both, so the client's first line reacts to them. `PickSettings` and
   `PickItems` are unused until settings or more items come back.
 - Observe (the replay) is paced by the player: each loop beat goes in the log, the client tells
   it as her own memory (`client_control.NarrateBeat`, first person, past tense, using the beat's
-  murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (row 16 of the dream debugger,
-  a click or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
+  murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (`ContinuePrompt`, appended under the
+  newest line in `LatestText`; a click anywhere on rows 6-16, or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
 - Endings are told the same way: each `GoodEndingLog` / `BadEndingLog` line is narrated with
-  CONTINUE, the client says `FactRevealed` aloud, then `Celebrate` shows the LAYER CLEARED
+  CONTINUE; on a good ending the client then names what the player said or did that turned it
+  around (`client_control.CreditLine`, from the take still in the session), says `FactRevealed`
+  aloud, then `Celebrate` shows the LAYER CLEARED
   banner with the dream's `ClearedLog` (the debugger's notes, not told by the client) listed
   under it, and one CONTINUE before the next layer.
-- The dream debugger's take log shows only the newest line (the player reads at their own pace).
+- The dream debugger's take log shows only the newest line (the player reads at their own pace),
+  pinned to the top of the log area (`LatestText`'s slot is top-aligned).
+- The take moves through the dream's `TakePhases` (Nell: dough time, bake time, opening time;
+  Des: his name is called, the spotlight, the catchphrase), spread evenly over `TakeSeconds`
+  before the last line (`take_flow.RunPhases`). Each phase goes in the log and nudges the client
+  on with `client_control.MoveScene`, which waits while she's talking; what the visitor changed
+  holds. Crisis beats from the writing aren't wired.
 - Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
   does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,
@@ -136,9 +165,10 @@ play session yet.
   Two layers: the text is `UW_DebuggerText` (`Content/DreamDebugger/`), a UMG widget with 18
   NotoSans rows (`Row00Text`..`Row17Text`, row 4 is `Tab0Text`..`Tab2Text`) in a Scale Box;
   input is invisible Verse UI buttons over the selectable rows (mouse, arrow keys, D-pad), whose
-  highlight moves the `>` cursor. Tabs: CASE FILE (paged, `[ MORE ]` on row 15), DREAMS (INVOKE
-  lines) and ASSISTANT (face plus preset questions). Invoking and asking only log so far. Shown
-  with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
+  highlight moves the `>` cursor. No tabs (Chip, 2026-11-13): the take flow drives it from the
+  moment it shows. Views: the file (`ShowFile`: rows 6-14 paged, `[ MORE ]` on row 15, the
+  button on row 16), the scene log (newest line in `LatestText`, CONTINUE under it), and the
+  take's menus. Shown with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
   background (they get the camera's perspective).
 - Input on the debugger (play test, 2026-11-13): the UMG text widget must be Not Hit-Testable
   (Self & All Children) or its rows catch the mouse above the Verse buttons; "Self Hit-Test
@@ -146,13 +176,27 @@ play session yet.
   Hovering a line focuses it, Space (Jump) activates the focused button, mouse clicks work.
   Arrow keys and Enter do nothing: Verse can't hear them and Fortnite's UI doesn't navigate with
   them.
+- The debugger's row 0 is a title bar image (`T_DebuggerTitleBar`, drawn by
+  `art/tools/make_debugger_titlebar.py`: a cloud dissolving into binary, the WONDERWELL
+  wordmark, DREAM DEBUGGER v4.1.7 [UNREGISTERED], window buttons). In `UW_DebuggerText` it's
+  `RowBox00 > TitleBarLayers (Overlay) > TitleBarImage, Row00`; Verse leaves row 0's text blank.
+  `RowBox00` is 1.5 rows tall and the blank `RowBox03` half a row, so rows 4 on stay on the
+  even 1/18 grid the click areas assume. Keep those two summing to two rows.
+  The brand font only exists as that image (see Fonts).
 - Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
   blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
+  The boot screen (`UW_DreamDebugger`) and the debugger (`UW_DebuggerText`) both use NotoSans
+  Black. Row 1 is blank: the [UNREGISTERED] tag is in the title bar image.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line
   names: `before_take`, `failed_take`, `mixed_take`, `ending_reaction`, `<dream id>_intro`,
-  `<dream id>_solved`.
+  `<dream id>_sendin`, `<dream id>_solved`. `device_director_voice` plays the lines that have
+  an audio player (`director_line`: id, player, seconds) and only logs the rest;
+  `game_director` sets it on the take flow with `DirectorLines()`, from its `NellD1Intro` ..
+  `NellD3SendIn` editables (players `DIR nell_*` in the outliner's `Director/Devices`, no
+  spatialization or attenuation, volume 2). A new line needs a WAV, a player, an editable and
+  a `DirectorLines` entry with its length.
 
 ## Gotchas
 - **Model-written text stays a `message`.** It is redacted when turned into a string, so the
@@ -193,7 +237,7 @@ play session yet.
   HUD" must stay Do Not Override: Hide Element hides everything, the talk UI included, and Verse
   `ShowElementsForPlayer` can't override the device. The player holds the talk key it shows.
   During a take the debugger also drops to input mode None so Fortnite gets the keyboard.
-- **The first take works end to end** (2026-11-13): INVOKE layer 1, the replay with Des's
+- **The first take works end to end** (2026-11-13, before the file view): INVOKE layer 1, the replay with Des's
   murmurs, directing by clicks, talking to Des by voice, his `scene_update` sentences in the
   log, the verdict and the retry.
 - **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD
@@ -205,6 +249,11 @@ play session yet.
 - The pre-roll no longer has the design's mic check or the Talk/Preset-lines choice (Chip
   wanted a plain black start screen). `game_state.VoiceMode` stays `Mic` until that choice gets
   a new home.
+- **Space must not make the character jump** (the jump was audible). The `No Jump Movement
+  Settings` device (Player Movement Settings, outliner folder `Game`) has its
+  `MovementSettings_Jumping` component's Jump Velocity at 0, Add to Players on Start on. The
+  Jump input action still reaches Verse. Untested in a session whether a zero-velocity jump is
+  silent; if not, Verse's `fort_jump_component` can disable jumping, but it's `@experimental`.
 - Only one `take_flow` may run: it's started by `game_director`, so keep its `RunOnBegin` off
   whenever a director is placed.
 - Verse devices render as consoles in a play session too. Keep `Game Director` and `Take Flow`

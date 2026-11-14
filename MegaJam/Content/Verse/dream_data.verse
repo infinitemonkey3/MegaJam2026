@@ -41,6 +41,11 @@ client_state := struct:
     Hope:int                  # 0-3, that the loop can end
     Mood:message              # one short phrase, e.g. "wary but softening"
 
+# Filled after a good ending of a dream with AsksForCake (Chip, 2026-11-13): the birthday cake
+# Walt named in Nell's dream 2. Dreams with UsesCake bake that cake.
+birthday_cake := struct:
+    CakeWaltAskedFor:message        # a few words, like "a lemon cake"
+
 take_memory := struct:
     WhoTheVisitorWas:message        # the role as the client understood it
     KeyMoments:[]message            # at most 3, one sentence each
@@ -90,6 +95,13 @@ loop_beat := class:
     Murmur:string = ""        # what the client mutters over this beat, if anything
     HoldSeconds:float = 2.5
 
+# A phase of the take: the dream's clock moves on to the next part of the morning (Chip,
+# 2026-11-13: without it the client stayed on the first task, the dough, for the whole take).
+# The phases spread evenly over the take, before the last line.
+take_phase_beat := class:
+    LogLine:string            # prose for the dream debugger's log
+    Context:string            # what's now happening, for the client: "It's time to ..."
+
 dream := class:
     Id:string
     Title:string
@@ -97,7 +109,17 @@ dream := class:
     Personality:string        # SetPersonality text for this dream (dream self, rules, setting)
     LoopBeats:[]loop_beat     # prewritten replay; the last beat is where the loop always ends
     EndingBeatLog:string      # log line for "the moment the loop always ends" during a take
-    Roles:[]casting_role
+    TakePhases:[]take_phase_beat = array{} # the take's clock: what part of the scene comes next
+    Roles:[]casting_role      # one role: the dream assigns it and the director sends you in as it
+    # The improv prompt the player is sent in with (Chip, 2026-11-13): who you are (the one role),
+    # what the client wants, and what's in the way. Shown at the top of the case file; Want and
+    # Obstacle also go to the client, who states her want early.
+    Want:string = ""
+    Obstacle:string = ""
+    SendIn:string = ""        # the director's prerecorded send-in line ("<dream id>_sendin"); the text is for the writing
+    RoleFile:[]string = array{} # what the player's role knows, shown before ENTER DREAM, to learn like the case file
+    AsksForCake:logic = false # a good ending asks the session which birthday cake was named
+    UsesCake:logic = false    # the client and the case file get that cake (a lemon cake if none was named)
     Settings:[]scene_setting
     Items:[]inject_item
     PositiveLine:string       # the client's verdict lines, spoken with PromptToTalk
@@ -107,7 +129,7 @@ dream := class:
     ClearedLog:[]string = array{} # after a good ending: the debugger's notes, shown, not told
     BadEndingLog:[]string     # authored bad ending
     FactRevealed:string       # what a positive verdict gives up; joins the facts for later dreams
-    TakeSeconds:float = 120.0 # how long a take runs before the last line
+    TakeSeconds:float = 240.0 # how long a take runs before the last line (doubled from 120, Chip 2026-11-13)
 
 client := class:
     Id:string
@@ -268,4 +290,4 @@ MakePlaceholderDream(Id:string, Title:string, Fact:string)<transacts>:dream =
             "OVEN state=burning / SMOKE rising"
             "LIGHTS state=out / HEART rate=spike / LOOP restart"
         FactRevealed := Fact
-        TakeSeconds := 90.0
+        TakeSeconds := 180.0

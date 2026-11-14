@@ -44,7 +44,7 @@ take_flow := class(creative_device):
     # game_director replaces Screen with the in-world screen.
     var Screen:debug_screen = stub_debug_screen{}
     Haze:haze_controller = haze_controller{}
-    Director:director_voice = stub_director_voice{}
+    var Director:director_voice = stub_director_voice{}
 
     # How long to wait for the player's last line, and for the client to finish a line.
     LastLineSeconds:float = 30.0
@@ -109,14 +109,22 @@ take_flow := class(creative_device):
             take_phase.Finale => DoFinale()
             take_phase.Done => take_phase.Done
 
-    # 1. Case file: load the dream into the client, show the file, the director's aside.
+    # 1. Case file: load the dream into the client and show her file with ATTACH TO DREAMER,
+    # while the director names her and says to learn it (Chip, 2026-11-13: like a spy learning
+    # the target; the file is gone once the player attaches).
     DoCaseFile(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         set TakeNumber = 0
         Control.LoadDream(Subject, Dream, Facts)
-        Entries := for (Entry : Subject.CaseFile + Facts + array{Dream.LoopNote}) { ToMessage(Entry) }
-        Screen.SetCaseFile(Entries)
-        Director.PlayLine("{Dream.Id}_intro")
+        branch:
+            Director.PlayLine("{Dream.Id}_intro")
+        Screen.ShowFile(ToMessage("CASE FILE"), Control.CakeEntries(Dream), Subject.CaseFile + Facts + array{Dream.LoopNote}, "ATTACH TO DREAMER")
+        Screen.SetTitle(ToMessage(Dream.Title))
         take_phase.Observe
+
+    # The player's role, to learn before ENTER DREAM: who they are, what the role knows, and the
+    # scene's improv prompt (what she wants, what's in the way).
+    RoleFile(Dream:dream, Role:casting_role)<transacts>:[]string =
+        array{"YOU ARE  {Role.Label}"} + Dream.RoleFile + array{"-- THIS DREAM --", "SHE WANTS  {Dream.Want}", "IN THE WAY  {Dream.Obstacle}"}
 
     # 2. Observe: replay the loop as a log, one beat at a time. The client tells each beat as
     # something that happened to her, and the player presses CONTINUE for the next (play test,
@@ -146,7 +154,19 @@ take_flow := class(creative_device):
     # client opens the take by reacting to both. Settings and a second item are off for now
     # (play test, 2026-11-13: with more choices the client's opening stayed generic, "you're
     # here early"); PickSettings and PickItems are kept for when they come back.
+    # A dream with one role assigns it (Chip, 2026-11-13: choosing who to be was the hardest
+    # call and caused most bad takes): the director sends the player in as it, and they pick
+    # only the item.
+    # With one role, the director sends the player in as it (on the first take) while they read
+    # the role, and ENTER DREAM starts the take (Chip, 2026-11-13). No item pick then.
     DoDirect(Dream:dream)<suspends>:take_phase =
+        if (Dream.Roles.Length = 1, Role := Dream.Roles[0]):
+            if (TakeNumber = 0):
+                branch:
+                    Director.PlayLine("{Dream.Id}_sendin")
+            Screen.ShowFile(ToMessage("YOUR ROLE"), array{}, RoleFile(Dream, Role), "ENTER DREAM")
+            set MaybeSetup = option{MakeTakeSetup(Role, array{}, array{})}
+            return take_phase.RunTake
         Director.PlayLine(DirectorLineBeforeTake)
         RoleIndex := PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
         if (Role := Dream.Roles[RoleIndex]):
@@ -238,6 +258,7 @@ take_flow := class(creative_device):
             race:
                 WatchScene(Control)
                 RunClock(Dream)
+                RunPhases(Dream, Control)
             take_phase.LastLine
         else:
             Logger.Print("[flow] no setup for the take; back to the menu", ?Level := log_level.Warning)
@@ -286,10 +307,20 @@ take_flow := class(creative_device):
     # Good ending: the client tells how the loop resolves, says the dream's fact in her own
     # words, then the debugger's notes, each with CONTINUE; then the next dream begins.
     DoGoodEnding(Dream:dream, Control:client_control)<suspends>:take_phase =
+        # First, while the session still holds the take: the cake named in it, for a later dream.
+        if (Dream.AsksForCake?):
+            Control.RequestCake()
         Haze.Reset()
         Screen.SetVitals(0)
         for (Line : Dream.GoodEndingLog):
             Narrate(Control, Line, "")
+        # She says what the player did that worked, in her own words (Chip, 2026-11-13). The log
+        # can't show it: model text is redacted when it becomes a string.
+        Log("She tells you what turned it around.")
+        Crediting := Control.CreditLine()
+        if (Crediting?):
+            Control.AwaitSpeechEnd(SpeechSeconds)
+        Screen.AwaitContinue()
         set Facts += array{Dream.FactRevealed}
         Log(Dream.FactRevealed)
         Revealing := Control.SpeakLine(Dream.FactRevealed)
@@ -344,6 +375,17 @@ take_flow := class(creative_device):
             Screen.SetVitals(Level)
             # Passed through untouched: model text is redacted as a string, so never branch on it.
             Screen.AppendLogLine(Update.LogLine)
+
+    # The take's phases (dough time, bake time, opening time...), spread evenly over the take
+    # before the last line: each goes in the log and moves the client's scene on. Never returns,
+    # so RunClock ends the race.
+    RunPhases(Dream:dream, Control:client_control)<suspends>:void =
+        Gap := Dream.TakeSeconds / (1.0 * (Dream.TakePhases.Length + 1))
+        for (Next : Dream.TakePhases):
+            Sleep(Gap)
+            Log(Next.LogLine)
+            Control.MoveScene(Next.Context, Gap / 2.0)
+        Sleep(Inf)
 
     # The take's clock: the haze's clock input rises a step each quarter of the take, and the
     # function returns when the take reaches the moment the loop always ends.

@@ -41,8 +41,7 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
 - `D-01` Pity. Being fussed over. Being told to sit down.
 - `D-02` Whistling. `ANOMALY` House rule: nobody whistles in the shop. 2 ejections on record.
   → Pays off in dream 1.
-- `D-03` Kitchen timers. `ANOMALY` Oven timer on premises: factory seal intact. Never used in
-  44 years. → Pays off in dream 2.
+- `D-03` Kitchen timers. Oven timer on premises: factory seal intact. Never used in 44 years.
 - `D-04` Shop-bought bread.
 - `D-05` Flowers. "They're for hospitals."
 
@@ -52,8 +51,9 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
 - `K-02` 25 yr ago. Taught nephew Theodore ("Teddy") to bake. He was nine. He stood on a
   flour crate to reach the bench.
 - `K-03` 6 yr ago. Walter Price deceased. Shop closed to trade the same week. Never reopened.
-- `K-04` 6 yr ago. `ANOMALY` Fire service called to the shop, 06:10. Cause given: "baking".
-  No claim filed. Same day, 11:00: funeral, W. Price. → Pays off in dream 2.
+- `K-04` 47 yr ago. `ANOMALY` Purse contents on record: one order slip, Hollis's Tea Room,
+  where the subject worked the counter. Folded small. Customer: W. Price. Order: 1 birthday
+  cake. Never filled there. → Pays off in dream 2.
 - `K-05` Every year. `ANOMALY` Shop meter reads zero all year except March 3. Order book, one
   entry a year, March 3: one cake. Customer: blank. Status: HOLD. Never collected.
   → Pays off in dream 1.
@@ -74,8 +74,7 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 
 ## Screen Unlocks
 
-Entries the screen adds after each dream resolves. Dream 1's are final. Dreams 2 and 3 are
-placeholders until Friday.
+Entries the screen adds after each dream resolves.
 
 ### After Dream 1
 
@@ -86,11 +85,18 @@ placeholders until Friday.
 
 ### After Dream 2
 
-- To write Friday. Clears `D-03` and `K-04`. Unlocks layer 3.
+- `U2-01` RECORD RECOVERED. Hollis's Tea Room, 47 yr ago. Walter Price answered every question
+  on her order pad.
+- `U2-02` `K-04` ANOMALY CLEARED. The slip in her purse is the first order she took from him:
+  his birthday cake.
+- `U2-03` LAYER 3 UNLOCKED. SCENE bakery_interior / T 16:30 / DATE march_03, 6 yr ago.
 
 ### After Dream 3
 
-- To write Friday. Clears `K-06`.
+- `U3-01` `K-06` ANOMALY CLEARED. The first slip is in Walter Price's handwriting. He ordered
+  his own birthday cake.
+- `U3-02` `K-05` CLOSED. Held for W. Price. Collected.
+- `U3-03` SESSION FAULT RESOLVED.
 
 ## Full Fact Sheet
 
@@ -116,7 +122,8 @@ before it resolves. Later stages never leak into an earlier dream's prompts.
 ### Stage 1: Unlocked By Dream 1
 
 - `F1-01` Walter Price, born March 3.
-- `F1-02` The March 3 cake: 8 inch, lemon. Same order every year. She bakes it, writes the
+- `F1-02` The March 3 cake: the cake Walt asked for the night she said yes (dream 2; the player's
+  answer, lemon if none). Same order every year. She bakes it, writes the
   slip, sets it in the case. It stays there until it is thrown out.
 - `F1-03` Walter whistled at the bench. One tune. He said he wrote it. Nobody believed him.
   It has no name on record.
@@ -124,19 +131,18 @@ before it resolves. Later stages never leak into an earlier dream's prompts.
 
 ### Stage 2: Unlocked By Dream 2
 
-- `F2-01` Walter timed the bake by the tune. Three times through and the bread was done. The
-  shop never used the timer.
-- `F2-02` Funeral morning. She opened alone at 05:00. 36 loaves in. She waited for the tune.
-  All 36 burned. A neighbor called the fire service.
-- `F2-03` She had promised the bread for the funeral lunch. The lunch was served with
-  shop-bought.
+- `F2-01` 47 yr ago. Nell worked the counter at Hollis's Tea Room. Walt Price delivered flour for
+  the mill and bought one of her cinnamon rolls every day for a month before she'd hear him out.
+- `F2-02` She interviewed him off her order pad at closing. The last thing she wrote down was
+  his birthday cake. She kept the slip.
+- `F2-03` She baked him that cake every March 3 for thirty-eight years.
 
 ### Stage 3: Unlocked By Dream 3
 
 - `F3-01` Walter Price died on March 3, his birthday, 6 yr ago. 16:40. Cutler Row, two
   hundred meters from the shop door.
-- `F3-02` That year she forgot the cake. He wrote the order slip himself, as a joke. "1 cake.
-  Lemon. W. Price. Pick up 5 PM." That is the first slip in the series.
+- `F3-02` That year she forgot the cake. He wrote the order slip himself, as a joke. "1 birthday
+  cake. W. Price. Pick up 5 PM." That is the first slip in the series.
 - `F3-03` They had words over it. Her last words to him: "Then you can pick it up yourself."
 - `F3-04` She baked it anyway. It was in the case at 5 PM.
 
@@ -152,8 +158,8 @@ his too.
 
 ### Dream 2 Reveal
 
-Walt's whistling was the oven clock. Three times through the tune and the bread was done. The
-morning of the funeral she stood at the oven waiting for a tune that didn't come.
+She made Walt answer every question on her order pad before she said yes. The last thing she
+wrote was his birthday cake, and she baked it every March 3 for thirty-eight years.
 
 ### Dream 3 Reveal
 
@@ -170,13 +176,14 @@ glass, the shop is silent, and the lights go out. Written in `dream-1.md`.
 
 ### Layer 2: The Memory Under It
 
-The morning of Walt's funeral. She opens alone. The oven works this time, too well. The bread
-goes in and she waits for a signal she can't name. Everything burns. To write Friday.
+Hollis's Tea Room, 47 years ago, at closing. Young Nell interviews Walt Price off her order pad
+before she'll say yes, and the clock always strikes nine first. If he wins her, she writes down
+his birthday cake. Written in `dream-2.md`.
 
 ### Layer 3: The Core
 
 March 3, six years ago. The last ordinary day. A cake in the case, an order slip in his
-handwriting, and 5 PM coming. To write Friday.
+handwriting, and 5 PM coming. Quiet on purpose. Written in `dream-3.md`.
 
 ## Leaves Behind
 
