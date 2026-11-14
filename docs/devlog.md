@@ -116,45 +116,91 @@ used.
 
 ## Day 2 (Nov 13)
 
+- **Overnight: the cold open's words and the name.** Chip rewrote two lines of the director's
+  narration ("people don't wake up" in place of "people get stuck", and "That's where you come
+  in" over the HELP WANTED sign), and the game took the name **Wonderwell**. The overnight
+  Verse session merged its work and handed over to the orchestrator before the usage window ran
+  out again.
+- **One thread.** In the morning Chip folded the day's work into one orchestrator session,
+  starting from the hand-off between the cold open and the room: the room fades up from black
+  and drifts forward onto the desk camera.
 - **The room.** The 2D room layers (back wall, desk, monitor, recliner, floor) were placed in
-  UEFN as flat cards, then repainted and reframed from Chip's notes:
-  - The clutter and posters came out, and the back wall and desk were redrawn at 4K.
-  - A cigarette was taken out of the prompts.
-  - Chip placed the layers himself, and the agent matched the camera to them.
-- **The dream debugger.** A UMG widget in the monitor's glass, with Verse buttons laid over its
-  rows so it can be clicked. It shows the patient's case file, the replay of the loop, the take
-  log and the menus. Later it got a branded title bar (a cloud dissolving into binary digits,
-  drawn by a Python script) and a keyboard layer recoloured to match the monitor.
+  UEFN as flat cards and reframed from Chip's notes:
+  - Chip placed and reframed the layers himself. The agent put his editor view through the
+    desk camera so he could check them (a placed camera device turned out to be blocking it),
+    and set the camera's field of view to 90.
+  - The posters and some clutter were hidden. One clutter cutout showed cigarettes, which break
+    the content guidelines, so it was deleted.
+  - The desk was clipped on the right and both it and the back wall looked soft, so they were
+    regenerated at 4K with the whole desk in frame, and the desk lamp came out. They still
+    looked blurry in game; Chip found the fix: the UI texture group, which skips mipmaps.
+  - The director's VO was too quiet, so every line was doubled in volume.
+- **The dream debugger.** Chip described it: a terminal-like program, a cracked, unregistered
+  copy of the Wonderwell Dream Debugger, naming the patient, with tabs for the case file and the
+  dreams. First it was a widget behind the monitor's glass, cut out of the monitor art.
+  In-world widgets can't be clicked, so Chip suggested the interactive part be a screen-space UI
+  placed by projecting the monitor's corners from the world onto the screen. It took a few
+  tries to stay locked to the monitor, and Chip turned the monitor to face the camera so the
+  two match exactly. A screen-space frame couldn't match the perspective of the world one, so it
+  was dropped and everything sits inside the glass.
+  - Fonts: UEFN won't import `.ttf` or `.otf`, and Unreal's own fonts fail validation, so the
+    text is Fortnite's NotoSans. The brand font only appears as an image.
+  - The tabs could only be clicked on a hairline at their top and bottom edges, which Chip
+    spotted from the hover glow. Fixed.
+  - Late at night it got a branded title bar (a cloud dissolving into binary digits, drawn by a
+    Python script, 50% thicker after a first look). The keyboard lost its cable and was
+    recoloured to match the monitor, and everything was realigned after Chip moved the monitor.
 - **First take, end to end.** Des's dream 1 played through: the replay, directing by clicks,
   talking to Des by voice, his live `scene_update` lines in the log, the verdict and a retry.
   Play testing drove most of the day's changes:
-  - The persona used the player's Fortnite outfit name ("Sergeant"), so every take now repeats
-    a rule naming the game's player labels.
-  - A one-off prompt was forgotten after one reply, so the take's setup went into the
-    personality.
-  - The verdict prompt was moderated when written in character, so it became neutral, with one
-    retry.
+  - The log was unreadable as debugger codes, so it became plain prose.
+  - Chip couldn't find how to talk back. The persona needs Fortnite's conversation prompt (a
+    held key), and that HUD element had been hidden with the rest.
+  - The persona called the player by his Fortnite outfit label ("Sergeant", "Tactical
+    Tracker", "Stealth Specialist"). Every take now repeats a rule naming those labels.
+  - Cast as Des's father, the player was greeted as a stranger: a one-off prompt was forgotten
+    after one reply, so the take's setup went into the personality.
+  - Des was obstinate and unrewarding to play against, so the personality now lets fitting help
+    land.
+  - The verdict prompt was moderated when written in character. A moderated verdict fell back
+    to the mixed line ("There's something familiar about you"), which puzzled Chip. The prompt
+    is now neutral, with one retry.
 - **Nell becomes patient 1.** Chip judged an adult's grief less likely than a child's to trip
   moderation, so Nell became the first patient. Patients are data: one `@editable` switch on the
-  director picks the client, the recliner art and the persona's voice.
-- **Pacing from play tests.** Players raced past the replay, so each beat now waits for CONTINUE
-  and the client tells it as her own memory. Endings are told the same way:
-  - A good ending has her name what the player did that turned it around.
-  - A LAYER CLEARED banner lists the debugger's notes.
-  - Takes play as improv: "yes, and".
-- **Nell's three dreams.** Dreams 2 and 3 were written, then reshaped from Chip's notes:
+  director picks the client, the recliner art (one texture swapped on one card, Chip's idea)
+  and the persona's voice. Nell also came across too severe at first, and was softened.
+- **Pacing from play tests.** The log raced by and Chip lost the gist. His idea: feed her the
+  replay's lines and let her tell them as something that happened to her ("I went into the
+  bakery and that darned oven wouldn't light again"). Each beat now waits for CONTINUE, and the
+  newest line is pinned to the top. Endings are told the same way:
+  - A good ending has her name what the player did that turned it around (Chip's request).
+  - A LAYER CLEARED banner lists the debugger's notes; she doesn't narrate those.
+  - With settings and two items her opening stayed generic ("you're here early"), so the take
+    became one role and one item, and her first line reacts to both.
+  - Takes play as improv: "yes, and". Chip found he could describe actions as well as speak,
+    and a take where he brought in a handyman went well.
+- **The start screen** shows the Wonderwell title card, with PRESS ANY KEY moved down.
+- **Nell's three dreams.** Chip noticed she got stuck on the dough for a long time, so takes got
+  a rough run of events that advance with the clock. Dreams 2 and 3 were written, then reshaped
+  from Chip's notes:
   - Dream 2 started as a surreal funeral morning. Chip found it played like dream 1 ("more bake
-    the loaves") and asked that the surreal parts carry a core symbol. It became a date
-    interview: young Nell quizzing Walt off her order pad.
-  - Dream 1 became surreal: a two-person shop with one person in it, and faceless help at the
-    locked door.
+    the loaves") and asked that the surreal parts carry a core symbol. He then asked for
+    something cute about dating. It became a date interview: young Nell quizzing Walt off her
+    order pad.
+  - Dream 1 became more surreal from his note: not normal baking problems but strange ones she
+    is overwhelmed by, with the same faceless strangers outside who could help, and she's
+    afraid to let them in.
   - Dream 3 is the quiet afternoon of March 3.
-- **Assigned roles.** Choosing who to be was the hardest call and caused most bad takes. Each
-  dream now assigns the player's role, like an improv prompt: who you are, what she wants,
-  what's in the way. You are Teddy in dream 1, young Walt in dream 2 and Walt in dream 3.
+- **What's fun.** Chip: the fun is "a clear problem to address for the character and a range of
+  reasonable approaches to it". Looked at as an improv prompt, choosing who to be was the
+  hardest call and caused most bad takes. So each dream now assigns the player's role: who you
+  are, what she wants, what's in the way. The director sends you in as that role in a
+  prerecorded line. You are Teddy himself in dream 1, young Walt in dream 2 and Walt in dream 3.
 - **The player's words carry forward.** The birthday cake the player names as young Walt in
   dream 2 is recorded by a silent prompt. It becomes the cake in dream 3, in her personality and
   on the case file. Chip: "That's the power of this."
+- **Space made the character jump** audibly. A Player Movement Settings device sets jump
+  velocity to 0, so Space can still drive the menus.
 
 ## Day 3 (Nov 14)
 
