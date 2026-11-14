@@ -313,7 +313,7 @@ dream_debugger_ui := class(debug_screen):
     RenderTabs():void =
         set View.BodyMessage = EmptyText
         set View.LatestMessage = EmptyText
-        SetRow(0, "WONDERWELL DREAM DEBUGGER  v4.1.7")
+        SetRow(0, "")    # row 0 is the title bar image (TitleBarImage in UW_DebuggerText)
         SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
         SetRow(2, "PATIENT: {Client.Name}")
         SetRow(3, "")
@@ -338,7 +338,7 @@ dream_debugger_ui := class(debug_screen):
     # The TAKE view: the take's title on row 4, then its menu or the last lines of its scene log,
     # and the vitals on row 16.
     RenderTake():void =
-        SetRow(0, "WONDERWELL DREAM DEBUGGER  v4.1.7")
+        SetRow(0, "")    # row 0 is the title bar image (TitleBarImage in UW_DebuggerText)
         SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
         SetRow(2, "PATIENT: {Client.Name}")
         SetRow(3, "")

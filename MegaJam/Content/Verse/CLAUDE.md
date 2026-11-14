@@ -152,6 +152,11 @@ play session yet.
   Hovering a line focuses it, Space (Jump) activates the focused button, mouse clicks work.
   Arrow keys and Enter do nothing: Verse can't hear them and Fortnite's UI doesn't navigate with
   them.
+- The debugger's row 0 is a title bar image (`T_DebuggerTitleBar`, drawn by
+  `art/tools/make_debugger_titlebar.py`: a cloud dissolving into binary, the WONDERWELL
+  wordmark, DREAM DEBUGGER v4.1.7 [UNREGISTERED], window buttons). In `UW_DebuggerText` it's
+  `RowBox00 > TitleBarLayers (Overlay) > TitleBarImage, Row00`; Verse leaves row 0's text blank.
+  The brand font only exists as that image (see Fonts).
 - Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
   blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
