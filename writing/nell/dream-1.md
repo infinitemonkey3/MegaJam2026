@@ -30,7 +30,7 @@ case file opens with it.
 - You are: Teddy, Walt's nephew, 34. She taught you to bake at nine, on a flour crate. Two years ago you asked her to reopen and she said no. You pay for this session. This morning you've turned up at five to help her open anyway.
 - She wants: `To open the shop at six, the way it's always opened.`
 - In the way: `The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in.`
-- Director on the case file, `nell_d1_intro`: `Eleanor Price. Nell. Seventy-one. Bargain implant, three years past warranty, same dream for nineteen nights. That's her file. Learn it. Once you're attached, you won't have it in front of you. Attach to the dreamer when you've got it.`
+- Director on the case file, `nell_d1_intro`: `Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you.`
 - Director on the role, `nell_d1_sendin`: `You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine, standing on a flour crate, and a woman who taught you can't refuse to show you how. That's your way in. Look over Teddy, and enter the dream when you're ready.`
 - Approaches that should all work: remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
 
