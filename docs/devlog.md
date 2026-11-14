@@ -97,3 +97,99 @@ used.
   (about $0.77) and cut the mouth into a 4-frame flipbook and the chest into an overlay, so the
   engine animates small pieces instead of swapping whole redrawn frames. All assets are logged
   in `docs/assets.md`.
+- **Des becomes the slice's client.** The writing session added Des Varro, a 13-year-old with a
+  second-hand speech implant, as the main client: case file, dream 1 ("the assembly loop") and a
+  personality with a stutter rule. Nell stayed as the worked example. Chip steered his details:
+  his kids' show Gale Rider, and his father's carrier's cloak worn inside out as a cape.
+- **Cold open built.**
+  - The street art (the Wonderwell poster, a HELP WANTED sign, a flyer, the street wall,
+    cables) was generated and cut out.
+  - It was laid out in UEFN as a Level Sequence with a slow camera move.
+  - The director's narration was generated with text-to-speech (fal, Gemini TTS, voice "Orus",
+    which Chip chose from a six-voice audition).
+  - A `game_director` Verse device runs the pre-roll, the cold open and the boot of the dream
+    debugger.
+- **Planning.** An implementation plan (`docs/implementation-plan.md`) was written and reviewed
+  against the design. The take-flow Verse compiled clean on its first full build.
+- **Clean-up.** The spike devices and Verse came out of the level once their answers were
+  recorded.
+
+## Day 2 (Nov 13)
+
+- **The room.** The 2D room layers (back wall, desk, monitor, recliner, floor) were placed in
+  UEFN as flat cards, then repainted and reframed from Chip's notes:
+  - The clutter and posters came out, and the back wall and desk were redrawn at 4K.
+  - A cigarette was taken out of the prompts.
+  - Chip placed the layers himself, and the agent matched the camera to them.
+- **The dream debugger.** A UMG widget in the monitor's glass, with Verse buttons laid over its
+  rows so it can be clicked. It shows the patient's case file, the replay of the loop, the take
+  log and the menus. Later it got a branded title bar (a cloud dissolving into binary digits,
+  drawn by a Python script) and a keyboard layer recoloured to match the monitor.
+- **First take, end to end.** Des's dream 1 played through: the replay, directing by clicks,
+  talking to Des by voice, his live `scene_update` lines in the log, the verdict and a retry.
+  Play testing drove most of the day's changes:
+  - The persona used the player's Fortnite outfit name ("Sergeant"), so every take now repeats
+    a rule naming the game's player labels.
+  - A one-off prompt was forgotten after one reply, so the take's setup went into the
+    personality.
+  - The verdict prompt was moderated when written in character, so it became neutral, with one
+    retry.
+- **Nell becomes patient 1.** Chip judged an adult's grief less likely than a child's to trip
+  moderation, so Nell became the first patient. Patients are data: one `@editable` switch on the
+  director picks the client, the recliner art and the persona's voice.
+- **Pacing from play tests.** Players raced past the replay, so each beat now waits for CONTINUE
+  and the client tells it as her own memory. Endings are told the same way:
+  - A good ending has her name what the player did that turned it around.
+  - A LAYER CLEARED banner lists the debugger's notes.
+  - Takes play as improv: "yes, and".
+- **Nell's three dreams.** Dreams 2 and 3 were written, then reshaped from Chip's notes:
+  - Dream 2 started as a surreal funeral morning. Chip found it played like dream 1 ("more bake
+    the loaves") and asked that the surreal parts carry a core symbol. It became a date
+    interview: young Nell quizzing Walt off her order pad.
+  - Dream 1 became surreal: a two-person shop with one person in it, and faceless help at the
+    locked door.
+  - Dream 3 is the quiet afternoon of March 3.
+- **Assigned roles.** Choosing who to be was the hardest call and caused most bad takes. Each
+  dream now assigns the player's role, like an improv prompt: who you are, what she wants,
+  what's in the way. You are Teddy in dream 1, young Walt in dream 2 and Walt in dream 3.
+- **The player's words carry forward.** The birthday cake the player names as young Walt in
+  dream 2 is recorded by a silent prompt. It becomes the cake in dream 3, in her personality and
+  on the case file. Chip: "That's the power of this."
+
+## Day 3 (Nov 14)
+
+- **A file to learn.** The debugger became a spy's briefing:
+  1. The patient's case file, with ATTACH TO DREAMER.
+  2. Once attached, her recounting of the loop.
+  3. Your role's file, with ENTER DREAM.
+
+  The director names the patient and sends you in. His seven new lines were recorded in the
+  same TTS voice, and a Verse `device_director_voice` plays them from audio player devices.
+- **Turns, not a clock.** In play the timed beats made the client talk over the player, and she
+  stalled on a question. Takes now move on only after the player has answered and she has
+  finished replying. In dream 2 she leads her own questions, because a prompted question landed
+  on top of the one she had just asked.
+- **Dream 2 grows a game.**
+  - It opens with three this-or-that guesses about Nell from her case file: cinnamon or lemon,
+    rain or sunshine, flowers or good flour. Then come the real questions.
+  - The first question, "where would you take me on a first date", was moderated in play. It
+    became "how would we spend a Saturday afternoon".
+  - Her last line is always the cake question, and the Saturday the player promises is carried
+    into dream 3 too.
+- **Title card.** Chip asked for the recliner's cable and the crowding lanterns to go, and for
+  the title to stand out.
+  - A Python script edits the two title layers: it clone-stamps the cable away, paints out the
+    lanterns, draws a brick wall, and gives the wordmark a stroke, shadow and halo.
+  - Two AI image edits (fal, Nano Banana 2.1) followed: one removed the recliner, and one added
+    a figure on the street, head in his hands, with the dream rising from his head. Chip chose
+    between two takes of the figure.
+  - Only the edited regions are blended in, because the edits drifted elsewhere.
+- **Dream 1 made concrete.** The surreal dough was hard to tackle in the abstract. Dream 1 is now
+  a run of jobs, each with a hint in Teddy's brief:
+  - fold the dough;
+  - knock twice on Walt's oven door and say "Morning, old girl";
+  - read out the regulars' orders;
+  - at six o'clock, ask for the key and let the faceless helpers in.
+- **Publish dry run.** The agent validated all 323 project assets, and checked every Verse API
+  we use for experimental markers. Nothing blocks a publish. Max Players (16) needs to be 1, and
+  only a real upload will prove the Scene Graph setting.
