@@ -238,6 +238,7 @@ take_flow := class(creative_device):
             race:
                 WatchScene(Control)
                 RunClock(Dream)
+                RunPhases(Dream, Control)
             take_phase.LastLine
         else:
             Logger.Print("[flow] no setup for the take; back to the menu", ?Level := log_level.Warning)
@@ -351,6 +352,17 @@ take_flow := class(creative_device):
             Screen.SetVitals(Level)
             # Passed through untouched: model text is redacted as a string, so never branch on it.
             Screen.AppendLogLine(Update.LogLine)
+
+    # The take's phases (dough time, bake time, opening time...), spread evenly over the take
+    # before the last line: each goes in the log and moves the client's scene on. Never returns,
+    # so RunClock ends the race.
+    RunPhases(Dream:dream, Control:client_control)<suspends>:void =
+        Gap := Dream.TakeSeconds / (1.0 * (Dream.TakePhases.Length + 1))
+        for (Next : Dream.TakePhases):
+            Sleep(Gap)
+            Log(Next.LogLine)
+            Control.MoveScene(Next.Context, Gap / 2.0)
+        Sleep(Inf)
 
     # The take's clock: the haze's clock input rises a step each quarter of the take, and the
     # function returns when the take reaches the moment the loop always ends.

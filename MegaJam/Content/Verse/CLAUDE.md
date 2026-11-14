@@ -95,6 +95,11 @@ play session yet.
   under it, and one CONTINUE before the next layer.
 - The dream debugger's take log shows only the newest line (the player reads at their own pace),
   pinned to the top of the log area (`LatestText`'s slot is top-aligned).
+- The take moves through the dream's `TakePhases` (Nell: dough time, bake time, opening time;
+  Des: his name is called, the spotlight, the catchphrase), spread evenly over `TakeSeconds`
+  before the last line (`take_flow.RunPhases`). Each phase goes in the log and nudges the client
+  on with `client_control.MoveScene`, which waits while she's talking; what the visitor changed
+  holds. Crisis beats from the writing aren't wired.
 - Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
   does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,

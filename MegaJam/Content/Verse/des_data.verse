@@ -25,6 +25,11 @@ MakeDesDream1()<transacts>:dream =
             loop_beat{LogLine := "The whole hall is laughing. His heart is racing."}
             loop_beat{LogLine := "The lights go out. The dream starts over."}
         EndingBeatLog := "The lights flicker. This is when they always go out. One more thing to say."
+        # Loosely the take beats in writing/des/dream-1.md, as the assembly's running order.
+        TakePhases := array:
+            take_phase_beat{LogLine := "Ms. Adeyemi-Ross calls his name from the side of the stage.", Context := "Time's moving on: Ms. Adeyemi-Ross calls your name from the side of the stage. You're next."}
+            take_phase_beat{LogLine := "A spotlight finds him. The hall goes quiet.", Context := "Time's moving on: you're in the spotlight now, and the whole hall has gone quiet, waiting."}
+            take_phase_beat{LogLine := "It's time for the catchphrase.", Context := "Time's moving on: it's time to say the catchphrase. Everyone is waiting for it."}
         Roles := array:
             casting_role{Id := "cast_father", Label := "Ansel Varro / father", LogEdit := "You step on stage as Ansel Varro, his dad.", ContextLine := "The visitor is your dad, Ansel. He talks footing, like at home. He works three jobs so you can have a better life up here. He should be at work. You've never seen him at school."}
             casting_role{Id := "cast_juno", Label := "Juno Pell / classmate", LogEdit := "You step on stage as Juno Pell, from his year.", ContextLine := "The visitor is Juno Pell, from your year. Juno sat next to you last year, asked what \"brann\" meant, and didn't laugh."}

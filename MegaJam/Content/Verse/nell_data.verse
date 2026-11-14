@@ -28,6 +28,11 @@ MakeNellDream1()<transacts>:dream =
             loop_beat{LogLine := "The lights flicker. Her heart is racing.", Murmur := "Somebody ought to be here by now."}
             loop_beat{LogLine := "The lights go out. The dream starts over."}
         EndingBeatLog := "The lights flicker. This is when they always go out. One more thing to say."
+        # Loosely the take beats in writing/nell/dream-1.md, as the parts of a baker's morning.
+        TakePhases := array:
+            take_phase_beat{LogLine := "Dough time. The dough has to be made and shaped now.", Context := "Time's moving on: it's dough time. The dough has to be mixed and shaped now, and it's being difficult."}
+            take_phase_beat{LogLine := "Bake time. The loaves have to go in the oven.", Context := "Time's moving on: it's bake time. The loaves have to go in the oven now, and the oven is being stubborn."}
+            take_phase_beat{LogLine := "Opening time. People are at the glass, and the door is still locked.", Context := "Time's moving on: it's opening time. People are waiting at the glass, and the door is still locked. They can't be kept waiting much longer."}
         Roles := array:
             casting_role{Id := "cast_teddy", Label := "Theodore \"Teddy\" Price / nephew", LogEdit := "You step in as Teddy, Walt's nephew.", ContextLine := "The visitor is Teddy, Walt's nephew, a grown man now. You taught him to bake when he was nine. He calls you Aunt Nell."}
             casting_role{Id := "cast_regular", Label := "A regular / first in line", LogEdit := "You step in as a regular, first in line.", ContextLine := "The visitor is one of your regulars, first in line most mornings. Two seeded rolls. You know the order better than the name."}

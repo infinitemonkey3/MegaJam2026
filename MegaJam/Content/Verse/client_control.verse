@@ -239,6 +239,21 @@ client_control := class:
             Logger.Print("[client] credit line skipped (persona busy)", ?Level := log_level.Warning)
             false
 
+    # A take phase: the dream's clock moves to the next part of the scene. The client reacts in a
+    # line or two and carries on with the visitor; what the visitor has already changed holds.
+    # Waits while the client is talking (PromptToTalk is refused then), up to TimeoutSeconds.
+    MoveScene(Context:string, TimeoutSeconds:float)<suspends>:void =
+        Instructions := ToMessage("{Context} Move the scene on to this now. Anything the visitor has already changed stays changed; this is only the dream pushing on. React in one or two short sentences, in your own voice, and keep playing along with the visitor.")
+        var Waited:float = 0.0
+        loop:
+            if (Persona.PromptToTalk[Instructions, VoiceChannel]):
+                break
+            if (Waited >= TimeoutSeconds):
+                Logger.Print("[client] scene move skipped (persona busy)", ?Level := log_level.Warning)
+                break
+            Sleep(0.5)
+            set Waited += 0.5
+
     MurmurLine(Line:string):void =
         Instructions := ToMessage("Half asleep, murmur exactly this and nothing else, and don't call anyone by name: {Line}")
         if (not Persona.PromptToTalk[Instructions, VoiceChannel]):

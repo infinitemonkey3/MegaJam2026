@@ -90,6 +90,13 @@ loop_beat := class:
     Murmur:string = ""        # what the client mutters over this beat, if anything
     HoldSeconds:float = 2.5
 
+# A phase of the take: the dream's clock moves on to the next part of the morning (Chip,
+# 2026-11-13: without it the client stayed on the first task, the dough, for the whole take).
+# The phases spread evenly over the take, before the last line.
+take_phase_beat := class:
+    LogLine:string            # prose for the dream debugger's log
+    Context:string            # what's now happening, for the client: "It's time to ..."
+
 dream := class:
     Id:string
     Title:string
@@ -97,6 +104,7 @@ dream := class:
     Personality:string        # SetPersonality text for this dream (dream self, rules, setting)
     LoopBeats:[]loop_beat     # prewritten replay; the last beat is where the loop always ends
     EndingBeatLog:string      # log line for "the moment the loop always ends" during a take
+    TakePhases:[]take_phase_beat = array{} # the take's clock: what part of the scene comes next
     Roles:[]casting_role
     Settings:[]scene_setting
     Items:[]inject_item
