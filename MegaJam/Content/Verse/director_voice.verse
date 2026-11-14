@@ -7,6 +7,8 @@ using { /Verse.org/Simulation }
 director_voice := interface:
     # Plays one named line and returns when it has finished.
     PlayLine(LineId:string)<suspends>:void
+    # Cuts off whatever line is playing (the player attached during the patient's intro).
+    StopLine():void
 
 # Line names take_flow uses. "{DreamId}_intro" and "{DreamId}_solved" are built per dream.
 DirectorLineBeforeTake:string = "before_take"
@@ -35,6 +37,10 @@ device_director_voice := class(director_voice):
         else:
             Logger.Print("[director] {LineId} (no audio)")
 
+    StopLine<override>():void =
+        for (Line : Lines):
+            Line.Player.Stop()
+
     FindLine(LineId:string)<transacts><decides>:director_line =
         var Found:?director_line = false
         for (Line : Lines, Line.Id = LineId):
@@ -48,3 +54,5 @@ stub_director_voice := class(director_voice):
     PlayLine<override>(LineId:string)<suspends>:void =
         Logger.Print("[director] {LineId}")
         Sleep(1.0)
+
+    StopLine<override>():void = {}

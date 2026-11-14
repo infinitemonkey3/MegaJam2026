@@ -121,6 +121,23 @@ dream_debugger_ui := class(debug_screen):
     # Input mode All while there's something to click; None while the player talks, so Fortnite
     # gets the keyboard (and the talk key) back.
     var Clickable:logic = true
+    # The player's active input, for the controls hint on row 17 (WatchInputKind keeps it current).
+    var Kind:input_kind = input_kind.KeyboardInput
+
+    ControlsHint():string =
+        case (Kind):
+            input_kind.GamepadInput => "D-PAD move  /  A select"
+            input_kind.TouchInput => "TAP select"
+            input_kind.KeyboardInput => "MOUSE click  /  SPACE select"
+
+    # Re-renders the hint when the player switches between keyboard and gamepad. Runs for good.
+    WatchInputKind(Player:player)<suspends>:void =
+        loop:
+            Now := ActiveInputKind(Player)
+            if (Now <> Kind):
+                set Kind = Now
+                Render()
+            Sleep(InputKindPollSeconds)
 
     # Shows the debugger over the monitor, given the monitor plane's screen rectangle.
     Show(Player:player, Monitor:monitor_rect):void =
@@ -136,6 +153,8 @@ dream_debugger_ui := class(debug_screen):
             PlayerUI.AddWidget(Root, player_ui_slot{ZOrder := 800, InputMode := ui_input_mode.All})
             set MaybePlayerUI = option{PlayerUI}
             set MaybeRoot = option{Root}
+            set Kind = ActiveInputKind(Player)
+            spawn{WatchInputKind(Player)}
             BeginTake()
             Logger.Print("[ui] dream debugger shown")
 
@@ -249,7 +268,7 @@ dream_debugger_ui := class(debug_screen):
         SetTab(1, "")
         SetTab(2, "")
         SetRow(5, "------------------------------------------------------------------------")
-        SetRow(17, "MOUSE click  /  SPACE select")
+        SetRow(17, ControlsHint())
 
     RenderFile():void =
         Header()

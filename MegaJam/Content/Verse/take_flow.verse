@@ -118,8 +118,13 @@ take_flow := class(creative_device):
         branch:
             Director.PlayLine("{Dream.Id}_intro")
         Screen.ShowFile(ToMessage("CASE FILE"), Control.CakeEntries(Dream), Subject.CaseFile + Facts + array{Dream.LoopNote}, "ATTACH TO DREAMER")
+        # Attaching cuts the director's intro short (Chip, 2026-11-14).
+        Director.StopLine()
         Screen.SetTitle(ToMessage(Dream.Title))
-        take_phase.Observe
+        # Watch her tell the loop, or skip straight to the role (Chip, 2026-11-14, to iterate
+        # faster). The take doesn't need the replay: the role brief has the scene.
+        Choice := PickOne("ATTACHED", array{"VIEW THE DREAM", "SKIP TO YOUR ROLE"})
+        if (Choice = 1) then take_phase.Direct else take_phase.Observe
 
     # The player's role, to learn before ENTER DREAM: who they are, what the role knows, and the
     # scene's improv prompt (what she wants, what's in the way).
@@ -174,6 +179,7 @@ take_flow := class(creative_device):
             else:
                 Screen.ShowFile(ToMessage("YOUR ROLE"), array{}, RoleFile(Dream, Role), "ENTER DREAM")
                 set MaybeSetup = option{MakeTakeSetup(Role, array{}, array{})}
+            Director.StopLine()                         # entering the dream cuts the send-in short
             return take_phase.RunTake
         Director.PlayLine(DirectorLineBeforeTake)
         RoleIndex := PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
@@ -300,8 +306,8 @@ take_flow := class(creative_device):
             Screen.SetClientState(TakeNumber, Feeling)
 
         if (Score := MaybeScore?):
-            Total := Score.BackstoryScore + Score.PersonalityScore + Score.EnvironmentScore + Score.CommonSenseScore
-            Logger.Print("[flow] score backstory={Score.BackstoryScore} personality={Score.PersonalityScore} environment={Score.EnvironmentScore} common_sense={Score.CommonSenseScore} total={Total}")
+            Total := Score.BackstoryScore + Score.PersonalityScore + Score.EnvironmentScore + Score.SurpriseScore
+            Logger.Print("[flow] score backstory={Score.BackstoryScore} personality={Score.PersonalityScore} environment={Score.EnvironmentScore} surprise={Score.SurpriseScore} total={Total}")
             Control.SpeakVerdict(Dream, Score)
             Control.AwaitSpeechEnd(SpeechSeconds)
             if (Score.Verdict = take_verdict.Positive):
@@ -395,6 +401,8 @@ take_flow := class(creative_device):
     # last beat's turns, the take goes to the last line. The player is never talked over: the
     # flow only prompts her after she has stopped speaking and the player has answered.
     RunBeats(Dream:dream, Control:client_control)<suspends>:void =
+        if (Dream.OpeningLog.Length > 0):
+            Log(Dream.OpeningLog)
         Control.AwaitSpeechEnd(SpeechSeconds)           # her opening line
         Turns := Max(1, Dream.TurnsPerBeat)
         var Beat:int = 0
@@ -402,6 +410,12 @@ take_flow := class(creative_device):
             for (Turn := 1..Turns):
                 Control.AwaitPlayerLine(Inf)
                 Control.AwaitSpeechEnd(SpeechSeconds)   # her reply
+                # The follow-up question, cued by the flow so it always comes (see FollowUpCue).
+                if (Turn < Turns, Dream.FollowUpCue.Length > 0, not Dream.ClientLeads?):
+                    if (Dream.FollowUpLog.Length > 0):
+                        Log(Dream.FollowUpLog)
+                    Control.MoveScene(Dream.FollowUpCue, SpeechSeconds)
+                    Control.AwaitSpeechEnd(SpeechSeconds)
             if (Next := Dream.TakePhases[Beat]):
                 set Beat += 1
                 Haze.SetClock(Min(3, Beat))

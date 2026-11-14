@@ -14,6 +14,12 @@ title_card := class:
 
     var MaybeRoot:?canvas = false
     var MaybePlayerUI:?player_ui = false
+    var MaybePromptText:?text_block = false
+
+    # Changes the prompt while the card is up (the player switched to a gamepad, say).
+    SetPrompt(Prompt:message):void =
+        if (PromptText := MaybePromptText?):
+            PromptText.SetText(Prompt)
 
     Show(Player:player, Prompt:message):void =
         if (not MaybeRoot?, PlayerUI := GetPlayerUI[Player]):
@@ -37,8 +43,10 @@ title_card := class:
             PlayerUI.AddWidget(Root, player_ui_slot{ZOrder := 1001, InputMode := ui_input_mode.None})
             set MaybeRoot = option{Root}
             set MaybePlayerUI = option{PlayerUI}
+            set MaybePromptText = option{PromptText}
 
     Hide():void =
         if (Root := MaybeRoot?, PlayerUI := MaybePlayerUI?):
             PlayerUI.RemoveWidget(Root)
         set MaybeRoot = false
+        set MaybePromptText = false

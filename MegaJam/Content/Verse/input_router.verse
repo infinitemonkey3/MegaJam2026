@@ -12,6 +12,24 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 #    "press any key" means these.
 # The menu bindings follow the screen spike; change them here once a play test shows which
 # keys work best in first person.
+# The player's active input, for prompts that name the key (Chip, 2026-11-14). From
+# player_input.PreferredInputMethod, which updates when the player switches; it has no change
+# event, so screens poll it. It can't tell an Xbox pad from a PlayStation one: Jump is "A" on
+# Xbox, Cross on PlayStation, and prompts say "A".
+input_kind := enum{KeyboardInput, GamepadInput, TouchInput}
+
+ActiveInputKind(Player:player)<transacts>:input_kind =
+    if (PlayerInput := GetPlayerInput[Player]):
+        Method := PlayerInput.PreferredInputMethod
+        if (Method = input_method.Gamepad) then input_kind.GamepadInput
+        else if (Method = input_method.Touch) then input_kind.TouchInput
+        else input_kind.KeyboardInput
+    else:
+        input_kind.KeyboardInput
+
+# How often screens check for a switch between keyboard and gamepad.
+InputKindPollSeconds:float = 0.25
+
 input_router := class:
     Logger:log = log{Channel := dead_air_log}
 
