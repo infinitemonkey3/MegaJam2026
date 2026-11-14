@@ -18,7 +18,10 @@ WORDMARK = ROOT / 'style-test/final/T_Title_Wordmark_A.png'
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / 'style-test/final/T_Debugger_TitleBar.png'
 MONO = 'C:/Windows/Fonts/consolab.ttf'
 
-W, H = 2048, 88          # final size: the debugger page's 1300-wide top row, about 56 tall (23.3 : 1)
+# Laid out at W x H, then scaled to FINAL: 1.5x the first version's 88 px height with every
+# element scaled the same (Chip, 2026-11-13). The row is 1300 wide and about 83 tall (15.5 : 1).
+W, H = 1365, 88
+FINAL = (2048, 132)
 S = 2                    # supersampling
 w, h = W * S, H * S
 
@@ -78,7 +81,7 @@ for gx in range(SPLIT, PIX_END, px):
 digit_font = ImageFont.truetype(MONO, 13 * S)
 band_top, band_bottom = cy - 30 * S, cy + 22 * S
 step_x, step_y = 10 * S, 13 * S
-x0, x1 = cx + 54 * S, 288 * S
+x0, x1 = cx + 54 * S, 205 * S
 for gx in range(x0, x1, step_x):
     t = (gx - x0) / (x1 - x0)
     half = (band_bottom - band_top) / 2 * (1 - 0.7 * t)
@@ -96,12 +99,12 @@ wm = Image.open(WORDMARK).convert('RGBA')
 wm = wm.crop(wm.getbbox())
 wm_h = int(h * 0.62)
 wm = wm.resize((int(wm.width * wm_h / wm.height), wm_h), Image.Resampling.LANCZOS)
-wm_x = 300 * S
+wm_x = 215 * S
 img.alpha_composite(wm, (wm_x, (h - wm_h) // 2 - 1 * S))
 
 # App name after the wordmark, in small mono caps.
 name_font = ImageFont.truetype(MONO, 34 * S)
-name = 'DREAM DEBUGGER  v4.1.7'
+name = 'DREAM DEBUGGER v4.1.7'
 nx = wm_x + wm.width + 26 * S
 d.text((nx, h // 2), name, font=name_font, fill=GOLD, anchor='lm')
 tag_font = ImageFont.truetype(MONO, 23 * S)
@@ -127,6 +130,6 @@ for i, kind in enumerate(('close', 'max', 'min')):
         d.line([(mx - 6 * S, my - 6 * S), (mx + 6 * S, my + 6 * S)], fill=CREAM, width=3 * S)
         d.line([(mx - 6 * S, my + 6 * S), (mx + 6 * S, my - 6 * S)], fill=CREAM, width=3 * S)
 
-img = img.resize((W, H), Image.Resampling.LANCZOS)
+img = img.resize(FINAL, Image.Resampling.LANCZOS)
 img.save(OUT)
 print('wrote', OUT, img.size)
