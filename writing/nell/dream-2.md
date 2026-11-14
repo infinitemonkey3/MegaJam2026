@@ -20,7 +20,7 @@ she holds in the case every March 3, and the slip comes back in dream 3.
 - She wants: `To find out if Walt Price is worth a yes, without letting on that she likes him already.`
 - In the way: `She has decided not to be charmed, and it's nearly nine. The tea room closes at nine.`
 - Director on the case file, `nell_d2_intro`: `She let us down a layer. Her file's grown since you last read it. Learn the new parts, then attach.`
-- Director on the role, `nell_d2_sendin`: `This one's casting itself. You're Walt Price, twenty-seven, flour on his jacket, the night she made up her mind about him. She married him, so he got it right once. Look over Walt, and enter the dream when you're ready.`
+- Director on the role, `nell_d2_sendin`: `This time you'll be Walt Price, twenty-seven, flour on his jacket. This is the night she made up her mind about him. Look over Walt, and enter the dream when you're ready.`
 - Approaches that should all work: specific, honest answers; making her laugh; asking about her
   baking and her plans; owning up to the whistling; teasing back; admitting he's nervous; a
   real plan for a date instead of a grand one.

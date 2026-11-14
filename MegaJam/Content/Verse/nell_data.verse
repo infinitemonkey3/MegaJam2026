@@ -114,7 +114,7 @@ MakeNellDream2()<transacts>:dream =
             casting_role{Id := "role_young_walt", Label := "Walter \"Walt\" Price, 27 / here to make his case", LogEdit := "You step in as Walt Price, twenty-seven, flour on your jacket.", ContextLine := "The visitor is Walt Price, 27, who delivers flour for the mill and has bought one of your cinnamon rolls every day this month. You've agreed to hear his case tonight, off the questions on your order pad."}
         Want := "To find out if Walt Price is worth a yes, without letting on that she likes him already."
         Obstacle := "She has decided not to be charmed, and it's nearly nine. The tea room closes at nine."
-        SendIn := "This one's casting itself. You're Walt Price, twenty-seven, flour on his jacket, the night she made up her mind about him. She married him, so he got it right once. Look over Walt, and enter the dream when you're ready."
+        SendIn := "This time you'll be Walt Price, twenty-seven, flour on his jacket. This is the night she made up her mind about him. Look over Walt, and enter the dream when you're ready."
         RoleFile := array:
             "AGE  27"
             "WORK  You deliver flour for the mill."
