@@ -41,10 +41,12 @@ client_state := struct:
     Hope:int                  # 0-3, that the loop can end
     Mood:message              # one short phrase, e.g. "wary but softening"
 
-# Filled after a good ending of a dream with AsksForCake (Chip, 2026-11-13): the birthday cake
-# Walt named in Nell's dream 2. Dreams with UsesCake bake that cake.
+# Filled after a good ending of a dream with AsksForCake (Chip, 2026-11-13): what the player, as
+# Walt, said in Nell's dream 2. Dreams with UsesCake bake that cake, and remember the Saturday he
+# promised her (2026-11-14), so the player can call back to it.
 birthday_cake := struct:
     CakeWaltAskedFor:message        # a few words, like "a lemon cake"
+    SaturdayWaltPromised:message    # one short sentence, like "a walk by the river, then the pictures"
 
 take_memory := struct:
     WhoTheVisitorWas:message        # the role as the client understood it

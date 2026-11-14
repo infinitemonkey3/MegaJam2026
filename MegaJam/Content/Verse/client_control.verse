@@ -51,7 +51,9 @@ CakeKnowledge<localizes>(Cake:message):message = "The cake: the night you said y
 CakeTakeLine<localizes>(Cake:message):message = "The cake in the case is his birthday cake: {Cake}. It's what he asked for the night you said yes to him, and you've baked it every March 3 since. Call it by what it is when you talk about it."
 CakeOpeningCue<localizes>(Cake:message):message = "Name the cake in your first line: {Cake}."
 CakeEntry<localizes>(Cake:message):message = "ORDER  1 birthday cake: {Cake}. W. Price. Pick up 5 PM."
-CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like. Give the cake he asked for in a few plain words, like \"a lemon cake\" or \"a chocolate cake with walnuts\". If he never said, give \"a lemon cake\"."
+CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like, and how the two of them would spend a Saturday afternoon. Give the cake he asked for in a few plain words, like \"a lemon cake\" or \"a chocolate cake with walnuts\"; if he never said, give \"a lemon cake\". Then give the Saturday he described, in one short plain sentence in his own terms, like \"a walk by the river, then the pictures\"; if he never said, give \"a walk, and tea somewhere\"."
+SaturdayTakeLine<localizes>(Plan:message):message = "The night you said yes to him, forty-one years ago, he promised you a Saturday: {Plan}. He kept that promise. You remember it, and if he brings it up, you know exactly what he means."
+SaturdayEntry<localizes>(Plan:message):message = "PROMISED  First Saturday out: {Plan}"
 
 LastN(Input:[]t, Count:int where t:type)<transacts>:[]t =
     if (Tail := Input.Slice[Input.Length - Count]):
@@ -143,6 +145,7 @@ client_control := class:
     # Carried forward between takes and dreams (design: "Continuity").
     var Memories:[]message = array{}        # oldest first, at most MaxMemories
     var MaybeCake:?message = false          # the birthday cake named in a dream with AsksForCake
+    var MaybeSaturday:?message = false      # the Saturday Walt promised in that dream
     var Feeling:?client_state = false       # false until LoadDream sets the starting state
 
     var MaybeAction:?cancelable = false
@@ -218,7 +221,7 @@ client_control := class:
         if (Now := Feeling?):
             set Lines += array{StateLine(Now.Mood, Now.Trust, Now.Fear, Now.Hope)}
         if (Dream.UsesCake?):
-            set Lines += array{CakeTakeLine(TheCake())}
+            set Lines += array{CakeTakeLine(TheCake())} + SaturdayLines(SaturdayTakeLine)
         # The take's setup goes into the personality, not only the opening prompt: as a one-off
         # PromptToTalk instruction the client forgot it after the first reply (the father became
         # "a stranger", play test 2026-11-13). The personality holds for every reply.
@@ -320,7 +323,8 @@ client_control := class:
         Result := Persona.GetAISession().Prompt(ToMessage(CakePromptText), birthday_cake)
         if (Cake := Result.GetSuccess[]):
             set MaybeCake = option{Cake.CakeWaltAskedFor}
-            Logger.Print("[client] the birthday cake is recorded")
+            set MaybeSaturday = option{Cake.SaturdayWaltPromised}
+            Logger.Print("[client] the birthday cake and the Saturday are recorded")
         else:
             LogPromptError("cake", option{Result.GetError[]})
 
@@ -329,7 +333,11 @@ client_control := class:
 
     # Case-file entries that carry model text: the cake order, for a dream with UsesCake.
     CakeEntries(Dream:dream):[]message =
-        if (Dream.UsesCake?) then array{CakeEntry(TheCake())} else array{}
+        if (Dream.UsesCake?) then array{CakeEntry(TheCake())} + SaturdayLines(SaturdayEntry) else array{}
+
+    # The Saturday line, if one was recorded, built with Line.
+    SaturdayLines(Line:type{_(:message):message}):[]message =
+        if (Plan := MaybeSaturday?) then array{Line(Plan)} else array{}
 
     # Asks the session for what to carry forward, and stores it. Call right after RequestScore,
     # while the session still holds the take's conversation. Runs after good and bad takes alike.

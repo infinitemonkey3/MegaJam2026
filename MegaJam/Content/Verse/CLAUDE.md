@@ -96,7 +96,10 @@ play session yet.
   silent prompt that fills `birthday_cake.CakeWaltAskedFor` from the take. Dream 3 has
   `UsesCake`: `LoadDream` adds `CakeKnowledge(TheCake())` to the personality, and the case file
   shows `CakeEntry` (`ORDER  1 birthday cake: ...`). `StartTake` also adds `CakeTakeLine` to the
-  take and `CakeOpeningCue` to her first line: from the personality alone she never named it. `TheCake` falls back to `DefaultCake` (a
+  take and `CakeOpeningCue` to her first line: from the personality alone she never named it.
+  The same prompt records `birthday_cake.SaturdayWaltPromised` (dream 2's Saturday answer); dream 3
+  gets it as `SaturdayTakeLine` in the take and `SaturdayEntry` (PROMISED) in the case file, so
+  the player can call back to it. `TheCake` falls back to `DefaultCake` (a
   lemon cake). `<localizes>` functions with parameters are `no_rollback`, so helpers that call
   them can't be `<transacts>`.
 - Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
