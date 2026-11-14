@@ -7,6 +7,19 @@ back out of.
 What the player should learn here: read the file, cast someone she knows, bring something that
 belongs to her, and give her a job instead of comfort.
 
+## Your Role
+
+The dream assigns the player's role (Chip, 2026-11-13: choosing who to be was the hardest call
+and caused most bad takes). The director sends them in with a prerecorded line, and they pick
+only the item. Built as an improv prompt: who you are, what she wants, what's in the way. The
+case file opens with it.
+
+- You are: The new apprentice, first morning. Teddy found them and sent them; he pays their wages. She didn't ask for an apprentice.
+- She wants: `To open the shop at six, the way it's always opened.`
+- In the way: `The oven won't light, the dough won't hold, and she won't ask anyone for help.`
+- Director, `nell_d1_sendin`: `You're the new apprentice. First morning. Her nephew sent you, and she doesn't know you're coming. She wants that shop open by six, and she'd sooner burn it down than ask for help. So don't call it help.`
+- Approaches that should all work: Ask her to teach you, take a job off her, get something wrong so she has to show you, light the oven while she tells you how, open the door and let them wait inside.
+
 ## Loop Beats
 
 What happens every night, in order. The loop is seven minutes of dream time.
@@ -167,6 +180,9 @@ Every element can also be left unset. The player picks one role, at most one val
 element, and at most two items.
 
 ### Casting
+
+Replaced by the assigned role above. The game uses only the role in `Your Role`; the
+alternatives below are kept for reference.
 
 #### cast_teddy
 

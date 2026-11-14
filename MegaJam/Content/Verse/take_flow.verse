@@ -113,10 +113,18 @@ take_flow := class(creative_device):
     DoCaseFile(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         set TakeNumber = 0
         Control.LoadDream(Subject, Dream, Facts)
-        Entries := for (Entry : Subject.CaseFile + Facts + array{Dream.LoopNote}) { ToMessage(Entry) }
+        Entries := for (Entry : Briefing(Dream) + Subject.CaseFile + Facts + array{Dream.LoopNote}) { ToMessage(Entry) }
         Screen.SetCaseFile(Entries)
         Director.PlayLine("{Dream.Id}_intro")
         take_phase.Observe
+
+    # The improv prompt at the top of the case file: who the player plays, what she wants, what's
+    # in the way. Empty for a dream that still lets the player cast.
+    Briefing(Dream:dream)<transacts>:[]string =
+        if (Dream.Roles.Length = 1, Role := Dream.Roles[0]):
+            array{"-- YOUR ROLE --", "YOU ARE  {Role.Label}", "SHE WANTS  {Dream.Want}", "IN THE WAY  {Dream.Obstacle}"}
+        else:
+            array{}
 
     # 2. Observe: replay the loop as a log, one beat at a time. The client tells each beat as
     # something that happened to her, and the player presses CONTINUE for the next (play test,
@@ -146,9 +154,16 @@ take_flow := class(creative_device):
     # client opens the take by reacting to both. Settings and a second item are off for now
     # (play test, 2026-11-13: with more choices the client's opening stayed generic, "you're
     # here early"); PickSettings and PickItems are kept for when they come back.
+    # A dream with one role assigns it (Chip, 2026-11-13: choosing who to be was the hardest
+    # call and caused most bad takes): the director sends the player in as it, and they pick
+    # only the item.
     DoDirect(Dream:dream)<suspends>:take_phase =
-        Director.PlayLine(DirectorLineBeforeTake)
-        RoleIndex := PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
+        RoleIndex := if (Dream.Roles.Length = 1):
+            SendIn(Dream)
+            0
+        else:
+            Director.PlayLine(DirectorLineBeforeTake)
+            PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
         if (Role := Dream.Roles[RoleIndex]):
             ItemIndex := PickOne("INJECT ITEM", for (Option : Dream.Items) { Option.Label })
             Items := if (Item := Dream.Items[ItemIndex]) then array{Item} else array{}
@@ -157,6 +172,13 @@ take_flow := class(creative_device):
         else:
             Logger.Print("[flow] {Dream.Id} has no roles to cast", ?Level := log_level.Error)
             take_phase.Done
+
+    # The director's send-in: his line plays and shows in the log, then CONTINUE.
+    SendIn(Dream:dream)<suspends>:void =
+        if (Dream.SendIn.Length > 0):
+            Log("DIRECTOR: {Dream.SendIn}")
+        Director.PlayLine("{Dream.Id}_sendin")
+        Screen.AwaitContinue()
 
     # Shows one menu and returns the index the player chose: "next" moves the highlight and
     # "confirm" takes it, or the screen reports a direct pick (a click on the dream debugger).

@@ -34,9 +34,10 @@ MakeNellDream1()<transacts>:dream =
             take_phase_beat{LogLine := "Bake time. The loaves have to go in the oven.", Context := "Time's moving on: it's bake time. The loaves have to go in the oven now, and the oven is being stubborn."}
             take_phase_beat{LogLine := "Opening time. People are at the glass, and the door is still locked.", Context := "Time's moving on: it's opening time. People are waiting at the glass, and the door is still locked. They can't be kept waiting much longer."}
         Roles := array:
-            casting_role{Id := "cast_teddy", Label := "Theodore \"Teddy\" Price / nephew", LogEdit := "You step in as Teddy, Walt's nephew.", ContextLine := "The visitor is Teddy, Walt's nephew, a grown man now. You taught him to bake when he was nine. He calls you Aunt Nell."}
-            casting_role{Id := "cast_regular", Label := "A regular / first in line", LogEdit := "You step in as a regular, first in line.", ContextLine := "The visitor is one of your regulars, first in line most mornings. Two seeded rolls. You know the order better than the name."}
-            casting_role{Id := "cast_stranger", Label := "A stranger / in from the street", LogEdit := "You step in as a stranger off the street.", ContextLine := "The visitor is a stranger who has walked in off the street. You've never seen them before, and you aren't open."}
+            casting_role{Id := "role_apprentice", Label := "The new apprentice / first morning", LogEdit := "You step in as the new apprentice, first morning on the job.", ContextLine := "The visitor is your new apprentice, here for their first morning. Teddy found them and sent them; he's paying their wages. They don't know the shop or your ways yet. You didn't ask for an apprentice."}
+        Want := "To open the shop at six, the way it's always opened."
+        Obstacle := "The oven won't light, the dough won't hold, and she won't ask anyone for help."
+        SendIn := "You're the new apprentice. First morning. Her nephew sent you, and she doesn't know you're coming. She wants that shop open by six, and she'd sooner burn it down than ask for help. So don't call it help."
         Settings := array:
             scene_setting{Id := "oven_patient", Element := "oven", Label := "OVEN / patient", LogEdit := "The pilot light is burning, waiting for someone to light the oven by hand.", ContextLine := "The pilot light is burning this time. The oven isn't lit. It will light if someone does it by hand."}
             scene_setting{Id := "oven_roaring", Element := "oven", Label := "OVEN / roaring", LogEdit := "The oven is already lit and running hot.", ContextLine := "The oven is already lit this time, and it's running hot. Too hot.", Risk := risk_level.Risky}
@@ -99,9 +100,10 @@ MakeNellDream2()<transacts>:dream =
             take_phase_beat{LogLine := "The people in black hum while they wait. None of the tunes is his.", Context := "The dream moves on: the people in black are waiting for the service, and each of them is humming a tune. You listen to every one. None of them is Walt's."}
             take_phase_beat{LogLine := "The bell starts to count eleven. The bread has been in the oven all this time.", Context := "The dream moves on: the bell has started counting eleven, and you've just remembered the bread has been in the oven the whole time you were searching. You still haven't found the tune."}
         Roles := array:
-            casting_role{Id := "cast_teddy", Label := "Theodore \"Teddy\" Price / nephew, in a black suit", LogEdit := "You step in as Teddy, in a black suit too big for him.", ContextLine := "The visitor is Teddy, Walt's nephew, in a black suit. He's come early to help with the bread for after the service. You taught him to bake when he was nine. You threw him out of the shop once for whistling."}
-            casting_role{Id := "cast_dunn", Label := "Dunn / night porter, coming off shift", LogEdit := "You step in as Dunn the night porter, coming off shift.", ContextLine := "The visitor is Dunn, the night porter, coming off his shift the way he did most mornings for a heel of rye. He knew Walt. He's heard about today."}
-            casting_role{Id := "cast_undertaker", Label := "The undertaker / come to hurry her", LogEdit := "You step in as the undertaker, checking the time.", ContextLine := "The visitor is the undertaker from the service, come to make sure you'll be on time. He keeps looking at his watch."}
+            casting_role{Id := "role_teddy", Label := "Theodore \"Teddy\" Price / nephew, in a black suit", LogEdit := "You step in as Teddy, in a black suit too big for him.", ContextLine := "The visitor is Teddy, Walt's nephew, in a black suit. He's come early to help with the bread for after the service. You taught him to bake when he was nine. You threw him out of the shop once for whistling."}
+        Want := "The bread done in time for after the service."
+        Obstacle := "Walt's tune kept the time in this shop, and it's gone. Nothing can tell her when the bread is done."
+        SendIn := "This time you're Teddy. Her nephew. Funeral suit, too big in the shoulders. She's got thirty-six loaves in and nothing to tell her when they're done. Walt used to. She threw you out once for whistling. Remember that."
         Settings := array{}
         Items := array:
             inject_item{Id := "item_third_loaf", Label := "The third loaf", LogEdit := "One loaf sits apart on the bench: the third loaf, for luck.", ContextLine := "One loaf sits apart on the bench. It's the third loaf, the one Walt always kept back for luck. You never ate it."}
@@ -156,9 +158,10 @@ MakeNellDream3()<transacts>:dream =
             take_phase_beat{LogLine := "Ten to five. Time to cash up and wipe down the bench.", Context := "Time's moving on: it's ten to five. Time to cash up and wipe down the bench. Walt still isn't here."}
             take_phase_beat{LogLine := "Nearly five. The cake is boxed and waiting by the till.", Context := "Time's moving on: it's nearly five. The cake is boxed and waiting by the till. He said he'd be in at five."}
         Roles := array:
-            casting_role{Id := "cast_walt", Label := "Walter \"Walt\" Price / husband", LogEdit := "You step in as Walt, here for his cake.", ContextLine := "The visitor is Walt, your husband, come in for his birthday cake. It's his birthday. You had words this morning, and he's here anyway."}
-            casting_role{Id := "cast_teddy", Label := "Theodore \"Teddy\" Price / nephew", LogEdit := "You step in as Teddy, dropping in after school.", ContextLine := "The visitor is Teddy, Walt's nephew. He's grown, but he still drops in at the end of the day like he did after school. He knows it's Walt's birthday."}
-            casting_role{Id := "cast_cake_customer", Label := "A customer / wants the lemon cake", LogEdit := "You step in as a customer, pointing at the lemon cake.", ContextLine := "The visitor is a customer you don't know, and they want to buy the lemon cake in the case."}
+            casting_role{Id := "role_walt", Label := "Walter \"Walt\" Price / husband", LogEdit := "You step in as Walt, here for his cake.", ContextLine := "The visitor is Walt, your husband, come in for his birthday cake. It's his birthday. You had words this morning, and he's here anyway."}
+        Want := "Walt to come in for his cake, and for this morning to be over."
+        Obstacle := "This morning she told him to pick it up himself. She can't say sorry first."
+        SendIn := "Last one. You're Walt. It's your birthday, and you've come for your cake. You had words this morning. She's been waiting six years for you to walk through that door. So walk in."
         Settings := array{}
         Items := array:
             inject_item{Id := "item_order_slip", Label := "Order slip / W. Price", LogEdit := "The order slip lies on the counter in Walt's handwriting.", ContextLine := "Walt's order slip is on the counter: 1 cake. Lemon. W. Price. Pick up 5 PM. His handwriting. He wrote it as a joke."}

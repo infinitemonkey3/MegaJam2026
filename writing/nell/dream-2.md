@@ -25,6 +25,19 @@ ordinary trouble on a bad morning and never calls it impossible.
 What the player should learn here: the missing thing can be supplied by the visitor, not the
 set. Whistle it, hum it, count it with her, help her find the hands, or ask whose tune it was.
 
+## Your Role
+
+The dream assigns the player's role (Chip, 2026-11-13: choosing who to be was the hardest call
+and caused most bad takes). The director sends them in with a prerecorded line, and they pick
+only the item. Built as an improv prompt: who you are, what she wants, what's in the way. The
+case file opens with it.
+
+- You are: Teddy, Walt's nephew, in a black suit too big in the shoulders.
+- She wants: `The bread done in time for after the service.`
+- In the way: `Walt's tune kept the time in this shop, and it's gone. Nothing can tell her when the bread is done.`
+- Director, `nell_d2_sendin`: `This time you're Teddy. Her nephew. Funeral suit, too big in the shoulders. She's got thirty-six loaves in and nothing to tell her when they're done. Walt used to. She threw you out once for whistling. Remember that.`
+- Approaches that should all work: Whistle or hum it, own up to the old ban, count the bake out loud, help find the clock hands, ask her what the tune was, judge the bread by colour and smell together.
+
 ## Loop Beats
 
 1. **05:00** The shop is hung with black. The oven lit first time.
@@ -74,6 +87,9 @@ Last line log: `The bell is counting eleven and the oven glows white. One more t
 One role and one item. Class is `specific`, `near-miss` or `wrong`, as in dream 1.
 
 ### Casting
+
+Replaced by the assigned role above. The game uses only the role in `Your Role`; the
+alternatives below are kept for reference.
 
 #### cast_teddy
 

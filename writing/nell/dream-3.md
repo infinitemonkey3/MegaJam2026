@@ -12,6 +12,19 @@ What the player should learn here: there is nothing to fix. The cake is done, th
 What's left undone is something said. The good takes let her say the other thing, or give the
 cake somewhere to go.
 
+## Your Role
+
+The dream assigns the player's role (Chip, 2026-11-13: choosing who to be was the hardest call
+and caused most bad takes). The director sends them in with a prerecorded line, and they pick
+only the item. Built as an improv prompt: who you are, what she wants, what's in the way. The
+case file opens with it.
+
+- You are: Walt, her husband, come in for his birthday cake.
+- She wants: `Walt to come in for his cake, and for this morning to be over.`
+- In the way: `This morning she told him to pick it up himself. She can't say sorry first.`
+- Director, `nell_d3_sendin`: `Last one. You're Walt. It's your birthday, and you've come for your cake. You had words this morning. She's been waiting six years for you to walk through that door. So walk in.`
+- Approaches that should all work: Tease her about the slip, say sorry first, ask for your cake, tell her you'd have ordered it anyway, cut it and share it, stay till closing.
+
 ## Loop Beats
 
 1. **16:30** The shop is open and warm. A lemon cake sits in the case.
@@ -57,6 +70,9 @@ Last line log: `The clock is about to strike five. One more thing to say.`
 ## Directing Options
 
 ### Casting
+
+Replaced by the assigned role above. The game uses only the role in `Your Role`; the
+alternatives below are kept for reference.
 
 #### cast_walt
 

@@ -182,11 +182,17 @@ client_control := class:
     # Spike 2 fallback: if a PromptToTalk context line doesn't stay in the session history for
     # the whole take, append these lines to the personality in LoadDream-style SetPersonality
     # instead and prompt only "Say your first line".
+    # Part of the opening cue: put the scene's want on the table in the first line.
+    WantCue(Dream:dream)<transacts>:string =
+        if (Dream.Want.Length > 0) then "Then say what you need from the visitor now. " else ""
+
     StartTake(Dream:dream, Setup:take_setup, TakeNumber:int):logic =
         # The persona system also passes on the player's own name or outfit, and the client used
         # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
         # says it again next to the casting.
         var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
+        if (Dream.Want.Length > 0):
+            set Lines += array{ToMessage("What you want in this scene: {Dream.Want} What's in the way: {Dream.Obstacle} Say what you want early, as something the visitor can work with. Make statements and offers; don't ask the visitor open questions.")}
         for (Setting : Setup.Settings):
             set Lines += array{ToMessage(Setting.ContextLine)}
         for (Item : Setup.Items):
@@ -207,7 +213,7 @@ client_control := class:
         # The first line reacts to the casting and the item by name, so the take opens on what the
         # player chose (play test, 2026-11-13: a bare "say your first line" got a generic opening).
         ItemText := Join(for (Item : Setup.Items) { Item.ContextLine }, " ")
-        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} And react to this, which is new this time: {ItemText} Don't open with the time of day or with the visitor being early.")
+        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} And react to this, which is new this time: {ItemText} {WantCue(Dream)}Don't open with the time of day or with the visitor being early.")
         if (Persona.PromptToTalk[Context, VoiceChannel]):
             Logger.Print("[client] take {TakeNumber} of {Dream.Id} started with {Lines.Length} context lines")
             true

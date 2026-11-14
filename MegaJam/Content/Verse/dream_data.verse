@@ -105,7 +105,13 @@ dream := class:
     LoopBeats:[]loop_beat     # prewritten replay; the last beat is where the loop always ends
     EndingBeatLog:string      # log line for "the moment the loop always ends" during a take
     TakePhases:[]take_phase_beat = array{} # the take's clock: what part of the scene comes next
-    Roles:[]casting_role
+    Roles:[]casting_role      # one role: the dream assigns it and the director sends you in as it
+    # The improv prompt the player is sent in with (Chip, 2026-11-13): who you are (the one role),
+    # what the client wants, and what's in the way. Shown at the top of the case file; Want and
+    # Obstacle also go to the client, who states her want early.
+    Want:string = ""
+    Obstacle:string = ""
+    SendIn:string = ""        # the director's prerecorded send-in line ("<dream id>_sendin"), also shown in the log
     Settings:[]scene_setting
     Items:[]inject_item
     PositiveLine:string       # the client's verdict lines, spoken with PromptToTalk
