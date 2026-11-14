@@ -41,8 +41,7 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
 - `D-01` Pity. Being fussed over. Being told to sit down.
 - `D-02` Whistling. `ANOMALY` House rule: nobody whistles in the shop. 2 ejections on record.
   → Pays off in dream 1.
-- `D-03` Kitchen timers. `ANOMALY` Oven timer on premises: factory seal intact. Never used in
-  44 years. → Pays off in dream 2.
+- `D-03` Kitchen timers. Oven timer on premises: factory seal intact. Never used in 44 years.
 - `D-04` Shop-bought bread.
 - `D-05` Flowers. "They're for hospitals."
 
@@ -52,8 +51,9 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
 - `K-02` 25 yr ago. Taught nephew Theodore ("Teddy") to bake. He was nine. He stood on a
   flour crate to reach the bench.
 - `K-03` 6 yr ago. Walter Price deceased. Shop closed to trade the same week. Never reopened.
-- `K-04` 6 yr ago. `ANOMALY` Fire service called to the shop, 06:10. Cause given: "baking".
-  No claim filed. Same day, 11:00: funeral, W. Price. → Pays off in dream 2.
+- `K-04` 47 yr ago. `ANOMALY` Purse contents on record: one order slip, Hollis's Tea Room,
+  where the subject worked the counter. Folded small. Customer: W. Price. Order: 1 birthday
+  cake. Never filled there. → Pays off in dream 2.
 - `K-05` Every year. `ANOMALY` Shop meter reads zero all year except March 3. Order book, one
   entry a year, March 3: one cake. Customer: blank. Status: HOLD. Never collected.
   → Pays off in dream 1.
@@ -85,11 +85,11 @@ Entries the screen adds after each dream resolves.
 
 ### After Dream 2
 
-- `U2-01` RECORD RECOVERED. Walter Price timed the bake by his tune. Three times through and the
-  bread was done.
-- `U2-02` `D-03` ANOMALY CLEARED. The oven timer was never needed.
-- `U2-03` `K-04` ANOMALY CLEARED. Funeral morning: she waited for the tune and the bread burned.
-- `U2-04` LAYER 3 UNLOCKED. SCENE bakery_interior / T 16:30 / DATE march_03, 6 yr ago.
+- `U2-01` RECORD RECOVERED. Hollis's Tea Room, 47 yr ago. Walter Price answered every question
+  on her order pad.
+- `U2-02` `K-04` ANOMALY CLEARED. The slip in her purse is the first order she took from him:
+  his birthday cake.
+- `U2-03` LAYER 3 UNLOCKED. SCENE bakery_interior / T 16:30 / DATE march_03, 6 yr ago.
 
 ### After Dream 3
 
@@ -130,12 +130,11 @@ before it resolves. Later stages never leak into an earlier dream's prompts.
 
 ### Stage 2: Unlocked By Dream 2
 
-- `F2-01` Walter timed the bake by the tune. Three times through and the bread was done. The
-  shop never used the timer.
-- `F2-02` Funeral morning. She opened alone at 05:00. 36 loaves in. She waited for the tune.
-  All 36 burned. A neighbor called the fire service.
-- `F2-03` She had promised the bread for the funeral lunch. The lunch was served with
-  shop-bought.
+- `F2-01` 47 yr ago. Nell worked the counter at Hollis's Tea Room. Walt Price delivered flour for
+  the mill and bought one of her cinnamon rolls every day for a month before she'd hear him out.
+- `F2-02` She interviewed him off her order pad at closing. The last thing she wrote down was
+  his birthday cake. She kept the slip.
+- `F2-03` She baked him that cake every March 3 for thirty-eight years.
 
 ### Stage 3: Unlocked By Dream 3
 
@@ -158,8 +157,8 @@ his too.
 
 ### Dream 2 Reveal
 
-Walt's whistling was the oven clock. Three times through the tune and the bread was done. The
-morning of the funeral she stood at the oven waiting for a tune that didn't come.
+She made Walt answer every question on her order pad before she said yes. The last thing she
+wrote was his birthday cake, and she baked it every March 3 for thirty-eight years.
 
 ### Dream 3 Reveal
 
@@ -176,10 +175,9 @@ glass, the shop is silent, and the lights go out. Written in `dream-1.md`.
 
 ### Layer 2: The Memory Under It
 
-The morning of Walt's funeral. She opens alone. The oven works this time, too well. The bread
-goes in and she waits for a signal she can't name. Everything burns. The surreal layer: clocks
-without hands, Walt's apron kneading by itself, flour raining on the mourners. Written in
-`dream-2.md`.
+Hollis's Tea Room, 47 years ago, at closing. Young Nell interviews Walt Price off her order pad
+before she'll say yes, and the clock always strikes nine first. If he wins her, she writes down
+his birthday cake. Written in `dream-2.md`.
 
 ### Layer 3: The Core
 
