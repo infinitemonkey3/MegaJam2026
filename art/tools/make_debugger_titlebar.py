@@ -100,15 +100,14 @@ wm_x = 300 * S
 img.alpha_composite(wm, (wm_x, (h - wm_h) // 2 - 1 * S))
 
 # App name after the wordmark, in small mono caps.
-name_font = ImageFont.truetype(MONO, 22 * S)
+name_font = ImageFont.truetype(MONO, 34 * S)
 name = 'DREAM DEBUGGER  v4.1.7'
 nx = wm_x + wm.width + 26 * S
-ny = h // 2 - 12 * S
-d.text((nx, ny), name, font=name_font, fill=GOLD)
-tag_font = ImageFont.truetype(MONO, 15 * S)
+d.text((nx, h // 2), name, font=name_font, fill=GOLD, anchor='lm')
+tag_font = ImageFont.truetype(MONO, 23 * S)
 tag = '[UNREGISTERED]'
 tx = nx + d.textlength(name, font=name_font) + 18 * S
-d.text((tx, ny + 5 * S), tag, font=tag_font, fill=(222, 96, 84, 255))
+d.text((tx, h // 2 + 1 * S), tag, font=tag_font, fill=(222, 96, 84, 255), anchor='lm')
 
 # Window buttons on the right: minimise, maximise, close.
 bw, bh, gap = 34 * S, 26 * S, 8 * S
