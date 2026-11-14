@@ -270,6 +270,11 @@ take_flow := class(creative_device):
         race:
             WatchScene(Control)
             block:
+                # A dream can make the last line her question (Nell's dream 2: his birthday cake,
+                # which a good ending carries into dream 3).
+                if (Dream.LastLineCue.Length > 0):
+                    Control.MoveScene(Dream.LastLineCue, SpeechSeconds)
+                    Control.AwaitSpeechEnd(SpeechSeconds)
                 Heard := Control.AwaitPlayerLine(LastLineSeconds)
                 if (Heard?):
                     Control.AwaitSpeechEnd(SpeechSeconds)

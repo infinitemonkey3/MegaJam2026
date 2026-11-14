@@ -110,6 +110,7 @@ dream := class:
     Personality:string        # SetPersonality text for this dream (dream self, rules, setting)
     LoopBeats:[]loop_beat     # prewritten replay; the last beat is where the loop always ends
     EndingBeatLog:string      # log line for "the moment the loop always ends" during a take
+    LastLineCue:string = ""   # told to the client at the last line, so she asks for it; the player's answer is the last line
     TakePhases:[]take_phase_beat = array{} # the take's clock: what part of the scene comes next
     Roles:[]casting_role      # one role: the dream assigns it and the director sends you in as it
     # The improv prompt the player is sent in with (Chip, 2026-11-13): who you are (the one role),

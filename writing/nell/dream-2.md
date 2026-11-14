@@ -75,7 +75,9 @@ her pad. First three this-or-that guesses about her, which reward reading her fi
 A right guess pleases her more than she lets on; a wrong one she corrects, drily. "What would
 our life together be like" was cut to keep the take short (and less romance for moderation).
 
-Last line log: `The clock is about to strike nine. One more thing to say.`
+Last line log: `The clock is about to strike nine. One more thing to say.` Then she asks the last
+thing on her pad, his birthday cake (`LastLineCue`; play test 2026-11-14: left to her, she never
+asked). His answer is the last line, and a good ending carries the cake into dream 3.
 
 ## Directing Options
 
