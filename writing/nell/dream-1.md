@@ -32,7 +32,7 @@ case file opens with it.
 - In the way: `The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in.`
 - Director on the case file, `nell_d1_intro`: `Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you.`
 - Director on the role, `nell_d1_sendin`: `You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready.`
-- Approaches that should all work: remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
+- Approaches that should all work: the hints in Teddy's brief (fold the dough, knock twice and say "Morning, old girl", read out the regulars' orders, ask for the key), remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
 
 ## Loop Beats
 
@@ -69,11 +69,16 @@ LOG     The lights go out. The dream starts over.
 
 ## Take Phases
 
-| Log | Context |
-|---|---|
-| `The dough is rising past the bench and across the floor.` | `The dream moves on: the dough won't stop rising. It's over the bench and across the floor now, and it takes four hands to knead. The people outside are watching through the glass with their floury hands up.` |
-| `Order slips fall from the ceiling, faster and faster.` | `The dream moves on: order slips are falling from the ceiling faster now, drifts of them, the whole street's orders. Walt's oven door still won't open for you. It's far too much for one pair of hands.` |
-| `The dough has reached the door. Six o'clock is coming, and the people outside press their hands to the glass.` | `The dream moves on: the dough has reached the door, and six o'clock is coming. The people with no faces press their floury hands to the glass. They could help. The door is still locked.` |
+Concrete jobs, one at a time (Chip, 2026-11-14: "endless dough in the abstract" was hard to
+tackle). Each job has a move from Teddy's brief that works, and "yes, and" lets anything
+reasonable work too. Two of the player's answers per job (`TurnsPerBeat` 2), then the next job.
+
+| # | Job | Hint in Teddy's brief | Also works |
+|---|---|---|---|
+| Opening line | The dough is climbing out of its bowl and over the bench | SHE ALWAYS SAID "Dough you fight, dough you lose. You fold it." | holding the bowl, flouring the bench |
+| 1 | Walt's oven door won't open for her | UNCLE WALT knocked twice and said "Morning, old girl." | family asking it kindly |
+| 2 | Order slips fall like snow: read them out while she says what each needs | THE ORDERS: Mrs. Okafor, Dunn, the Abbey Lane school run | sorting them, making up orders |
+| Last line | Six o'clock: should she let the faceless people in? (`LastLineCue`) | THE FRONT DOOR: the key is on a string round her neck | telling her they're her regulars |
 
 ## Take Beats
 
