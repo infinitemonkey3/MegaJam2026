@@ -87,6 +87,13 @@ play session yet.
   prompt (`Briefing`: YOUR ROLE, SHE WANTS `dream.Want`, IN THE WAY `dream.Obstacle`), and
   `StartTake` tells the client her want and to state it early, in offers, not questions. Nell's
   roles: Teddy, young Walt, Walt. Des still casts from three.
+- **The player's words can carry between dreams** as messages (they can't become strings).
+  Nell's dream 2 has `AsksForCake`: `DoGoodEnding` first calls `client_control.RequestCake`, a
+  silent prompt that fills `birthday_cake.CakeWaltAskedFor` from the take. Dream 3 has
+  `UsesCake`: `LoadDream` adds `CakeKnowledge(TheCake())` to the personality, and the case file
+  shows `CakeEntry` (`ORDER  1 birthday cake: ...`). `TheCake` falls back to `DefaultCake` (a
+  lemon cake). `<localizes>` functions with parameters are `no_rollback`, so helpers that call
+  them can't be `<transacts>`.
 - Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
   opening prompt names both, so the client's first line reacts to them. `PickSettings` and
   `PickItems` are unused until settings or more items come back.

@@ -113,8 +113,9 @@ take_flow := class(creative_device):
     DoCaseFile(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         set TakeNumber = 0
         Control.LoadDream(Subject, Dream, Facts)
-        Entries := for (Entry : Briefing(Dream) + Subject.CaseFile + Facts + array{Dream.LoopNote}) { ToMessage(Entry) }
-        Screen.SetCaseFile(Entries)
+        Top := for (Entry : Briefing(Dream)) { ToMessage(Entry) }
+        Rest := for (Entry : Subject.CaseFile + Facts + array{Dream.LoopNote}) { ToMessage(Entry) }
+        Screen.SetCaseFile(Top + Control.CakeEntries(Dream) + Rest)
         Director.PlayLine("{Dream.Id}_intro")
         take_phase.Observe
 
@@ -309,6 +310,9 @@ take_flow := class(creative_device):
     # Good ending: the client tells how the loop resolves, says the dream's fact in her own
     # words, then the debugger's notes, each with CONTINUE; then the next dream begins.
     DoGoodEnding(Dream:dream, Control:client_control)<suspends>:take_phase =
+        # First, while the session still holds the take: the cake named in it, for a later dream.
+        if (Dream.AsksForCake?):
+            Control.RequestCake()
         Haze.Reset()
         Screen.SetVitals(0)
         for (Line : Dream.GoodEndingLog):

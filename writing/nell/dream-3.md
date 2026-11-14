@@ -4,7 +4,7 @@ Client `nell`, layer 3, dream id `nell_d3`. The core: March 3, six years ago, th
 afternoon. Same headings as `dream-2.md`.
 
 After dream 2 this one is quiet on purpose. Nothing melts and nothing floats. It's a warm shop
-at the end of a working day, with a lemon cake in the case and a clock on the wall. The only
+at the end of a working day, with his birthday cake in the case and a clock on the wall. The only
 wrong things are small: the street outside is too long, the clock is too loud, and five o'clock
 takes a very long time to come.
 
@@ -25,9 +25,18 @@ case file opens with it.
 - Director, `nell_d3_sendin`: `Last one. You're Walt again, forty-one years on. It's your birthday, and you've come for your cake. You had words this morning. She's been waiting six years for you to walk through that door. So walk in.`
 - Approaches that should all work: Tease her about the slip, say sorry first, ask for your cake, tell her you'd have ordered it anyway, cut it and share it, stay till closing.
 
+## The Cake
+
+The cake is whatever the player, as young Walt, asked for in dream 2 (Chip, 2026-11-13: "That's
+the power of this"). After dream 2's good ending a silent prompt asks the session which cake Walt
+named (`birthday_cake.CakeWaltAskedFor`); dream 3's personality is told it's the cake she's baked
+every March 3 since, and the case file shows `ORDER  1 birthday cake: <the cake>. W. Price. Pick
+up 5 PM.` If dream 2 never got there, it's a lemon cake. Authored text here says only "his
+birthday cake".
+
 ## Loop Beats
 
-1. **16:30** The shop is open and warm. A lemon cake sits in the case.
+1. **16:30** The shop is open and warm. His birthday cake sits in the case.
 2. **16:31** The order slip on the cake is in Walt's handwriting.
 3. **16:35** She keeps looking at the door. They had words this morning.
 4. **16:40** Far down the Row, a siren. She doesn't look up.
@@ -42,9 +51,9 @@ since.
 ## Observe Replay
 
 ```
-LOG     Half past four in the afternoon. The shop is open and warm. A lemon cake sits in the case.
-MURMUR  There. Eight inch, lemon. Same as always.
-LOG     The order slip is in Walt's handwriting: 1 cake. Lemon. W. Price. Pick up 5 PM.
+LOG     Half past four in the afternoon. The shop is open and warm. His birthday cake sits in the case.
+MURMUR  There. His cake. Same as always.
+LOG     The order slip is in Walt's handwriting: 1 birthday cake. W. Price. Pick up 5 PM.
 MURMUR  Ordering his own birthday cake. The cheek of the man.
 LOG     She keeps looking at the door. They had words this morning.
 MURMUR  He'll be in. He always comes in.
@@ -95,11 +104,11 @@ alternatives below are kept for reference.
 
 #### cast_cake_customer
 
-- Label: `A customer / wants the lemon cake`
+- Label: `A customer / wants the birthday cake`
 - Class: wrong
 - Risky: no
-- Log: `You step in as a customer, pointing at the lemon cake.`
-- Context: `The visitor is a customer you don't know, and they want to buy the lemon cake in the case.`
+- Log: `You step in as a customer, pointing at the birthday cake.`
+- Context: `The visitor is a customer you don't know, and they want to buy the birthday cake in the case.`
 - Why: `K-05`. The one thing in the shop that isn't for sale.
 
 ### Inject Items
@@ -110,7 +119,7 @@ alternatives below are kept for reference.
 - Class: specific
 - Risky: no
 - Log: `The order slip lies on the counter in Walt's handwriting.`
-- Context: `Walt's order slip is on the counter: 1 cake. Lemon. W. Price. Pick up 5 PM. His handwriting. He wrote it as a joke.`
+- Context: `Walt's order slip is on the counter: 1 birthday cake. W. Price. Pick up 5 PM. His handwriting. He wrote it as a joke.`
 - Why: `K-06`. The first slip, in his hand. It gets the joke, and the argument, on the table.
 
 #### item_two_forks

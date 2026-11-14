@@ -41,6 +41,11 @@ client_state := struct:
     Hope:int                  # 0-3, that the loop can end
     Mood:message              # one short phrase, e.g. "wary but softening"
 
+# Filled after a good ending of a dream with AsksForCake (Chip, 2026-11-13): the birthday cake
+# Walt named in Nell's dream 2. Dreams with UsesCake bake that cake.
+birthday_cake := struct:
+    CakeWaltAskedFor:message        # a few words, like "a lemon cake"
+
 take_memory := struct:
     WhoTheVisitorWas:message        # the role as the client understood it
     KeyMoments:[]message            # at most 3, one sentence each
@@ -112,6 +117,8 @@ dream := class:
     Want:string = ""
     Obstacle:string = ""
     SendIn:string = ""        # the director's prerecorded send-in line ("<dream id>_sendin"), also shown in the log
+    AsksForCake:logic = false # a good ending asks the session which birthday cake was named
+    UsesCake:logic = false    # the client and the case file get that cake (a lemon cake if none was named)
     Settings:[]scene_setting
     Items:[]inject_item
     PositiveLine:string       # the client's verdict lines, spoken with PromptToTalk

@@ -84,6 +84,12 @@ Assigned: Walt Price (see Your Role).
 - `item_cinema_tickets` (near-miss): `He's got two tickets to the pictures in his hand. Saturday. He didn't ask what you'd like to see.` (a fine date, but nobody asked her)
 - `item_roses` (wrong): `He's brought a bunch of red roses. Flowers are for hospitals.` (`D-05`)
 
+## The Cake Carries Forward
+
+Whatever cake the player names here becomes the cake in dream 3: after a good ending, a silent
+prompt asks the session which cake Walt asked for, and dream 3 bakes it (`AsksForCake` here,
+`UsesCake` there). Lemon if he never said.
+
 ## Verdict Lines
 
 - Positive: `Well. You'll do. Don't let it go to your head.`

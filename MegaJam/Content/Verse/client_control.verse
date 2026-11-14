@@ -43,6 +43,13 @@ VerdictInstructions<localizes>(Line:string, Hint:message):message = "Back in the
 # How many carried-forward memory items the client is told at take start (design: "the last 6").
 MaxMemories:int = 6
 
+# The cake carried from Nell's dream 2 into dream 3. It stays a message: model text can't
+# become a string, so it goes straight back into the personality and the case file.
+DefaultCake<localizes>:message = "a lemon cake"
+CakeKnowledge<localizes>(Cake:message):message = "The cake: the night you said yes to Walt, he told you the birthday cake he'd want: {Cake}. You've baked him that cake every March 3 since, and it's the cake in the case today. His order slip asks for it, in his handwriting."
+CakeEntry<localizes>(Cake:message):message = "ORDER  1 birthday cake: {Cake}. W. Price. Pick up 5 PM."
+CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like. Give the cake he asked for in a few plain words, like \"a lemon cake\" or \"a chocolate cake with walnuts\". If he never said, give \"a lemon cake\"."
+
 LastN(Input:[]t, Count:int where t:type)<transacts>:[]t =
     if (Tail := Input.Slice[Input.Length - Count]):
         Tail
@@ -132,6 +139,7 @@ client_control := class:
 
     # Carried forward between takes and dreams (design: "Continuity").
     var Memories:[]message = array{}        # oldest first, at most MaxMemories
+    var MaybeCake:?message = false          # the birthday cake named in a dream with AsksForCake
     var Feeling:?client_state = false       # false until LoadDream sets the starting state
 
     var MaybeAction:?cancelable = false
@@ -150,7 +158,8 @@ client_control := class:
             set Feeling = option{Start}
         CaseText := Join(Subject.CaseFile, " ")
         FactText := Join(Facts, " ")
-        Personality := ToMessage("{Dream.Personality}\n\nYour waking life: {CaseText}\n\nAlso true: {FactText}")
+        Base := ToMessage("{Dream.Personality}\n\nYour waking life: {CaseText}\n\nAlso true: {FactText}")
+        Personality := if (Dream.UsesCake?) then Join(array{Base, CakeKnowledge(TheCake())}, MessageSpace) else Base
         set DreamPersonality = Personality
         if (Persona.SetPersonality[Personality]):
             Logger.Print("[client] personality set for {Dream.Id}")
@@ -292,6 +301,23 @@ client_control := class:
         else:
             LogPromptError("verdict retry", option{Retry.GetError[]})
             false
+
+    # Asks the session which birthday cake Walt named, while it still holds the take. Call at the
+    # start of a good ending of a dream with AsksForCake. If it fails, TheCake stays the default.
+    RequestCake()<suspends>:void =
+        Result := Persona.GetAISession().Prompt(ToMessage(CakePromptText), birthday_cake)
+        if (Cake := Result.GetSuccess[]):
+            set MaybeCake = option{Cake.CakeWaltAskedFor}
+            Logger.Print("[client] the birthday cake is recorded")
+        else:
+            LogPromptError("cake", option{Result.GetError[]})
+
+    TheCake()<transacts>:message =
+        if (Cake := MaybeCake?) then Cake else DefaultCake
+
+    # Case-file entries that carry model text: the cake order, for a dream with UsesCake.
+    CakeEntries(Dream:dream):[]message =
+        if (Dream.UsesCake?) then array{CakeEntry(TheCake())} else array{}
 
     # Asks the session for what to carry forward, and stores it. Call right after RequestScore,
     # while the session still holds the take's conversation. Runs after good and bad takes alike.

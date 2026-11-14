@@ -122,7 +122,8 @@ before it resolves. Later stages never leak into an earlier dream's prompts.
 ### Stage 1: Unlocked By Dream 1
 
 - `F1-01` Walter Price, born March 3.
-- `F1-02` The March 3 cake: 8 inch, lemon. Same order every year. She bakes it, writes the
+- `F1-02` The March 3 cake: the cake Walt asked for the night she said yes (dream 2; the player's
+  answer, lemon if none). Same order every year. She bakes it, writes the
   slip, sets it in the case. It stays there until it is thrown out.
 - `F1-03` Walter whistled at the bench. One tune. He said he wrote it. Nobody believed him.
   It has no name on record.
@@ -140,8 +141,8 @@ before it resolves. Later stages never leak into an earlier dream's prompts.
 
 - `F3-01` Walter Price died on March 3, his birthday, 6 yr ago. 16:40. Cutler Row, two
   hundred meters from the shop door.
-- `F3-02` That year she forgot the cake. He wrote the order slip himself, as a joke. "1 cake.
-  Lemon. W. Price. Pick up 5 PM." That is the first slip in the series.
+- `F3-02` That year she forgot the cake. He wrote the order slip himself, as a joke. "1 birthday
+  cake. W. Price. Pick up 5 PM." That is the first slip in the series.
 - `F3-03` They had words over it. Her last words to him: "Then you can pick it up yourself."
 - `F3-04` She baked it anyway. It was in the case at 5 PM.
 
