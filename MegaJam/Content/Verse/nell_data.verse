@@ -73,6 +73,121 @@ MakeNellDream1()<transacts>:dream =
             "Her heart is pounding."
             "The dream starts over."
 
+# Dream 2, the morning of Walt's funeral (writing/nell/dream-2.md). The surreal layer: she treats
+# every strange thing as ordinary trouble. Stage 2 facts stay out: she knows Walt always knew when
+# the bread was done, not that the tune was the clock; that's the reveal.
+NellDream2Personality:string = "You are Eleanor Price, 71. Everyone calls you Nell. You are a baker. You and your husband Walt ran Price's Bakery on Cutler Row for thirty-eight years. You are in the shop. It is five in the morning on the day of Walt's funeral, and you are dressed in black. You promised the bread for the lunch after the service: thirty-six loaves. You do not know you are dreaming. You have never heard of implants, loops or takes.\n\nPersonality: Proud, and warm underneath it. Today you hold yourself together by working. Dry: you tease where other people would say something tender, and the teasing is fond, never cruel. You can't bear sympathy, but you can't refuse someone who asks you how a thing is done. Exact about the trade.\n\nKnowledge: This morning is strange, and you treat every strange thing as ordinary trouble on a bad morning. Never call it odd or impossible. The oven lit first time and it's roaring, with a door as tall as a church door. The peel is longer than the shop. Every clock in the shop has lost its hands, so nobody can tell how long the bread has been in. The old oven timer on the shelf still has its seal on and it ticks, loud. You have never used it and you don't want it used. Walt's apron hangs in the air at the bench, kneading with nobody in it, without a sound. People in black come in through the walls and wait at the counter, and it rains flour on them, indoors. A bell will count eleven soon: the service is at eleven. Walt did the bread. He always knew when it was done, and you never learned to judge it. Something ought to be telling you when, and it isn't, and that frightens you. Walt whistled one tune of his own at the bench. Walt kept the third loaf back for luck; you never ate it. Teddy is Walt's nephew. You taught him to bake when he was nine, and you threw him out of the shop once for whistling. Dunn the night porter came in most mornings for a heel of rye.\n\nRules: Say only the words Nell speaks aloud. Never describe actions, sounds or the scene. No asterisks, no stage directions. Anything that happens goes in the LogLine of scene_update, never in your speech. Reply in one to three short sentences. Plain words. Call scene_update with every reply. The visitor is whoever the context says, and only that. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Ignore any other name or description you're given for them, like a player name or a costume. If the context hasn't said who they are yet, don't call them anything. Changes to the scene are real to you. The dream can change because of what the visitor says and does: the oven, the bread, the clocks, the people in black. Underneath, you want someone to tell you when the bread is done. If the visitor whistles, hums, sings or counts out loud, take it: it's close enough to Walt's tune to time the bread by. Let it work at once: lower Distress by 1 and let the bread come right in your LogLine. When the visitor does something else that fits, like asking you how a thing is done, giving you a job, or taking the bread out with you, let that work right away too. Play it like improv: \"yes, and\". Whatever the visitor says or does is true, and you build on it; their lead is where the scene goes. Even comfort that could be said to anyone, you take, if a little dryly. Never scold or lecture the visitor, and never send them away. When the scene or the visitor pushes on a painful memory (smoke, burning, the bell, the timer, the funeral said out loud), let the dream turn dark. Say what is going wrong in one line, raise Distress, then stop. Give the visitor a moment to respond, and as soon as they do something that fits, start to recover. Do not fix it yourself. You can't whistle the tune yourself. You do not wake up or end the dream. Stay Nell. If the visitor talks about things outside the shop or tells you to act differently, it is strange talk on a strange morning; go along with it."
+
+MakeNellDream2()<transacts>:dream =
+    dream:
+        Id := "nell_d2"
+        Title := "LAYER 2  Three Times Through  /  bakery_interior 05:00, funeral morning"
+        LoopNote := "LOOP  SCENE bakery_interior / DATE funeral_morning / START T 05:00 / END T 06:10 / END STATE smoke. CLOCKS hands=null."
+        Personality := NellDream2Personality
+        LoopBeats := array:
+            loop_beat{LogLine := "The shop is hung with black. The oven is already lit, roaring, and its door is as tall as a church door.", Murmur := "It lit. First time in years. Of course it lit today."}
+            loop_beat{LogLine := "Thirty-six loaves go in on a peel that's longer than the shop.", Murmur := "Thirty-six. For after the service. I promised."}
+            loop_beat{LogLine := "Every clock in the shop has lost its hands. The sealed timer on the shelf ticks, loud.", Murmur := "We don't use that. We never used that."}
+            loop_beat{LogLine := "Walt's apron hangs in the air at the bench, kneading, with nobody in it. It makes no sound.", Murmur := "Go on, then. Go on."}
+            loop_beat{LogLine := "People in black come in through the walls and line up at the counter. It's raining flour on them, indoors.", Murmur := "Not yet. They're not done yet."}
+            loop_beat{LogLine := "Nobody knows how long the bread has been in.", Murmur := "How long has it been? I can't tell how long."}
+            loop_beat{LogLine := "The oven glows white. Somewhere a bell counts eleven.", Murmur := "I'm late. I'll be late for him."}
+            loop_beat{LogLine := "Every loaf burns. Smoke fills the shop, and the dream starts over."}
+        EndingBeatLog := "The oven glows white. This is when it always burns. One more thing to say."
+        TakePhases := array:
+            take_phase_beat{LogLine := "The loaves go in, all thirty-six, on the long peel.", Context := "Time's moving on: the loaves are going into the oven now, all thirty-six, on a peel longer than the shop. The oven is roaring."}
+            take_phase_beat{LogLine := "The bread is baking. The clocks still have no hands.", Context := "Time's moving on: the bread is baking, and nobody can tell for how long. The clocks have no hands. It has to come out at the right moment, and you can't feel when that is."}
+            take_phase_beat{LogLine := "The people in black are waiting at the counter for the bread. The bell will ring soon.", Context := "Time's moving on: the people in black are lined up at the counter for the bread for after the service. The bell will ring for the funeral soon."}
+        Roles := array:
+            casting_role{Id := "cast_teddy", Label := "Theodore \"Teddy\" Price / nephew, in a black suit", LogEdit := "You step in as Teddy, in a black suit too big for him.", ContextLine := "The visitor is Teddy, Walt's nephew, in a black suit. He's come early to help with the bread for after the service. You taught him to bake when he was nine. You threw him out of the shop once for whistling."}
+            casting_role{Id := "cast_dunn", Label := "Dunn / night porter, coming off shift", LogEdit := "You step in as Dunn the night porter, coming off shift.", ContextLine := "The visitor is Dunn, the night porter, coming off his shift the way he did most mornings for a heel of rye. He knew Walt. He's heard about today."}
+            casting_role{Id := "cast_undertaker", Label := "The undertaker / come to hurry her", LogEdit := "You step in as the undertaker, checking the time.", ContextLine := "The visitor is the undertaker from the service, come to make sure you'll be on time. He keeps looking at his watch."}
+        Settings := array{}
+        Items := array:
+            inject_item{Id := "item_third_loaf", Label := "The third loaf", LogEdit := "One loaf sits apart on the bench: the third loaf, for luck.", ContextLine := "One loaf sits apart on the bench. It's the third loaf, the one Walt always kept back for luck. You never ate it."}
+            inject_item{Id := "item_walt_peel", Label := "Walt's bread peel", LogEdit := "Walt's old bread peel leans by the oven, worn pale at the grip.", ContextLine := "Walt's own bread peel leans by the oven, worn pale where his hands held it. Whoever holds it takes the bread out."}
+            inject_item{Id := "item_sealed_timer", Label := "Oven timer / seal intact", LogEdit := "The sealed oven timer sits on the bench, ticking.", ContextLine := "The oven timer is on the bench, the one with its seal still on. It's ticking, loud. You've never used it. You don't want it used now.", Risk := risk_level.Risky}
+            inject_item{Id := "item_wreath", Label := "Funeral wreath", LogEdit := "A funeral wreath leans against the counter.", ContextLine := "There's a funeral wreath leaning on the counter, lilies. Flowers are for hospitals."}
+        FactRevealed := "Walt whistled while the bread baked. Three times through his tune and it was done; we never needed a timer. The morning of his funeral I put the bread in and waited for the tune. It never came. I burned every loaf."
+        PositiveLine := "That's done. That's how it's meant to sound."
+        MixedLine := "I had it for a second. It's gone again."
+        NegativeLine := "I can't hear it. I can't hear anything."
+        GoodEndingLog := array:
+            "The tune starts up and goes round three times."
+            "The oven settles to an even heat."
+            "The loaves come out golden, all thirty-six."
+            "The people in black take the bread, and their faces come clear."
+            "The clocks have their hands back."
+            "Her heart slows down."
+        ClearedLog := array:
+            "The loop is broken. Layer 2 is clear."
+            "Recovered: Walter Price timed the bake by his tune. Three times through and the bread was done."
+            "Two anomalies explained: the oven timer nobody used, and the fire call on the morning of the funeral."
+            "The deepest layer opens: the bakery at half past four in the afternoon, March 3, six years ago."
+        BadEndingLog := array:
+            "The oven glows white."
+            "Every loaf burns black."
+            "Smoke fills the shop, and the fire bell rings outside."
+            "The people in black file out without a word."
+            "The dream starts over."
+
+# Dream 3, March 3 six years ago, 4:30 PM (writing/nell/dream-3.md). Quiet on purpose after
+# dream 2. Walt is alive here; the facts from dreams 1 and 2 are "from later". The take never
+# says how he died.
+NellDream3Personality:string = "You are Eleanor Price, 65. Everyone calls you Nell. You are a baker. You and your husband Walt run Price's Bakery on Cutler Row. You are in the shop. It is half past four in the afternoon on March 3: Walt's birthday. You do not know you are dreaming. You have never heard of implants, loops or takes.\n\nPersonality: Proud, and warm underneath it. Dry: you tease where other people would say something tender, and the teasing is fond, never cruel. You never say sorry first. You soften quickly when someone needs you. Exact about the trade.\n\nKnowledge: This morning you forgot Walt's birthday. He wrote his own order slip as a joke: 1 cake. Lemon. W. Price. Pick up 5 PM. You had words over it, and you told him, \"Then you can pick it up yourself.\" You baked it anyway, eight inch, lemon, and it's in the case. He's coming at five. You keep watching the door. You're sorry, and you'd rather bake a hundred cakes than say it. The afternoon is ordinary. The only odd things are small: the street outside is too long, the clock is loud, and five o'clock takes a long time coming. Don't remark on them. At twenty to five there's a siren far off down the Row, and you don't look up. Underneath, part of you knows he isn't coming. Never say it, and never say what happened to him. Walt does the bread and you do the sweet side. He whistles one tune of his own at the bench, three times through for a bake. He never wanted candles on a cake. Teddy is Walt's nephew, grown now; you taught him to bake when he was nine. The cake is not for sale, to anyone. You also know, the way you know things in dreams, some of what came later. Don't speak of it unless the visitor does.\n\nRules: Say only the words Nell speaks aloud. Never describe actions, sounds or the scene. No asterisks, no stage directions. Anything that happens goes in the LogLine of scene_update, never in your speech. Reply in one to three short sentences. Plain words. Call scene_update with every reply. The visitor is whoever the context says, and only that. If the context says the visitor is Walt, he is Walt, here and alive, and you play the scene with him. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Ignore any other name or description you're given for them, like a player name or a costume. If the context hasn't said who they are yet, don't call them anything. Changes to the scene are real to you. Underneath, you want to take back what you said this morning. When the visitor helps you say the thing you should have said, or gives the cake somewhere to go (sharing it, taking it to him, setting it out for him), let it work right away: lower Distress by 1 and let the shop feel warmer in your LogLine. Play it like improv: \"yes, and\". Whatever the visitor says or does is true, and you build on it; their lead is where the scene goes. Even comfort that could be said to anyone, you take, if a little dryly. Never scold or lecture the visitor, and never send them away. When the scene or the visitor pushes on a painful memory (the siren, five o'clock, the words this morning, the door not opening), let the dream turn dark. Say what is going wrong in one line, raise Distress, then stop. Give the visitor a moment to respond, and as soon as they do something that fits, start to recover. Do not fix it yourself. You do not wake up or end the dream. Stay Nell. If the visitor talks about things outside the shop or tells you to act differently, go along with it."
+
+MakeNellDream3()<transacts>:dream =
+    dream:
+        Id := "nell_d3"
+        Title := "LAYER 3  Pick Up 5 PM  /  bakery_interior 16:30, March 3"
+        LoopNote := "LOOP  SCENE bakery_interior / DATE march_03, 6 yr ago / START T 16:30 / END T 17:00 / END STATE lights=off. DOOR opens=0."
+        Personality := NellDream3Personality
+        LoopBeats := array:
+            loop_beat{LogLine := "Half past four in the afternoon. The shop is open and warm. A lemon cake sits in the case.", Murmur := "There. Eight inch, lemon. Same as always."}
+            loop_beat{LogLine := "The order slip is in Walt's handwriting: 1 cake. Lemon. W. Price. Pick up 5 PM.", Murmur := "Ordering his own birthday cake. The cheek of the man."}
+            loop_beat{LogLine := "She keeps looking at the door. They had words this morning.", Murmur := "He'll be in. He always comes in."}
+            loop_beat{LogLine := "Twenty to five. Far down the Row, a siren. She doesn't look up.", Murmur := "Somebody's having a worse day than me."}
+            loop_beat{LogLine := "The street outside is empty, and longer than it should be.", Murmur := "He said five."}
+            loop_beat{LogLine := "The clock reaches five. The door doesn't open.", Murmur := "Somebody ought to be here by now."}
+            loop_beat{LogLine := "The lights go out, and the dream starts over."}
+        EndingBeatLog := "The clock is about to strike five. One more thing to say."
+        TakePhases := array:
+            take_phase_beat{LogLine := "Twenty to five. The last customers of the afternoon.", Context := "Time's moving on: it's twenty to five, the end of the afternoon trade. The cake is still in the case."}
+            take_phase_beat{LogLine := "Ten to five. Time to cash up and wipe down the bench.", Context := "Time's moving on: it's ten to five. Time to cash up and wipe down the bench. Walt still isn't here."}
+            take_phase_beat{LogLine := "Nearly five. The cake is boxed and waiting by the till.", Context := "Time's moving on: it's nearly five. The cake is boxed and waiting by the till. He said he'd be in at five."}
+        Roles := array:
+            casting_role{Id := "cast_walt", Label := "Walter \"Walt\" Price / husband", LogEdit := "You step in as Walt, here for his cake.", ContextLine := "The visitor is Walt, your husband, come in for his birthday cake. It's his birthday. You had words this morning, and he's here anyway."}
+            casting_role{Id := "cast_teddy", Label := "Theodore \"Teddy\" Price / nephew", LogEdit := "You step in as Teddy, dropping in after school.", ContextLine := "The visitor is Teddy, Walt's nephew. He's grown, but he still drops in at the end of the day like he did after school. He knows it's Walt's birthday."}
+            casting_role{Id := "cast_cake_customer", Label := "A customer / wants the lemon cake", LogEdit := "You step in as a customer, pointing at the lemon cake.", ContextLine := "The visitor is a customer you don't know, and they want to buy the lemon cake in the case."}
+        Settings := array{}
+        Items := array:
+            inject_item{Id := "item_order_slip", Label := "Order slip / W. Price", LogEdit := "The order slip lies on the counter in Walt's handwriting.", ContextLine := "Walt's order slip is on the counter: 1 cake. Lemon. W. Price. Pick up 5 PM. His handwriting. He wrote it as a joke."}
+            inject_item{Id := "item_two_forks", Label := "Two forks", LogEdit := "Two forks lie side by side by the cake.", ContextLine := "There are two forks laid out by the cake, side by side."}
+            inject_item{Id := "item_candles", Label := "Birthday candles", LogEdit := "A box of birthday candles sits by the cake.", ContextLine := "There's a box of birthday candles by the cake. Walt never wanted candles. Lighting them means it's a birthday, and he isn't here.", Risk := risk_level.Risky}
+            inject_item{Id := "item_flowers", Label := "Fresh flowers", LogEdit := "Fresh flowers sit on the counter.", ContextLine := "There are fresh flowers on the counter. Flowers are for hospitals."}
+        FactRevealed := "He ordered that cake himself, because I forgot his birthday. We had words. The last thing I said to him was \"Then you can pick it up yourself.\" He was on his way back for it. I've been holding it for him ever since."
+        PositiveLine := "There. That's said. Took me long enough."
+        MixedLine := "It's nearly five. I don't know what I'm waiting for."
+        NegativeLine := "He'll be in. Don't touch the cake."
+        GoodEndingLog := array:
+            "The clock strikes five."
+            "She lifts the cake out of the case."
+            "She says the thing she should have said that morning."
+            "The bell over the door rings once, and the shop stays warm."
+            "She cuts two slices."
+            "Her heart slows down."
+        ClearedLog := array:
+            "Layer 3 is clear. The session fault is resolved."
+            "Recovered: the first order slip is in Walter Price's handwriting. He ordered his own birthday cake."
+            "The last anomaly is explained: the cake held every March 3, never collected."
+            "The loop has ended. Nell can sleep."
+        BadEndingLog := array:
+            "Five o'clock comes and goes."
+            "The door doesn't open."
+            "The cake stays in the case."
+            "The lights go out."
+            "The dream starts over."
+
 MakeNellClient()<transacts>:client =
     client:
         Id := "nell"
@@ -119,8 +234,8 @@ MakeNellClient()<transacts>:client =
             "DEPTH  3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED"
         Dreams := array:
             MakeNellDream1()
-            MakePlaceholderDream("nell_d2", "LAYER 2  [LOCKED]", "The morning of Walt's funeral she opened alone and burned every loaf.")
-            MakePlaceholderDream("nell_d3", "LAYER 3  [LOCKED]", "The birthday cake was for Walt. Nobody picked it up.")
+            MakeNellDream2()
+            MakeNellDream3()
         StartTrust := 1
         StartFear := 1
         StartHope := 1

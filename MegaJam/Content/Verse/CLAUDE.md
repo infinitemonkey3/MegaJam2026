@@ -58,8 +58,9 @@ play session yet.
 - `MakeDesClient()` (`des_data.verse`): Des, with the case file's Screen section from
   `writing/des/case-file.md` and a full dream 1.
 - `MakeNellClient()` (`nell_data.verse`): Nell, the current patient 1 (2026-11-13), with the
-  Screen section of `writing/nell/case-file.md` and a full dream 1 from
-  `writing/nell/dream-1.md`; layers 2 and 3 are placeholders.
+  Screen section of `writing/nell/case-file.md` and all three dreams from
+  `writing/nell/dream-1.md`..`dream-3.md` (2: the funeral morning, surreal; 3: March 3, 4:30 PM,
+  quiet). Dreams 2 and 3 have no scene settings (`Settings := array{}`), since Direct skips them.
 - Patients are data: `game_director`'s `@editable Patient` (`patient_choice`) is the one switch.
   `MakePatient` gives the client for the debugger and the takes; `SetUpPatient` (first thing in
   `OnBegin`) sets `PatientRecliner`'s material on the `ReclinerCard` entity and the patient's

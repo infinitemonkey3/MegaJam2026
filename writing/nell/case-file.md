@@ -74,8 +74,7 @@ DEPTH      3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED
 
 ## Screen Unlocks
 
-Entries the screen adds after each dream resolves. Dream 1's are final. Dreams 2 and 3 are
-placeholders until Friday.
+Entries the screen adds after each dream resolves.
 
 ### After Dream 1
 
@@ -86,11 +85,18 @@ placeholders until Friday.
 
 ### After Dream 2
 
-- To write Friday. Clears `D-03` and `K-04`. Unlocks layer 3.
+- `U2-01` RECORD RECOVERED. Walter Price timed the bake by his tune. Three times through and the
+  bread was done.
+- `U2-02` `D-03` ANOMALY CLEARED. The oven timer was never needed.
+- `U2-03` `K-04` ANOMALY CLEARED. Funeral morning: she waited for the tune and the bread burned.
+- `U2-04` LAYER 3 UNLOCKED. SCENE bakery_interior / T 16:30 / DATE march_03, 6 yr ago.
 
 ### After Dream 3
 
-- To write Friday. Clears `K-06`.
+- `U3-01` `K-06` ANOMALY CLEARED. The first slip is in Walter Price's handwriting. He ordered
+  his own birthday cake.
+- `U3-02` `K-05` CLOSED. Held for W. Price. Collected.
+- `U3-03` SESSION FAULT RESOLVED.
 
 ## Full Fact Sheet
 
@@ -171,12 +177,14 @@ glass, the shop is silent, and the lights go out. Written in `dream-1.md`.
 ### Layer 2: The Memory Under It
 
 The morning of Walt's funeral. She opens alone. The oven works this time, too well. The bread
-goes in and she waits for a signal she can't name. Everything burns. To write Friday.
+goes in and she waits for a signal she can't name. Everything burns. The surreal layer: clocks
+without hands, Walt's apron kneading by itself, flour raining on the mourners. Written in
+`dream-2.md`.
 
 ### Layer 3: The Core
 
 March 3, six years ago. The last ordinary day. A cake in the case, an order slip in his
-handwriting, and 5 PM coming. To write Friday.
+handwriting, and 5 PM coming. Quiet on purpose. Written in `dream-3.md`.
 
 ## Leaves Behind
 
