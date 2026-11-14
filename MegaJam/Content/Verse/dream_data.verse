@@ -95,9 +95,10 @@ loop_beat := class:
     Murmur:string = ""        # what the client mutters over this beat, if anything
     HoldSeconds:float = 2.5
 
-# A phase of the take: the dream's clock moves on to the next part of the morning (Chip,
-# 2026-11-13: without it the client stayed on the first task, the dough, for the whole take).
-# The phases spread evenly over the take, before the last line.
+# A beat of the take: the scene moves on to its next part (Chip, 2026-11-13: without it the
+# client stayed on the first task, the dough, for the whole take). Beats advance by turns, not
+# time (2026-11-14: a timer made her talk over the player): after TurnsPerBeat answers from the
+# player and her replies, the next beat is told to her.
 take_phase_beat := class:
     LogLine:string            # prose for the dream debugger's log
     Context:string            # what's now happening, for the client: "It's time to ..."
@@ -129,7 +130,7 @@ dream := class:
     ClearedLog:[]string = array{} # after a good ending: the debugger's notes, shown, not told
     BadEndingLog:[]string     # authored bad ending
     FactRevealed:string       # what a positive verdict gives up; joins the facts for later dreams
-    TakeSeconds:float = 240.0 # how long a take runs before the last line (doubled from 120, Chip 2026-11-13)
+    TurnsPerBeat:int = 2      # player answers before the scene moves to the next beat; after the last beat, the last line
 
 client := class:
     Id:string
@@ -290,4 +291,3 @@ MakePlaceholderDream(Id:string, Title:string, Fact:string)<transacts>:dream =
             "OVEN state=burning / SMOKE rising"
             "LIGHTS state=out / HEART rate=spike / LOOP restart"
         FactRevealed := Fact
-        TakeSeconds := 180.0

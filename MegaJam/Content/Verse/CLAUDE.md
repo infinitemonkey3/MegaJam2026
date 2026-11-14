@@ -113,11 +113,15 @@ play session yet.
   under it, and one CONTINUE before the next layer.
 - The dream debugger's take log shows only the newest line (the player reads at their own pace),
   pinned to the top of the log area (`LatestText`'s slot is top-aligned).
-- The take moves through the dream's `TakePhases` (Nell: dough time, bake time, opening time;
-  Des: his name is called, the spotlight, the catchphrase), spread evenly over `TakeSeconds`
-  before the last line (`take_flow.RunPhases`). Each phase goes in the log and nudges the client
-  on with `client_control.MoveScene`, which waits while she's talking; what the visitor changed
-  holds. Crisis beats from the writing aren't wired.
+- **Takes run on turns, not a clock** (Chip, 2026-11-14: the timer made her talk over the
+  player, and she stalled on a question). `take_flow.RunBeats`: her opening line, then per beat
+  `dream.TurnsPerBeat` player answers (`AwaitPlayerLine`, no timeout), each followed by her
+  reply (`AwaitSpeechEnd`); then the next of `dream.TakePhases` goes in the log and is told to
+  her with `client_control.MoveScene` (only after she's stopped speaking; she moves the scene on
+  and ends on something to answer). After the last beat's turns, the last line. The haze clock
+  rises a step per beat. Every take also tells her to take turns and not move the scene on by
+  herself. Nell's dream 2 is one answer per question (`TurnsPerBeat := 1`); the default is 2.
+  Crisis beats from the writing aren't wired.
 - Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
   does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,

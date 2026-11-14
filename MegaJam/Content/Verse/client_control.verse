@@ -199,7 +199,7 @@ client_control := class:
         # The persona system also passes on the player's own name or outfit, and the client used
         # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
         # says it again next to the casting.
-        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
+        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Take turns with the visitor: say your piece, then stop and wait for their answer. Answer what they said, and don't move the scene on to something new by yourself; the dream will move it on when it's time."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
         if (Dream.Want.Length > 0):
             set Lines += array{ToMessage("What you want in this scene: {Dream.Want} What's in the way: {Dream.Obstacle} Say what you want early, as something the visitor can work with. Make statements and offers; don't ask the visitor open questions.")}
         for (Setting : Setup.Settings):
@@ -255,11 +255,12 @@ client_control := class:
             Logger.Print("[client] credit line skipped (persona busy)", ?Level := log_level.Warning)
             false
 
-    # A take phase: the dream's clock moves to the next part of the scene. The client reacts in a
-    # line or two and carries on with the visitor; what the visitor has already changed holds.
-    # Waits while the client is talking (PromptToTalk is refused then), up to TimeoutSeconds.
+    # A take beat: the scene moves to its next part. Called once she has finished replying to the
+    # player. She says it in a line or two and ends on something for the player to answer; what
+    # the player has already changed holds. Waits while she's talking (PromptToTalk is refused
+    # then), up to TimeoutSeconds.
     MoveScene(Context:string, TimeoutSeconds:float)<suspends>:void =
-        Instructions := ToMessage("{Context} Move the scene on to this now. Anything the visitor has already changed stays changed; this is only the dream pushing on. React in one or two short sentences, in your own voice, and keep playing along with the visitor.")
+        Instructions := ToMessage("{Context} Move the scene on to this now, without repeating what you just said. Anything the visitor has already changed stays changed; this is only the dream moving on. Say it in one or two short sentences, in your own voice, and end on something the visitor can answer. Then stop and wait for them.")
         var Waited:float = 0.0
         loop:
             if (Persona.PromptToTalk[Instructions, VoiceChannel]):

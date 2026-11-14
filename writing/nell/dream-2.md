@@ -51,7 +51,7 @@ MURMUR  And he can stop that, for a start.
 LOG     She opens the order pad. Her questions are written down the first page.
 MURMUR  I've got questions. I'm not daft.
 LOG     She asks the first one. He opens his mouth to answer.
-MURMUR  Go on, then. Where would you take me?
+MURMUR  Go on, then. How would we spend a Saturday?
 LOG     The clock strikes nine. Mrs. Hollis turns the sign to CLOSED. He hasn't said a word.
 MURMUR  That's nine. Typical.
 LOG     The lights go out, and the dream starts over.
@@ -64,11 +64,12 @@ Her questions, in order, a new one each phase. She asks the first in her opening
 | Log | Context |
 |---|---|
 | `Next on her pad: what would our life be like?` | `Time's moving on. Ask the next question on your pad, in your own words: what would your life together be like? Where would you live, and what would a Sunday look like?` |
-| `Next on her pad: what about my baking?` | `Time's moving on. Ask the next question on your pad: you mean to have your own shop one day, the sweet side, your own rolls. What does he make of that? Would he stand for a wife with her own trade?` |
+| `Next on her pad: what about my baking?` | `Time's moving on. Ask the next question on your pad: you mean to have your own shop one day, the sweet side, your own rolls. What does he make of that? Would he mind you having a trade of your own?` |
 | `Last on her pad: why me? The clock says five to nine.` | `Time's moving on: it's five to nine and Mrs. Hollis is jangling her keys. Ask the last question on your pad, the hard one: why you?` |
 
-Opening question (in her first line, set by the personality): where would he take her on a
-first date?
+Opening question (in her first line, set by the personality): if she said yes, how would they
+spend a Saturday afternoon? (Was "where would you take me on a first date", which got moderated
+in play, 2026-11-14.)
 
 Last line log: `The clock is about to strike nine. One more thing to say.`
 
