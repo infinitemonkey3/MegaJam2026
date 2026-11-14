@@ -221,11 +221,38 @@ shadow = cv2.GaussianBlur(alpha.astype(np.float32), (0, 0), 6)
 stroke = cv2.dilate(alpha, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))).astype(np.float32)
 
 canvas = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+
+# A soft white halftone panel behind the name, so the busy sky behind it reads quieter (Chip,
+# 2026-11-14). Dots on a 45-degree grid, biggest at the centre of an ellipse around the
+# wordmark and shrinking to nothing at its edge; white and partly transparent.
+HT_STEP, HT_ALPHA, HT_MARGIN_X, HT_MARGIN_Y = 9, 0.8, 110, 80
+cx = WM_X - PAD + wm.width / 2
+cy = WM_Y - PAD + wm.height / 2
+rx = wm.width / 2 - PAD + HT_MARGIN_X
+ry = wm.height / 2 - PAD + HT_MARGIN_Y
+yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+d = np.sqrt(((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2)
+strength = np.clip(1.0 - d, 0.0, 1.0) ** 0.4           # 1 at the centre, 0 at the ellipse edge
+u, v = (xx + yy) / np.sqrt(2), (xx - yy) / np.sqrt(2)  # rotate the dot grid 45 degrees
+du = (u % HT_STEP) - HT_STEP / 2
+dv = (v % HT_STEP) - HT_STEP / 2
+radius = strength * HT_STEP * 0.72
+dots = np.clip(radius - np.sqrt(du * du + dv * dv) + 0.5, 0.0, 1.0)   # anti-aliased dot edge
+halftone = Image.new('RGBA', (W, H), (255, 255, 255, 0))
+halftone.putalpha(Image.fromarray((dots * HT_ALPHA * 255).astype(np.uint8)))
+canvas.alpha_composite(halftone)
+
 canvas.alpha_composite(layer(halo, NAVY, 0.45), (WM_X - PAD, WM_Y - PAD))
 canvas.alpha_composite(layer(shadow, NAVY, 0.75), (WM_X - PAD, WM_Y - PAD + 9))
 canvas.alpha_composite(layer(stroke, NAVY, 1.0), (WM_X - PAD, WM_Y - PAD))
 canvas.alpha_composite(wm, (WM_X - PAD, WM_Y - PAD))
+# Also the two layers on their own, so the game can drift clouds between them (Chip,
+# 2026-11-14): <out>_Sky.png without the wordmark, <out>_Wordmark.png with transparency.
+SKY = OUT.with_name(OUT.stem + '_Sky.png')
+WORDMARK_LAYER = OUT.with_name(OUT.stem + '_Wordmark.png')
+out.convert('RGB').save(SKY)
+canvas.save(WORDMARK_LAYER)
 out.alpha_composite(canvas)
 
 out.convert('RGB').save(OUT)
-print('wrote', OUT)
+print('wrote', OUT, SKY, WORDMARK_LAYER)

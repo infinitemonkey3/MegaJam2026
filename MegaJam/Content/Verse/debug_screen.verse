@@ -33,6 +33,10 @@ debug_screen := interface:
     # Vitals trace speed, 0 (calm) to 3 (spiking).
     SetVitals(Level:int):void
 
+    # Lumi, Wonderwell's assistant, disabled in this cracked copy; awake when the AI breaks in
+    # during the finale (Chip, 2026-11-14).
+    SetAssistantAwake(Awake:logic):void
+
     # The client's trust, fear and hope after a take, for the per-take chart.
     SetClientState(TakeNumber:int, Feeling:client_state):void
 
@@ -85,6 +89,9 @@ stub_debug_screen := class(debug_screen):
 
     SetVitals<override>(Level:int):void =
         Logger.Print("[screen] VITALS level={Level}")
+
+    SetAssistantAwake<override>(Awake:logic):void =
+        Logger.Print("[screen] LUMI awake={if (Awake?) then "yes" else "no"}")
 
     SetClientState<override>(TakeNumber:int, Feeling:client_state):void =
         Logger.Print("[screen] STATE take={TakeNumber} trust={Feeling.Trust} fear={Feeling.Fear} hope={Feeling.Hope}")

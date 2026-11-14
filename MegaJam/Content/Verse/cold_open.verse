@@ -45,6 +45,7 @@ cold_open_rig := class:
     RoomRain:audio_player_device                        # AMB_Rain_Window, looping
     BootChime:audio_player_device                       # SFX_Boot_Chime
     TutorialLine:audio_player_device                    # VO_Director_Tutorial_02 ("where she's stuck")
+    TitleTheme:audio_player_device                      # MUS_TitleTheme, looping, under the title card
 
 cold_open := class:
     Rig:cold_open_rig
@@ -61,6 +62,9 @@ cold_open := class:
     # so lifting the black one tick after Play showed the world for a frame (play test,
     # 2026-11-14). The sequences open on their own fade from black, so the wait doesn't show.
     HandOffSeconds:float = 0.3
+    # When LS_ColdOpen is fully black: its fade out runs from frame 910 to 954 at 30 fps (31.8 s)
+    # and it ends at 958. Change it with the sequence.
+    ColdOpenBlackSeconds:float = 31.85
     # VO_Director_Tutorial_02.wav is 5.32 s; audio_player_device has no finished event.
     TutorialSeconds:float = 5.6
 
@@ -82,6 +86,7 @@ cold_open := class:
         var Kind:input_kind = ActiveInputKind(Player)
         StartCard.Show(Player, StartPrompt(Kind))
         Rig.NoSignalSound.Play()
+        Rig.TitleTheme.Play()                           # the Wonderwell jingle as a looping theme
         race:
             Input.ConfirmEvent.Await()
             # The prompt follows a switch between keyboard and gamepad.
@@ -95,6 +100,7 @@ cold_open := class:
 
     EndPreRoll():void =
         Rig.NoSignalSound.Stop()
+        Rig.TitleTheme.Stop()                           # the cold open brings in the jingle itself
         StartCard.Hide()
         Screen.SetTitle(EmptyText)
 
@@ -109,6 +115,13 @@ cold_open := class:
         GoToDesk(Player)
         Sleep(HandOffSeconds)
         Screen.Hide()
+        # The black overlay goes back up once the sequence's own fade to black has finished but
+        # before it ends and lets go of the view, so the world doesn't show for a frame. (Keeping
+        # the sequence's final state instead left the fade at black for good: the room intro
+        # restored it when it finished, and the room stayed black. Play test, 2026-11-14.)
+        branch:
+            Sleep(ColdOpenBlackSeconds - HandOffSeconds)
+            Screen.Show(Player)
         race:
             Rig.Sequence.StoppedEvent.Await()
             block:

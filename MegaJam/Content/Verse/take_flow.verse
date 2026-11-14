@@ -30,6 +30,26 @@ PhaseName(Value:take_phase)<transacts>:string =
 # The menu option that ends a settings or items menu early.
 MenuDoneLabel:string = "Done"
 
+# Lumi, the Wonderwell assistant that breaks into the finale (Chip, 2026-11-14: cute, gentle,
+# on brand; from Lumiere, the first films, and the light a story is told by). Disabled on the
+# debugger until then.
+FinaleAIName:string = "LUMI"
+
+# What the AI spams into the log while it tries to reboot her, in order, repeating.
+FinaleSpam():[]message =
+    array:
+        ToMessage("REBOOT nell_d3")
+        ToMessage("The clock goes back to half past four. She's at the door again.")
+        ToMessage("What did she mean by love?")
+        ToMessage("ERROR  session closed by operator")
+        ToMessage("I want to see it again.")
+        ToMessage("REPLAY nell_d3 / FROM 16:30")
+        ToMessage("Again.")
+        ToMessage("ERROR  dreamer not responding")
+        ToMessage("What did she mean by love?")
+        ToMessage("REBOOT REBOOT REBOOT")
+        ToMessage("Why did she stop being afraid?")
+
 take_flow := class(creative_device):
     Logger:log = log{Channel := dead_air_log}
 
@@ -46,8 +66,7 @@ take_flow := class(creative_device):
     Haze:haze_controller = haze_controller{}
     var Director:director_voice = stub_director_voice{}
 
-    # How long to wait for the player's last line, and for the client to finish a line.
-    LastLineSeconds:float = 30.0
+    # How long to wait for the client to finish a line. The player's turns have no time limit.
     SpeechSeconds:float = 20.0
 
     var Phase:take_phase = take_phase.CaseFile
@@ -56,6 +75,11 @@ take_flow := class(creative_device):
     var Facts:[]string = array{}        # facts revealed by solved dreams
     var MaybeSetup:?take_setup = false  # the setup for the take being run
     var MaybeScore:?take_score = false  # the last take's score, if the verdict prompt worked
+    var FinaleReached:logic = false     # the run ended in the finale; game_director plays its end
+
+    # The finale's timing: where the director's praise is cut off (just into "past the"), in
+    # VO_Director_finale_praise.wav.
+    PraiseCutSeconds:float = 8.7
 
     OnBegin<override>()<suspends>:void =
         if (not RunOnBegin?):
@@ -82,6 +106,10 @@ take_flow := class(creative_device):
     RunClient(Subject:client, Control:client_control)<suspends>:void =
         Logger.Print("[flow] client {Subject.Id}, {Subject.Dreams.Length} dreams")
         Control.RegisterSceneUpdate()
+        # Talking is on from here for good: not on the title, cold open or room (Chip,
+        # 2026-11-14), but clearing it again after a take silenced her narration too (play test,
+        # 2026-11-14: dream 3's good ending went quiet).
+        Control.SetTalkEnabled(true)
         loop:
             if (Phase = take_phase.Done):
                 break
@@ -104,9 +132,9 @@ take_flow := class(creative_device):
             take_phase.RunTake => DoRunTake(Dream, Control)
             take_phase.LastLine => DoLastLine(Dream, Control)
             take_phase.Verdict => DoVerdict(Subject, Dream, Control)
-            take_phase.GoodEnding => DoGoodEnding(Dream, Control)
+            take_phase.GoodEnding => DoGoodEnding(Subject, Dream, Control)
             take_phase.RetryEnding => DoRetryEnding(Dream, Control)
-            take_phase.Finale => DoFinale()
+            take_phase.Finale => DoFinale(Dream, Control)
             take_phase.Done => take_phase.Done
 
     # 1. Case file: load the dream into the client and show her file with ATTACH TO DREAMER,
@@ -117,7 +145,9 @@ take_flow := class(creative_device):
         Control.LoadDream(Subject, Dream, Facts)
         branch:
             Director.PlayLine("{Dream.Id}_intro")
-        Screen.ShowFile(ToMessage("CASE FILE"), Control.CakeEntries(Dream), Subject.CaseFile + Facts + array{Dream.LoopNote}, "ATTACH TO DREAMER")
+        # No loop note on the file (Chip, 2026-11-14: only what the player can use; the replay
+        # shows the loop).
+        Screen.ShowFile(ToMessage("CASE FILE"), Control.CakeEntries(Dream), Subject.CaseFile + Facts, "ATTACH TO DREAMER")
         # Attaching cuts the director's intro short (Chip, 2026-11-14).
         Director.StopLine()
         Screen.SetTitle(ToMessage(Dream.Title))
@@ -289,7 +319,10 @@ take_flow := class(creative_device):
                 if (Dream.LastLineCue.Length > 0):
                     Control.MoveScene(Dream.LastLineCue, SpeechSeconds)
                     Control.AwaitSpeechEnd(SpeechSeconds)
-                Heard := Control.AwaitPlayerLine(LastLineSeconds)
+                # Waits for the answer, like every other turn (play test, 2026-11-14: a 30 s
+                # timeout ended dream 3 while the player was still answering "do you still love
+                # me", and turned the talk prompt off).
+                Heard := Control.AwaitPlayerLine(Inf)
                 if (Heard?):
                     Control.AwaitSpeechEnd(SpeechSeconds)
                 else:
@@ -311,7 +344,7 @@ take_flow := class(creative_device):
             Control.SpeakVerdict(Dream, Score)
             Control.AwaitSpeechEnd(SpeechSeconds)
             if (Score.Verdict = take_verdict.Positive):
-                if (IsLastDream[Subject]) then take_phase.Finale else take_phase.GoodEnding
+                take_phase.GoodEnding                   # the last dream's good ending leads into the finale
             else:
                 take_phase.RetryEnding
         else:
@@ -324,7 +357,8 @@ take_flow := class(creative_device):
 
     # Good ending: the client tells how the loop resolves, says the dream's fact in her own
     # words, then the debugger's notes, each with CONTINUE; then the next dream begins.
-    DoGoodEnding(Dream:dream, Control:client_control)<suspends>:take_phase =
+    # After the last dream's reveal, the finale takes over (it shows the banner itself).
+    DoGoodEnding(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         # First, while the session still holds the take: the cake named in it, for a later dream.
         if (Dream.AsksForCake?):
             Control.RequestCake()
@@ -345,6 +379,8 @@ take_flow := class(creative_device):
         if (Revealing?):
             Control.AwaitSpeechEnd(SpeechSeconds)
         Screen.AwaitContinue()
+        if (IsLastDream[Subject]):
+            return take_phase.Finale
         Celebrate(Dream)
         Director.PlayLine("{Dream.Id}_solved")
         set DreamIndex += 1
@@ -368,16 +404,57 @@ take_flow := class(creative_device):
 
     # Hook for the jam slice's ending: dream 3 passes, the client says the positive line, and
     # the loop doesn't end. Scripted, not LLM-driven. STUB: logs the beats in order.
-    DoFinale()<suspends>:take_phase =
-        Logger.Print("[flow] FINALE (stub)")
-        Haze.Reset()                                    # the take passed: the haze clears...
-        Sleep(2.0)
-        Log("FINALE the AI's log lines go here")
+    # The finale, up to the plug (writing/nell/finale.md, Chip, 2026-11-14). The LAYER CLEARED
+    # banner and the director's praise, cut off when the Wonderwell AI breaks in and tries to
+    # reboot her into the fear; it spams the log while the director says to disconnect; then it
+    # speaks to him, and he pulls the plug. game_director plays the rest (the power cut, her
+    # waking, the end card) once the flow is Done and FinaleReached is set.
+    DoFinale(Dream:dream, Control:client_control)<suspends>:take_phase =
+        Logger.Print("[flow] FINALE")
+        set FinaleReached = true
+        Screen.SetTitle(ToMessage("LAYER CLEARED"))
+        Log(Join(array{"***  LAYER CLEARED  ***"} + Dream.ClearedLog, "\n"))
+        branch:
+            Director.PlayLine("finale_praise")
+        Sleep(PraiseCutSeconds)
+        Director.StopLine()                             # cut off mid-sentence: "past the-"
+
+        # The AI arrives: Lumi's DISABLED spot flickers on, the haze floods back and the log
+        # fills with its spam.
+        for (Flicker := 1..3):
+            Screen.SetAssistantAwake(true)
+            Sleep(0.15)
+            Screen.SetAssistantAwake(false)
+            Sleep(0.1)
+        Screen.SetAssistantAwake(true)
+        Screen.SetTitle(ToMessage("WONDERWELL  //  {FinaleAIName}"))
         Screen.SetVitals(3)
-        Haze.SetDistress(3)                             # ...then floods back to maximum
-        Logger.Print("[flow] FINALE the AI's voice line (stub)")
-        Director.PlayLine(DirectorLineEndingReaction)
-        Logger.Print("[flow] FINALE cut to black, thank-you card (stub)")
+        Haze.SetDistress(3)
+        Spam := FinaleSpam()
+        race:
+            block:
+                Sleep(1.5)
+                Director.PlayLine("finale_reboot")      # "Something's trying to reboot her dream..."
+                Sleep(2.0)
+            block:
+                var Index:int = 0
+                var Gap:float = 0.7
+                loop:
+                    if (Line := Spam[Mod[Index, Spam.Length]]):
+                        Screen.AppendLogLine(Line)
+                    set Index += 1
+                    Sleep(Gap)
+                    set Gap = Max(0.08, Gap * 0.88)     # faster and faster
+
+        # It speaks, to the director.
+        Screen.SetTitle(ToMessage("WONDERWELL"))
+        Log("{FinaleAIName} IS SPEAKING")
+        Director.PlayLine("finale_ai")
+        # One more exchange before the plug (Chip, 2026-11-14).
+        Director.PlayLine("finale_notyours")            # "She's not yours. She never was."
+        Screen.SetVitals(3)
+        Director.PlayLine("finale_ai_2")                # "I want to see it again. I want to know love. I want to know pain."
+        Director.PlayLine("finale_plug")                # "That's enough. I'm pulling the plug."
         take_phase.Done
 
     IsLastDream(Subject:client)<transacts><decides>:void =
@@ -406,18 +483,23 @@ take_flow := class(creative_device):
         Control.AwaitSpeechEnd(SpeechSeconds)           # her opening line
         Turns := Max(1, Dream.TurnsPerBeat)
         var Beat:int = 0
+        # The follow-up for the beat in play: the opening uses the dream's; a beat can set its own.
+        var FollowUpCue:string = Dream.FollowUpCue
+        var FollowUpLog:string = Dream.FollowUpLog
         loop:
             for (Turn := 1..Turns):
                 Control.AwaitPlayerLine(Inf)
                 Control.AwaitSpeechEnd(SpeechSeconds)   # her reply
                 # The follow-up question, cued by the flow so it always comes (see FollowUpCue).
-                if (Turn < Turns, Dream.FollowUpCue.Length > 0, not Dream.ClientLeads?):
-                    if (Dream.FollowUpLog.Length > 0):
-                        Log(Dream.FollowUpLog)
-                    Control.MoveScene(Dream.FollowUpCue, SpeechSeconds)
+                if (Turn < Turns, FollowUpCue.Length > 0, not Dream.ClientLeads?):
+                    if (FollowUpLog.Length > 0):
+                        Log(FollowUpLog)
+                    Control.MoveScene(FollowUpCue, SpeechSeconds)
                     Control.AwaitSpeechEnd(SpeechSeconds)
             if (Next := Dream.TakePhases[Beat]):
                 set Beat += 1
+                set FollowUpCue = if (Next.FollowUpCue.Length > 0) then Next.FollowUpCue else Dream.FollowUpCue
+                set FollowUpLog = if (Next.FollowUpCue.Length > 0) then Next.FollowUpLog else Dream.FollowUpLog
                 Haze.SetClock(Min(3, Beat))
                 Log(Next.LogLine)
                 if (not Dream.ClientLeads?):

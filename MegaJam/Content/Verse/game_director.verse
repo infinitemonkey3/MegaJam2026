@@ -28,6 +28,9 @@ game_director := class(creative_device):
     @editable RoomRain:audio_player_device = audio_player_device{}
     @editable BootChime:audio_player_device = audio_player_device{}
     @editable TutorialLine:audio_player_device = audio_player_device{}
+    @editable TitleTheme:audio_player_device = audio_player_device{}
+    # The title theme in a minor key, looping under the end card.
+    @editable EndTheme:audio_player_device = audio_player_device{}
     # The director's lines over the case file and the role (Content/DirectorVO, players in the
     # outliner's Director/Devices). Lengths are in DirectorLines.
     @editable NellD1Intro:audio_player_device = audio_player_device{}
@@ -36,12 +39,26 @@ game_director := class(creative_device):
     @editable NellD2SendIn:audio_player_device = audio_player_device{}
     @editable NellD3Intro:audio_player_device = audio_player_device{}
     @editable NellD3SendIn:audio_player_device = audio_player_device{}
+    # The finale (writing/nell/finale.md): the director's lines, the AI's line and the power cut.
+    @editable FinalePraise:audio_player_device = audio_player_device{}
+    @editable FinaleReboot:audio_player_device = audio_player_device{}
+    @editable FinaleAI:audio_player_device = audio_player_device{}
+    @editable FinaleNotYours:audio_player_device = audio_player_device{}
+    @editable FinaleAI2:audio_player_device = audio_player_device{}
+    @editable FinalePlug:audio_player_device = audio_player_device{}
+    @editable FinalePowerCut:audio_player_device = audio_player_device{}
+    @editable FinaleAfter:audio_player_device = audio_player_device{}
+    @editable FinaleResting:audio_player_device = audio_player_device{}
+    @editable FinaleKettle:audio_player_device = audio_player_device{}
 
     # Debug starts. PreRoll is the real game; ColdOpen skips the pre-roll; Room or later skips
     # the whole opening and starts at the desk.
     @editable StartAt:game_phase = game_phase.PreRollPhase
     # Sprint skips the current phase.
     @editable DevKeys:logic = false
+    # Debug: the patient's dream to start at (0 is the first). 2 starts at Nell's dream 3, to test
+    # it and the finale; the cake from dream 2 then falls back to a lemon cake.
+    @editable StartDream:int = 0
     # Which client is on the debugger, in the takes and in the recliner. SetUpPatient puts their
     # art on ReclinerCard and their NPC definition (the voice) on the take flow's ClientSpawner.
     @editable Patient:patient_choice = patient_choice.NellPatient
@@ -90,6 +107,7 @@ game_director := class(creative_device):
                 RoomRain := RoomRain
                 BootChime := BootChime
                 TutorialLine := TutorialLine
+                TitleTheme := TitleTheme
             Input := Input
             Screen := Screen
             Debugger := Debugger
@@ -128,6 +146,10 @@ game_director := class(creative_device):
         # the boot has played on the in-world screen behind it.
         Client := MakePatient(Patient)
         DebuggerUI := dream_debugger_ui{Client := Client}
+        # Let the view settle on the desk camera first. After a skip the client is still at the
+        # room intro's start, 60 cm back, for a moment, and the debugger came out too small
+        # (play test, 2026-11-14): the projection reads the player's current view.
+        Sleep(ViewSettleSeconds)
         if (Monitor := MakeMonitorPanel().ProjectRect[Player]):
             # The in-world screen stays as the dark fill behind; blank its boot text first.
             Debugger.Clear()
@@ -149,8 +171,13 @@ game_director := class(creative_device):
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
             DebuggerUI.BeginTake()
+            if (StartDream > 0):
+                Logger.Print("[game] debug start at dream {StartDream}")
+                set Takes.DreamIndex = StartDream
             Takes.RunClient(Client, Control)
             DebuggerUI.EndTake()
+            if (Takes.FinaleReached?):
+                RunFinaleEnd(Player, Control, Screen, Debugger, DebuggerUI)
         else:
             Logger.Print("[game] no client NPC; skipping the client phase", ?Level := log_level.Error)
 
@@ -166,14 +193,56 @@ game_director := class(creative_device):
             director_line{Id := "nell_d2_sendin", Player := NellD2SendIn, Seconds := 13.9}
             director_line{Id := "nell_d3_intro", Player := NellD3Intro, Seconds := 6.3}
             director_line{Id := "nell_d3_sendin", Player := NellD3SendIn, Seconds := 12.7}
+            director_line{Id := "finale_praise", Player := FinalePraise, Seconds := 9.8}
+            director_line{Id := "finale_reboot", Player := FinaleReboot, Seconds := 6.9}
+            director_line{Id := "finale_ai", Player := FinaleAI, Seconds := 9.8}
+            director_line{Id := "finale_notyours", Player := FinaleNotYours, Seconds := 4.3}
+            director_line{Id := "finale_ai_2", Player := FinaleAI2, Seconds := 6.0}
+            director_line{Id := "finale_plug", Player := FinalePlug, Seconds := 3.4}
+            director_line{Id := "finale_power_cut", Player := FinalePowerCut, Seconds := 3.6}
+            director_line{Id := "finale_after", Player := FinaleAfter, Seconds := 6.9}
+            director_line{Id := "finale_resting", Player := FinaleResting, Seconds := 2.9}
+            director_line{Id := "finale_kettle", Player := FinaleKettle, Seconds := 1.8}
 
     # A Space press made after the stage began. The press that ended the stage before fires the
     # Jump event again (play test, 2026-11-14: the start press skipped the whole cold open), so
     # presses in the first SkipGraceSeconds are ignored.
     SkipGraceSeconds:float = 1.0
+    # How long the view gets to land on the desk camera before the debugger is placed over it.
+    ViewSettleSeconds:float = 1.0
     AwaitFreshConfirm()<suspends>:void =
         Sleep(SkipGraceSeconds)
         Input.ConfirmEvent.Await()
+
+    # The end of the finale, after the director pulls the plug (writing/nell/finale.md): the
+    # power cut and the monitor going black, the director shaken, Nell waking as if from a nap in
+    # front of the TV, a little banter, then the end card.
+    RunFinaleEnd(Player:player, Control:client_control, Screen:overlay_screen, Debugger:dream_debugger_screen, DebuggerUI:dream_debugger_ui)<suspends>:void =
+        Logger.Print("[game] finale: the plug")
+        branch:
+            Takes.Director.PlayLine("finale_power_cut")
+        DebuggerUI.Hide()
+        Debugger.Clear()
+        Takes.Haze.Reset()
+        Sleep(5.0)                                      # the sound, then a beat of rain and dark
+        Takes.Director.PlayLine("finale_after")         # "That thing talked..."
+        Sleep(1.0)
+        NellSays(Control, NellWakeLine)
+        Takes.Director.PlayLine("finale_resting")       # "Just resting your eyes, Mrs. Price."
+        NellSays(Control, NellBanterLine)
+        Takes.Director.PlayLine("finale_kettle")        # "Kettle's on."
+        Sleep(1.5)
+        Logger.Print("[game] finale: end card")
+        Screen.Show(Player)
+        EndTheme.Play()
+        EndCard := title_card{}
+        EndCard.Show(Player, EndCardText)
+
+    # Nell says one line word for word, and this waits until she has finished.
+    NellSays(Control:client_control, Line:string)<suspends>:void =
+        Speaking := Control.SpeakLine(Line)             # no_rollback: not inside the if
+        if (Speaking?):
+            Control.AwaitSpeechEnd(20.0)
 
     # Succeeds if the session should play Phase, given StartAt.
     Runs(Phase:game_phase)<transacts><decides>:void =
@@ -247,6 +316,12 @@ game_director := class(creative_device):
             Sleep(0.5)
             set Waited += 0.5
         Found
+
+# Nell, awake in the recliner after the finale, as if she'd nodded off in front of the TV.
+NellWakeLine:string = "Hm? Oh. Did I drop off? I must have nodded off in front of the telly again."
+NellBanterLine:string = "Nell. Nobody calls me Mrs. Price but the bank. I had the loveliest dream. Walt was in it. Well, don't just stand there. Somebody put the kettle on."
+# PLACEHOLDER team name until it's chosen.
+EndCardText<localizes>:message = "THANK YOU FOR PLAYING   //   TEAM NAME"
 
 # The patients the game can run. Values carry a suffix so they can't clash with a content
 # folder's module name.

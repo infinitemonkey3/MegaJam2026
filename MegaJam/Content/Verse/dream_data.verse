@@ -104,6 +104,10 @@ loop_beat := class:
 take_phase_beat := class:
     LogLine:string            # prose for the dream debugger's log
     Context:string            # what's now happening, for the client: "It's time to ..."
+    # This beat's own follow-up question, in place of the dream's FollowUpCue (Nell's dream 1:
+    # the oven is "how are you getting it open?", then "what's inside?").
+    FollowUpCue:string = ""
+    FollowUpLog:string = ""
 
 dream := class:
     Id:string

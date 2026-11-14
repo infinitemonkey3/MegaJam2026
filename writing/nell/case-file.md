@@ -9,7 +9,38 @@ planted odd entries. The "Pays off" notes after an arrow are for us and are not 
 
 ## Screen
 
-### Header
+Cut down to what a player can use in a take: who she is and her people, her personality,
+likes and dislikes (Chip, 2026-11-14: the file ran to 7 pages, much of it flavor like the
+implant). No codes, no anomalies, no loop note; the revealed facts are still added after each
+dream. This is the text on screen:
+
+```
+NELL   Eleanor Price, 71. Baker. Answers to "Nell"; "Eleanor" is for the bank.
+WALT   Her husband. They ran Price's Bakery on Cutler Row for 38 years: he did the bread,
+       she did the sweet side. He died 6 years ago. The shop never reopened.
+TEDDY  Walt's nephew. She taught him to bake when he was nine, standing on a flour crate.
+-- PERSONALITY --
+Proud. Does the work herself.
+Dry. Teases where others would say something kind.
+Won't take help, but gives it. Softens when someone needs her.
+Exact about the trade. Corrects bad technique.
+-- LIKES --
+Cinnamon rolls. Hers sold out by seven, 38 years running.
+Rain on the awning. "Rain sells bread."
+Being asked how a thing is done.
+Her regulars. Knows the order before the name.
+-- DISLIKES --
+Pity. Being fussed over, or told to sit down.
+Whistling. Nobody whistles in her shop.
+Kitchen timers. Shop-bought bread.
+Flowers. "They're for hospitals."
+```
+
+### Cut From The Screen
+
+The original screen, kept for reference: the dreams and the fact sheet still use these.
+
+#### Header
 
 ```
 SUBJECT    PRICE, ELEANOR M.   AKA "NELL"
@@ -20,7 +51,7 @@ PACKAGE    FAMILIAR PLACES (BASIC) / SOURCE: SUBJECT MEMORY
 BROUGHT IN PRICE, THEODORE (NEPHEW)
 ```
 
-### Personality
+#### Personality
 
 - `P-01` Proud. Does the work herself.
 - `P-02` Dry. Jokes where others would say something kind.
@@ -28,7 +59,7 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
 - `P-04` Exact about the trade. Corrects technique. Cannot leave a thing done badly.
 - `P-05` Answers to "Nell". "Eleanor" is for the bank.
 
-### Likes
+#### Likes
 
 - `L-01` Cinnamon. Her rolls sold out by 07:00, 38 years running.
 - `L-02` Rain on the shop awning. Chalked on the board: "Rain sells bread."
@@ -36,7 +67,7 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
 - `L-04` Regulars. Knows the order before the name.
 - `L-05` A clean bench.
 
-### Dislikes
+#### Dislikes
 
 - `D-01` Pity. Being fussed over. Being told to sit down.
 - `D-02` Whistling. `ANOMALY` House rule: nobody whistles in the shop. 2 ejections on record.
@@ -45,7 +76,7 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
 - `D-04` Shop-bought bread.
 - `D-05` Flowers. "They're for hospitals."
 
-### Key Moments
+#### Key Moments
 
 - `K-01` 44 yr ago. Opened Price's Bakery, Cutler Row, with husband PRICE, WALTER.
 - `K-02` 25 yr ago. Taught nephew Theodore ("Teddy") to bake. He was nine. He stood on a
@@ -61,7 +92,7 @@ BROUGHT IN PRICE, THEODORE (NEPHEW)
   → Pays off in dream 3.
 - `K-07` 5 yr ago. Implant fitted. Reason given at purchase: "To sleep."
 
-### Loop Note
+#### Loop Note
 
 ```
 LOOP       SCENE bakery_interior / START T 05:00 / END T 05:07 / END STATE lights=off

@@ -41,6 +41,11 @@ play session yet.
   Reload, both mouse buttons: Verse only hears Fortnite's input actions, not raw keys).
 
 ### Cold open (`cold_open.verse`)
+- The title card is three layers (2026-11-14): `T_TitleCard_Sky`, then `M_TitleClouds` (a UI
+  material panning `T_TitleClouds` across the top 30% of the screen in two layers, near and a smaller, fainter far one at 60% of the speed, animated on the client),
+  then `T_TitleCard_Wordmark`. `make_title_card.py` writes both image layers. The looping
+  `MUS_TitleTheme` (player `CO Title Theme`, the rig's `TitleTheme`) (theme B, the 1950s vibraphone take) plays under it from
+  `RunPreRoll` until `EndPreRoll`. The end card loops `MUS_EndTheme` (player `CO End Theme`, `game_director.EndTheme`), an ominous minor-key take on it.
 - `title_card` (`title_card.verse`): the Wonderwell title card (`Content/TitleCard/T_TitleCard`,
   built by `art/tools/make_title_card.py`: a figure sat on the street, head in hands, the dream
   rising from his head; no recliner) full screen with the prompt low under the recliner.
@@ -91,7 +96,22 @@ play session yet.
 - `take_flow`: `creative_device`, the state machine. `@editable ClientSpawner` is the client
   NPC's spawner. Phases (`take_phase`): CaseFile, Observe, Direct, RunTake, LastLine, Verdict,
   then GoodEnding (next dream), RetryEnding (back to Direct, "Take N+1"), or Finale after a
-  positive verdict on the last dream (`DoFinale`, a stub for the scripted ending).
+  positive verdict on the last dream.
+- **The finale** (`writing/nell/finale.md`, Chip, 2026-11-14). The last dream's good ending
+  stops after her reveal and goes to `DoFinale`: the LAYER CLEARED banner, the director's praise
+  cut off at `PraiseCutSeconds`, then Lumi (`FinaleAIName`, the Wonderwell assistant) wakes: its
+  DISABLED spot on the debugger flickers ONLINE (`debug_screen.SetAssistantAwake`), the haze
+  floods, `FinaleSpam` fills the log faster and faster while
+  the director's `finale_reboot` plays, Lumi speaks (`finale_ai`), and the director pulls the
+  plug. The flow ends Done with `FinaleReached`; `game_director.RunFinaleEnd` plays the rest:
+  the power cut (debugger hidden, monitor cleared, haze off), the director shaken, Nell waking
+  (`NellWakeLine`, `NellBanterLine`, said word for word) with his two replies, then the title
+  card as the end card (`EndCardText`, team name a placeholder). All finale audio is director
+  lines (`DirectorLines`, players `DIR finale_*`).
+- The debugger's old tab row is Lumi's bar: LUMI / "your Wonderwell story guide" / DISABLED,
+  "I'm here." / ONLINE once awake. The patient is on row 1 and the dream's title on row 2.
+- `game_director.StartDream` (debug) starts the patient at a later dream; set it to 0 for a real
+  build.
 - **Each dream opens like a spy learning a target** (Chip, 2026-11-13). `DoCaseFile` shows the
   patient's case file (`debug_screen.ShowFile`: case file, revealed facts, loop note, any cake
   entry) with ATTACH TO DREAMER, while the director's `<dream id>_intro` plays (in a `branch`).
@@ -146,7 +166,8 @@ play session yet.
   her own replies and the flow only counts answers and logs each beat: a prompted question came
   on top of the one her reply had already asked, so she asked it twice (play test, 2026-11-14).
   `dream.FollowUpCue`, if set (Nell's dream 1: "what are you doing with it?"), is told to her
-  after every answer but a beat's last, with `FollowUpLog` in the log; left to her own reply
+  after every answer but a beat's last, with `FollowUpLog` in the log (a `take_phase_beat` can
+  set its own, as dream 1's oven does: "how are you getting it open?", then "what's inside?"); left to her own reply
   she skipped it and the player froze (play test, 2026-11-14). `dream.OpeningLog` puts the
   take's first question in the log.
   `dream.LastLineCue`, if set, is told to her at the last line so she asks for it (dream 2: his
@@ -164,6 +185,10 @@ play session yet.
 ### Client control (`client_control.verse`)
 - `client_npc_behavior`: the `npc_behavior` for the client's NPC Character Definition (which
   also needs the Persona modifier). Sets up the voice channel and exposes `MaybeControl`.
+  Players aren't in her voice group (no voice panel, no talk prompt) and have no conversation target until
+  `take_flow.RunClient` starts and calls `client_control.SetTalkEnabled(true)`, which stays on
+  (Chip, 2026-11-14: the talk prompt showed from the title screen). Don't clear it after a
+  take: without the target she can't speak to the player either, and her endings went silent.
 - `client_control`: `LoadDream` (SetPersonality), `RegisterSceneUpdate` and
   `SceneUpdateEvent`, `StartTake` (context lines, carried-forward memory and state),
   `MurmurLine`, `RequestScore`, `RequestMemory`, `SpeakVerdict`, `SpeakLine`,
@@ -259,9 +284,10 @@ play session yet.
 - **Hand-offs wait for the client** (play test, 2026-11-14: a frame of the world showed at each
   set change). Verse runs on the server and the client takes a few frames to start or stop a
   sequence, so the black overlay stays up `cold_open.HandOffSeconds` (0.3 s) after a `Play`
-  and goes up that long before a skip's `GoToEndAndStop`. The `CO Cold Open Sequence` device
-  has Finish Completion State Override = Force Keep State, so its final black frame holds
-  until the room intro fades up instead of handing the view back.
+  and goes up that long before a skip's `GoToEndAndStop`, and it goes back up at
+  `ColdOpenBlackSeconds`, once the cold open has faded to black but before it ends. Don't set the
+  cold open device to Force Keep State: the kept fade stayed black for good, because the room
+  intro restored it when it finished (play test, 2026-11-14).
 - **Before the room intro, the 3D world only shows inside the cold-open sequence.** Outside it,
   `overlay_screen` is up (black). The sequence fades in from and out to black, so the overlay
   comes down and goes back up under black with no seam.

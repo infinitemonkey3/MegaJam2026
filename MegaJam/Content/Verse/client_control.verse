@@ -52,7 +52,7 @@ CakeTakeLine<localizes>(Cake:message):message = "The cake in the case is his bir
 CakeOpeningCue<localizes>(Cake:message):message = "Name the cake in your first line: {Cake}."
 CakeEntry<localizes>(Cake:message):message = "ORDER  1 birthday cake: {Cake}. W. Price. Pick up 5 PM."
 CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like, and how the two of them would spend a Saturday afternoon. Give the cake he asked for in a few plain words, like \"a lemon cake\" or \"a chocolate cake with walnuts\"; if he never said, give \"a lemon cake\". Then give the Saturday he described, in one short plain sentence in his own terms, like \"a walk by the river, then the pictures\"; if he never said, give \"a walk, and tea somewhere\"."
-SaturdayTakeLine<localizes>(Plan:message):message = "The night you said yes to him, forty-one years ago, he promised you a Saturday: {Plan}. He kept that promise. You remember it, and if he brings it up, you know exactly what he means."
+SaturdayTakeLine<localizes>(Plan:message):message = "The night you said yes to him, forty-one years ago, he promised you a Saturday: {Plan}. That Saturday was your first date. You got a few more Saturdays like it over the years, but not as many as he promised, and you think that was mostly your doing. When you ask him if he remembers that first one, name it in his own words, and ask him to tell you the story of it again."
 SaturdayEntry<localizes>(Plan:message):message = "PROMISED  First Saturday out: {Plan}"
 
 LastN(Input:[]t, Count:int where t:type)<transacts>:[]t =
@@ -90,7 +90,7 @@ client_npc_behavior := class(npc_behavior):
             VoiceChannel := voice_channel(client_voice_member_info):
                 Name := ChannelName
                 Group := Group
-            Control := client_control{Persona := Persona, VoiceChannel := VoiceChannel}
+            Control := client_control{Persona := Persona, VoiceChannel := VoiceChannel, Group := Group}
             set MaybeGroup = option{Group}
 
             if (Group.AddMember(NPCAgent, client_voice_member_info{}).GetSuccess[]):
@@ -116,12 +116,13 @@ client_npc_behavior := class(npc_behavior):
         if (Control := MaybeControl?, Group := MaybeGroup?):
             AddPlayer(Player, Control, Group)
 
+    # Registers the player with the client. They don't join her voice group or get the talk key
+    # until client_control.SetTalkEnabled: membership alone put the voice panel (NELL, Muted, AI)
+    # on the title screen (Chip, 2026-11-14).
     AddPlayer(Player:player, Control:client_control, Group:agent_group(client_voice_member_info)):void =
-        if (Group.AddMember(Player, client_voice_member_info{}).GetSuccess[]):
-            Player.SetConversationTarget(Control.Persona, Control.VoiceChannel)
-            Logger.Print("[client] player can talk to the client")
-        else:
-            Logger.Print("[client] could not add the player to the voice group", ?Level := log_level.Warning)
+        set Control.Players += array{Player}
+        if (Control.TalkOn?):
+            Control.ConnectPlayer(Player)
 
     OnEnd<override>():void =
         if (Playspace := GetEntity[].GetPlayspaceForEntity[]):
@@ -132,8 +133,33 @@ client_npc_behavior := class(npc_behavior):
 client_control := class:
     Persona:persona_component
     VoiceChannel:voice_channel(client_voice_member_info)
+    Group:agent_group(client_voice_member_info)
+    # The players in the island; they join her voice group only once talk is on.
+    var Players:[]player = array{}
+    var TalkOn:logic = false
 
     Logger:log = log{Channel := dead_air_log}
+
+    # Turns talking to the client on: each player joins her voice group (which shows Fortnite's
+    # voice panel) and their talk key points at her. Off clears the talk key but keeps them in
+    # the group; take_flow only ever turns it on.
+    SetTalkEnabled(On:logic):void =
+        set TalkOn = On
+        for (Player : Players):
+            if (On?):
+                ConnectPlayer(Player)
+            else:
+                Player.ClearConversationTarget()
+        if (On?):
+            Logger.Print("[client] player can talk to the client")
+        else:
+            Logger.Print("[client] talk off")
+
+    # Joins one player to her voice group and points their talk key at her.
+    ConnectPlayer(Player:player):void =
+        if (Group.AddMember(Player, client_voice_member_info{}).GetSuccess[]):
+            Logger.Print("[client] player joined the voice group")
+        Player.SetConversationTarget(Persona, VoiceChannel)
 
     # What the model sees when deciding to emit the scene_update action.
     SceneUpdateName<localizes>:message = "scene_update"

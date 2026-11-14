@@ -11,6 +11,10 @@ using { /UnrealEngine.com/Temporary/UI }
 title_card := class:
     # Where the prompt's centre sits, as a fraction of the screen height: below the recliner.
     PromptY:float = 0.965
+    # The band the clouds drift in, as fractions of the screen height. M_TitleClouds' U tiling
+    # (1.48) keeps the clouds' shape for a band this tall; change both together.
+    CloudsTop:float = 0.0
+    CloudsBottom:float = 0.30
 
     var MaybeRoot:?canvas = false
     var MaybePlayerUI:?player_ui = false
@@ -28,12 +32,23 @@ title_card := class:
                 DefaultTextColor := NamedColors.White
                 DefaultTextSize := 26.0
                 DefaultJustification := text_justification.Center
+            # Three layers (Chip, 2026-11-14): the sky and street, clouds drifting across the top
+            # (M_TitleClouds pans T_TitleClouds on the player's machine), and the wordmark over
+            # them. art/tools/make_title_card.py writes the two image layers.
             Root := canvas:
                 Slots := array:
                     canvas_slot:
                         Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.0}, Maximum := vector2{X := 1.0, Y := 1.0}}
                         Offsets := margin{}
-                        Widget := texture_block{DefaultImage := TitleCard.T_TitleCard}
+                        Widget := texture_block{DefaultImage := TitleCard.T_TitleCard_Sky}
+                    canvas_slot:
+                        Anchors := anchors{Minimum := vector2{X := 0.0, Y := CloudsTop}, Maximum := vector2{X := 1.0, Y := CloudsBottom}}
+                        Offsets := margin{}
+                        Widget := material_block{DefaultImage := TitleCard.M_TitleClouds{}}
+                    canvas_slot:
+                        Anchors := anchors{Minimum := vector2{X := 0.0, Y := 0.0}, Maximum := vector2{X := 1.0, Y := 1.0}}
+                        Offsets := margin{}
+                        Widget := texture_block{DefaultImage := TitleCard.T_TitleCard_Wordmark}
                     canvas_slot:
                         Anchors := anchors{Minimum := vector2{X := 0.5, Y := PromptY}, Maximum := vector2{X := 0.5, Y := PromptY}}
                         Alignment := vector2{X := 0.5, Y := 0.5}
