@@ -19,8 +19,18 @@ play session yet.
   `ColdOpenPhase` (with the boot), `RoomPhase`, `ClientPhase`, then `DonePhase`, logging
   `[game] A -> B` on each change. Holds every device
   reference as an `@editable` (`Takes`, the cold-open cameras, sequence and audio players).
-- Space (Jump, the router's `ConfirmEvent`) skips the cold open straight to the room intro, for
-  players and for iterating on the room.
+- Space / A (Jump, the router's `ConfirmEvent`) is the one key (Chip, 2026-11-14): it starts
+  the game from the start prompt (no other key does), with a one-second grace per stage
+  (`game_director.AwaitFreshConfirm`: the start press fired again and skipped the cold open), skips the cold open to the room
+  intro, and skips the room intro and the boot together to the debugger (`EndBoot` stops the
+  tutorial line). On the debugger, ATTACH (and ENTER DREAM) cut the director's line short
+  (`director_voice.StopLine`), and after ATTACH a menu offers VIEW THE DREAM (the replay) or
+  SKIP TO YOUR ROLE.
+- Prompts name the player's active input (`input_router.ActiveInputKind`, from
+  `player_input.PreferredInputMethod`, polled every `InputKindPollSeconds` since it has no
+  change event): the title card says PRESS SPACE / PRESS A / PRESS JUMP TO START
+  (`cold_open.StartPrompt`), and the debugger's row 17 hint changes to match
+  (`dream_debugger_ui.ControlsHint`). A gamepad can't be told Xbox from PlayStation; it says "A".
 - Debug starts: `@editable StartAt:game_phase` (`PreRollPhase` is the real game;
   `ColdOpenPhase` skips the pre-roll; `RoomPhase` or later starts at the desk) and `@editable DevKeys` (Sprint skips the current
   phase).
@@ -88,9 +98,15 @@ play session yet.
   The file is gone once the player attaches: the client then recounts the loop (Observe).
 - A dream with exactly one role assigns it: `DoDirect` shows the role (`RoleFile`: YOU ARE,
   `dream.RoleFile`, SHE WANTS `dream.Want`, IN THE WAY `dream.Obstacle`) with ENTER DREAM, while
-  the director's `<dream id>_sendin` plays (first take only; `dream.SendIn` is its text). No
-  item pick then; the opening cue skips the item. `StartTake` tells the client her want and to
-  state it early, in offers, not questions. Nell's roles: Teddy, young Walt, Walt. Des still
+  the director's `<dream id>_sendin` plays (first take only; `dream.SendIn` is its text). Then the player
+  picks **one prop** from `dream.Items` ("CHOOSE WHAT YOU BRING", then a menu; picking enters the
+  dream; Chip, 2026-11-14: a prop gives the player a direction without putting them on rails).
+  Nell's dreams 2 and 3 have three props each, written as brought in by the visitor. A dream
+  with no items goes straight to ENTER DREAM: Nell's dream 1 has none, since its props come
+  out of the player's answers to her asks (Chip, 2026-11-14: each trouble ends in an errand
+  and one concrete question, "what've you got?", "who is it?"; see `writing/nell/dream-1.md`).
+  `StartTake` tells the client her want and to state it early, in offers; she may ask for one
+  concrete thing but never what to do. Nell's roles: Teddy, young Walt, Walt. Des still
   casts from three, with the item pick.
 - **The player's words can carry between dreams** as messages (they can't become strings).
   Nell's dream 2 has `AsksForCake`: `DoGoodEnding` first calls `client_control.RequestCake`, a
@@ -129,6 +145,10 @@ play session yet.
   With `dream.ClientLeads` (Nell's dream 2, her list of questions) she moves the beats on in
   her own replies and the flow only counts answers and logs each beat: a prompted question came
   on top of the one her reply had already asked, so she asked it twice (play test, 2026-11-14).
+  `dream.FollowUpCue`, if set (Nell's dream 1: "what are you doing with it?"), is told to her
+  after every answer but a beat's last, with `FollowUpLog` in the log; left to her own reply
+  she skipped it and the player froze (play test, 2026-11-14). `dream.OpeningLog` puts the
+  take's first question in the log.
   `dream.LastLineCue`, if set, is told to her at the last line so she asks for it (dream 2: his
   birthday cake); the player's answer is the last line.
   Crisis beats from the writing aren't wired.
@@ -236,6 +256,12 @@ play session yet.
 - **The room shows from the room intro on** (2026-11-13), and everything the player reads is on
   the dream debugger in the monitor. A `RoomPhase` or later debug start goes straight to the
   desk camera with no intro.
+- **Hand-offs wait for the client** (play test, 2026-11-14: a frame of the world showed at each
+  set change). Verse runs on the server and the client takes a few frames to start or stop a
+  sequence, so the black overlay stays up `cold_open.HandOffSeconds` (0.3 s) after a `Play`
+  and goes up that long before a skip's `GoToEndAndStop`. The `CO Cold Open Sequence` device
+  has Finish Completion State Override = Force Keep State, so its final black frame holds
+  until the room intro fades up instead of handing the view back.
 - **Before the room intro, the 3D world only shows inside the cold-open sequence.** Outside it,
   `overlay_screen` is up (black). The sequence fades in from and out to black, so the overlay
   comes down and goes back up under black with no seam.

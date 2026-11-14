@@ -32,7 +32,7 @@ case file opens with it.
 - In the way: `The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in.`
 - Director on the case file, `nell_d1_intro`: `Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you.`
 - Director on the role, `nell_d1_sendin`: `You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready.`
-- Approaches that should all work: remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
+- Approaches that should all work: the hints in Teddy's brief (fold the dough, knock twice and say "Morning, old girl", read out the regulars' orders, ask for the key), remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
 
 ## Loop Beats
 
@@ -69,11 +69,40 @@ LOG     The lights go out. The dream starts over.
 
 ## Take Phases
 
-| Log | Context |
-|---|---|
-| `The dough is rising past the bench and across the floor.` | `The dream moves on: the dough won't stop rising. It's over the bench and across the floor now, and it takes four hands to knead. The people outside are watching through the glass with their floury hands up.` |
-| `Order slips fall from the ceiling, faster and faster.` | `The dream moves on: order slips are falling from the ceiling faster now, drifts of them, the whole street's orders. Walt's oven door still won't open for you. It's far too much for one pair of hands.` |
-| `The dough has reached the door. Six o'clock is coming, and the people outside press their hands to the glass.` | `The dream moves on: the dough has reached the door, and six o'clock is coming. The people with no faces press their floury hands to the glass. They could help. The door is still locked.` |
+One trouble at a time, and each ends in an **ask**: Nell sends Teddy on an errand and asks him
+one concrete question only he can answer (Chip, 2026-11-14: open improv gave the player infinite
+options, and they gave up). The props aren't picked up front; they come out of his answers, the
+way they would in improv. Whatever he answers is true and works, however odd: a shovel or a
+tuba, she's dry about it and puts it to use.
+
+Every trouble has the same rhythm, like dream 2's pad (Chip, 2026-11-14), two answers long
+(`TurnsPerBeat` 2):
+
+1. **Find it.** She sends him on an errand and asks what he found: **fetch** (what have you
+   got?), **look** (what's in there?) or **read** (what does it say?).
+2. He answers. **His answer changes her plan** (Chip, 2026-11-14): she never tells him to get
+   rid of it, she says how it changes what she's doing about this trouble. He finds the 1986
+   Chicago Bears: "Linebackers. Fine. Big hands, they can knead. I'll grease the tins."
+   She doesn't use it herself; it's his to use. Then she stops.
+3. **Do it.** "Don't just stand there, Teddy. What are you doing with it?" The flow cues this
+   question (`FollowUpCue`; play test, 2026-11-14: left to her, she put the Statue of Liberty on
+   the bowl herself, never asked, and the player froze). Each question also shows in the
+   debugger log ("She asks: ..."), so there's always something on screen to answer.
+4. He answers. She says how that moves her plan on, lets it work, and asks nothing more until
+   the next trouble.
+
+If he's stuck, she asks the same thing more plainly. She never asks what she should do and
+never offers choices. The last line is one ask only.
+
+| # | Trouble | Her ask | Teddy's brief could feed it |
+|---|---|---|---|
+| Opening line | The dough is climbing out of its bowl and over the bench | Go out back and get something to get it back in. What've you got? | "Dough you fight, dough you lose. You fold it." |
+| 1 | Walt's oven door won't open for her | Try it, it might open for you. What's inside? | Walt knocked twice and said "Morning, old girl." |
+| 2 | Order slips fall like snow, the whole street's orders | Catch one and read it out. Who's it for, and what do they want? | The regulars' orders |
+| Last line | Six o'clock: a faceless person knocks at the front door (`LastLineCue`) | Go and look. Who is it? Whoever he names, that's their face now. | The key on a string round her neck |
+
+No prop menu (`Items` is empty, so the role screen goes straight to ENTER DREAM). The old
+props, for reference: the old flour crate, Walt's apron, Walt's spare key.
 
 ## Take Beats
 

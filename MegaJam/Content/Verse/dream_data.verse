@@ -27,7 +27,7 @@ take_score := struct:
     BackstoryScore:int        # 0-3
     PersonalityScore:int      # 0-3
     EnvironmentScore:int      # 0-3
-    CommonSenseScore:int      # 0-3
+    SurpriseScore:int         # 0-3 (was CommonSenseScore; Chip, 2026-11-14: a zany answer she runs with is the fun)
     Verdict:take_verdict
     HintForWeakestCriterion:message
 
@@ -138,6 +138,13 @@ dream := class:
     # counts answers and logs each beat, and never prompts her (2026-11-14: a prompted question
     # came on top of the one her reply had already asked, so she asked it twice).
     ClientLeads:logic = false
+    # A question the flow has her ask after each answer but a beat's last (Nell's dream 1: "what
+    # are you doing with it?"). Play test, 2026-11-14: left to her own reply, she used the
+    # player's answer herself, never asked, and the player froze. FollowUpLog shows it on the
+    # debugger so the player can see what to answer.
+    FollowUpCue:string = ""
+    FollowUpLog:string = ""
+    OpeningLog:string = ""    # logged with her opening line: the take's first question, on screen
 
 client := class:
     Id:string

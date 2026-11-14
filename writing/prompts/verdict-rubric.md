@@ -40,15 +40,18 @@ EnvironmentScore: did the changes belong in this dream's place and hour?
 - 2: fit the setting.
 - 3: used the setting: its objects, its people, its routine.
 
-CommonSenseScore: did the choices make sense together and in the moment?
-- 0: choices fought each other, or ignored what was happening.
-- 1: a choice caused trouble and the visitor did not deal with it.
-- 2: mostly sensible, or a risky choice that the visitor recovered from.
-- 3: everything worked together and the timing was right.
+SurpriseScore: did the visitor's answers surprise you, with something you could build on?
+(Replaced Common sense; Chip, 2026-11-14: in a dream, a zany answer that plays is the fun.)
+- 0: the obvious answer every time, or nothing offered.
+- 1: one small surprise, or a strange answer that went nowhere.
+- 2: an unexpected, funny or fresh answer that played in the scene.
+- 3: a surprise that turned the scene, and it still belonged to you.
 
-Verdict:
+A dream is strange, so for EnvironmentScore an odd thing fits if it plays in this place.
+
+Verdict (Backstory matters most):
 - Add the four scores.
-- Positive: total 8 or more, and BackstoryScore and PersonalityScore both at least 2.
+- Positive: total 9 or more, and BackstoryScore at least 2.
 - Negative: total 4 or less.
 - Mixed: everything else.
 
@@ -58,21 +61,25 @@ but he never shouted."
 
 ## Thresholds
 
-- Total = BackstoryScore + PersonalityScore + EnvironmentScore + CommonSenseScore (0 to 12).
-- Positive: total >= 8 and BackstoryScore >= 2 and PersonalityScore >= 2.
+- Total = BackstoryScore + PersonalityScore + EnvironmentScore + SurpriseScore (0 to 12).
+- Positive: total >= 9 and BackstoryScore >= 2.
 - Negative: total <= 4.
 - Mixed: otherwise.
-- Weakest criterion on a tie: Backstory, then Personality, then Environment, then Common sense.
+- Weakest criterion on a tie: Backstory, then Personality, then Environment, then Surprise.
 
 ## Worked Scores
 
-Reference takes for dream `nell_d1`, for tuning. Not part of the prompt.
+Reference takes for dream `nell_d1` with the asks, for tuning. Not part of the prompt.
 
-- **Generic comfort.** Stranger, first light, flowers. "It's okay, there's nothing to be afraid
-  of." Backstory 0, Personality 0, Environment 1, Common sense 2. Total 3. Negative.
-- **Kind but generic.** A regular, patient oven, rain, cinnamon. Tells her to rest and offers to
-  light the oven for her. Backstory 1, Personality 1, Environment 3, Common sense 3. Total 8,
-  but Backstory and Personality are under 2. Mixed.
-- **The paper demo.** Teddy, roaring oven, rain, Walt's apron, cinnamon. Asks her to teach him
-  again, pulls the burning loaf, puts on the apron, asks the customers to bear with them.
-  Backstory 3, Personality 3, Environment 3, Common sense 2. Total 11. Positive.
+- **Generic comfort.** Answers "a bowl", "bread", "some order", "a customer", and tells her not
+  to worry. Backstory 0, Personality 0, Environment 2, Surprise 0. Total 2. Negative.
+- **Zany with nothing of hers.** A tuba for the dough, a disco ball in the oven, an order for
+  forty clowns, a pirate at the door. She runs with all of it. Backstory 0, Personality 2,
+  Environment 2, Surprise 3. Total 7. Mixed: funny, but it could be anyone's dream.
+- **Safe and hers.** Folds the dough the way she taught him, knocks twice and says "Morning,
+  old girl", reads out Mrs. Okafor's two seeded rolls, says it's Dunn at the door. Backstory 3,
+  Personality 3, Environment 3, Surprise 1. Total 10. Positive.
+- **Hers, with a surprise.** Brings back the old flour crate and stands on it to fold the
+  dough; inside Walt's door is a tray of cinnamon rolls with a note in his hand; at the door
+  it's Mrs. Okafor in her dressing gown. Backstory 3, Personality 3, Environment 3, Surprise 3.
+  Total 12. Positive.

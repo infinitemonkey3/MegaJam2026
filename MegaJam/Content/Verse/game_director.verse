@@ -108,15 +108,18 @@ game_director := class(creative_device):
             race:
                 Opening.RunColdOpen(Player)
                 Input.SkipEvent.Await()
-                Input.ConfirmEvent.Await()
+                AwaitFreshConfirm()
             Opening.EndColdOpen(Player)
+            # Space again skips the room intro and the boot together, straight to the debugger
+            # (Chip, 2026-11-14, to iterate faster).
             race:
-                Opening.RunRoomIntro(Player)
+                block:
+                    Opening.RunRoomIntro(Player)
+                    Opening.EndRoomIntro(Player)
+                    Opening.RunBoot()
                 Input.SkipEvent.Await()
+                AwaitFreshConfirm()
             Opening.EndRoomIntro(Player)
-            race:
-                Opening.RunBoot()
-                Input.SkipEvent.Await()
             Opening.EndBoot()
         else:
             Opening.SkipToDesk(Player)
@@ -163,6 +166,14 @@ game_director := class(creative_device):
             director_line{Id := "nell_d2_sendin", Player := NellD2SendIn, Seconds := 13.9}
             director_line{Id := "nell_d3_intro", Player := NellD3Intro, Seconds := 6.3}
             director_line{Id := "nell_d3_sendin", Player := NellD3SendIn, Seconds := 12.7}
+
+    # A Space press made after the stage began. The press that ended the stage before fires the
+    # Jump event again (play test, 2026-11-14: the start press skipped the whole cold open), so
+    # presses in the first SkipGraceSeconds are ignored.
+    SkipGraceSeconds:float = 1.0
+    AwaitFreshConfirm()<suspends>:void =
+        Sleep(SkipGraceSeconds)
+        Input.ConfirmEvent.Await()
 
     # Succeeds if the session should play Phase, given StartAt.
     Runs(Phase:game_phase)<transacts><decides>:void =

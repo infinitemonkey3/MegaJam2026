@@ -16,7 +16,18 @@ using { /UnrealEngine.com/Temporary/Diagnostics }
 #    then on; the boot shows on the dream debugger, the in-world screen in the monitor.
 
 # Authored placeholder text; the writing stream's versions replace it.
-PressAnyKeyText<localizes>:message = "PRESS ANY KEY TO START"
+# Jump: the one key that starts and skips (Chip, 2026-11-14: "any key" can't be true, since Verse
+# only hears Fortnite's actions). Space on keyboard, A on an Xbox pad.
+PressAnyKeyText<localizes>:message = "PRESS SPACE TO START"
+PressStartGamepadText<localizes>:message = "PRESS A TO START"
+PressStartTouchText<localizes>:message = "PRESS JUMP TO START"
+
+# The start prompt for the player's active input.
+StartPrompt(Kind:input_kind)<transacts>:message =
+    case (Kind):
+        input_kind.GamepadInput => PressStartGamepadText
+        input_kind.TouchInput => PressStartTouchText
+        input_kind.KeyboardInput => PressAnyKeyText
 DebuggerTitle<localizes>:message = "DREAM DEBUGGER"
 BootLines:[]string = array:
     "BOOT dbg_link / BUILD unlicensed"
@@ -45,6 +56,11 @@ cold_open := class:
 
     # Safety net in case the sequence never signals StoppedEvent.
     SequenceTimeoutSeconds:float = 60.0
+    # How long the black overlay stays up after a sequence is told to play, or goes up before one
+    # is stopped. Verse runs on the server and the client takes a few frames to start a sequence,
+    # so lifting the black one tick after Play showed the world for a frame (play test,
+    # 2026-11-14). The sequences open on their own fade from black, so the wait doesn't show.
+    HandOffSeconds:float = 0.3
     # VO_Director_Tutorial_02.wav is 5.32 s; audio_player_device has no finished event.
     TutorialSeconds:float = 5.6
 
@@ -55,7 +71,7 @@ cold_open := class:
 
     # ---- Pre-roll ----
 
-    # Black with "PRESS ANY KEY TO START"; any key the input router hears starts the game.
+    # Black with "PRESS SPACE / A TO START"; Jump (the router's confirm) starts the game.
     # Voice mode stays at its default (mic); the preset-lines choice needs a new home.
     RunPreRoll(Player:player)<suspends>:void =
         Rig.MonitorCamera.AddTo(Player)    # a fixed view under the black, so nothing shows when it lifts
@@ -63,9 +79,18 @@ cold_open := class:
         Screen.SetMenu(EmptyText, array{}, 0)
         Screen.SetTitle(EmptyText)
         Screen.Show(Player)
-        StartCard.Show(Player, PressAnyKeyText)
+        var Kind:input_kind = ActiveInputKind(Player)
+        StartCard.Show(Player, StartPrompt(Kind))
         Rig.NoSignalSound.Play()
-        Input.AnyKeyEvent.Await()
+        race:
+            Input.ConfirmEvent.Await()
+            # The prompt follows a switch between keyboard and gamepad.
+            loop:
+                Sleep(InputKindPollSeconds)
+                Now := ActiveInputKind(Player)
+                if (Now <> Kind):
+                    set Kind = Now
+                    StartCard.SetPrompt(StartPrompt(Kind))
         Logger.Print("[cold_open] pre-roll done")
 
     EndPreRoll():void =
@@ -82,6 +107,7 @@ cold_open := class:
         # the overlay comes down under it without a seam.
         Sleep(0.0)
         GoToDesk(Player)
+        Sleep(HandOffSeconds)
         Screen.Hide()
         race:
             Rig.Sequence.StoppedEvent.Await()
@@ -92,8 +118,10 @@ cold_open := class:
 
     # The sequence ends on black. The overlay goes up for the hand-off so nothing flashes while
     # the cold open lets go of the view, then comes down under the room intro's own black.
-    EndColdOpen(Player:player):void =
+    # On a skip the black has to reach the screen before the sequence lets go of the view.
+    EndColdOpen(Player:player)<suspends>:void =
         Screen.Show(Player)
+        Sleep(HandOffSeconds)
         Rig.Sequence.GoToEndAndStop(Player)
         GoToDesk(Player)
         Rig.RoomRain.Play()
@@ -104,7 +132,7 @@ cold_open := class:
     # field of view), so the hand-off back to the desk camera doesn't show.
     RunRoomIntro(Player:player)<suspends>:void =
         Rig.RoomIntro.Play(Player)
-        Sleep(0.0)
+        Sleep(HandOffSeconds)
         Screen.Hide()
         race:
             Rig.RoomIntro.StoppedEvent.Await()
@@ -135,7 +163,9 @@ cold_open := class:
         Rig.TutorialLine.Play()
         Sleep(TutorialSeconds)
 
+    # Also cuts the tutorial line short when Space skipped the boot.
     EndBoot():void =
+        Rig.TutorialLine.Stop()
         Debugger.SetTitle(DebuggerTitle)
 
     # For debug starts after the cold open: put the player at the desk view of the room as if
