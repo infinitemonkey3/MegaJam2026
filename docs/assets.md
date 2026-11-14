@@ -19,3 +19,4 @@ Notes:
 - License lines are the badge shown on each fal model page on 2026-11-12; the providers' own
   terms were not read.
 | `audio/narration/VO_Director_ColdOpen_01.wav` to `_04.wav`, `VO_Director_Tutorial_01.wav` (director voice-over) | fal, `google/gemini-3.8-flash-tts`, voice `Orus` | fal model page: "Commercial use" (Google's own terms not read) | No, generated 2026-11-12 (`_03` redone and `_04` added 2026-11-13) |
+| `audio/narration/VO_Director_Tutorial_02.wav`, `VO_Director_nell_d1_intro.wav` to `VO_Director_nell_d3_sendin.wav` (director voice-over, debugger flow) | fal, `google/gemini-3.8-flash-tts`, voice `Orus` | fal model page: "Commercial use" (Google's own terms not read) | No, generated 2026-11-14 |

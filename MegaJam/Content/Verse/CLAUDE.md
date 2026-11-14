@@ -191,7 +191,12 @@ play session yet.
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line
   names: `before_take`, `failed_take`, `mixed_take`, `ending_reaction`, `<dream id>_intro`,
-  `<dream id>_solved`.
+  `<dream id>_sendin`, `<dream id>_solved`. `device_director_voice` plays the lines that have
+  an audio player (`director_line`: id, player, seconds) and only logs the rest;
+  `game_director` sets it on the take flow with `DirectorLines()`, from its `NellD1Intro` ..
+  `NellD3SendIn` editables (players `DIR nell_*` in the outliner's `Director/Devices`, no
+  spatialization or attenuation, volume 2). A new line needs a WAV, a player, an editable and
+  a `DirectorLines` entry with its length.
 
 ## Gotchas
 - **Model-written text stays a `message`.** It is redacted when turned into a string, so the

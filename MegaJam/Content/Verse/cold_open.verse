@@ -33,7 +33,7 @@ cold_open_rig := class:
     NoSignalSound:audio_player_device                   # AMB_No_Signal, looping
     RoomRain:audio_player_device                        # AMB_Rain_Window, looping
     BootChime:audio_player_device                       # SFX_Boot_Chime
-    TutorialLine:audio_player_device                    # VO_Director_Tutorial_01
+    TutorialLine:audio_player_device                    # VO_Director_Tutorial_02 ("where she's stuck")
 
 cold_open := class:
     Rig:cold_open_rig
@@ -45,7 +45,7 @@ cold_open := class:
 
     # Safety net in case the sequence never signals StoppedEvent.
     SequenceTimeoutSeconds:float = 60.0
-    # VO_Director_Tutorial_01.wav is 5.36 s; audio_player_device has no finished event.
+    # VO_Director_Tutorial_02.wav is 5.32 s; audio_player_device has no finished event.
     TutorialSeconds:float = 5.6
 
     var OnDesk:logic = false

@@ -28,6 +28,14 @@ game_director := class(creative_device):
     @editable RoomRain:audio_player_device = audio_player_device{}
     @editable BootChime:audio_player_device = audio_player_device{}
     @editable TutorialLine:audio_player_device = audio_player_device{}
+    # The director's lines over the case file and the role (Content/DirectorVO, players in the
+    # outliner's Director/Devices). Lengths are in DirectorLines.
+    @editable NellD1Intro:audio_player_device = audio_player_device{}
+    @editable NellD1SendIn:audio_player_device = audio_player_device{}
+    @editable NellD2Intro:audio_player_device = audio_player_device{}
+    @editable NellD2SendIn:audio_player_device = audio_player_device{}
+    @editable NellD3Intro:audio_player_device = audio_player_device{}
+    @editable NellD3SendIn:audio_player_device = audio_player_device{}
 
     # Debug starts. PreRoll is the real game; ColdOpen skips the pre-roll; Room or later skips
     # the whole opening and starts at the desk.
@@ -70,6 +78,7 @@ game_director := class(creative_device):
         Debugger := dream_debugger_screen{Entity := DebuggerScreen, Input := Input}
         Debugger.Clear()
         set Takes.Screen = Debugger
+        set Takes.Director = device_director_voice{Lines := DirectorLines()}
 
         Opening := cold_open:
             Rig := cold_open_rig:
@@ -143,6 +152,17 @@ game_director := class(creative_device):
             Logger.Print("[game] no client NPC; skipping the client phase", ?Level := log_level.Error)
 
         EnterPhase(game_phase.DonePhase)
+
+    # The director's recorded lines, by the ids take_flow plays, with each WAV's length plus a
+    # beat (audio/narration/VO_Director_nell_*.wav).
+    DirectorLines():[]director_line =
+        array:
+            director_line{Id := "nell_d1_intro", Player := NellD1Intro, Seconds := 13.2}
+            director_line{Id := "nell_d1_sendin", Player := NellD1SendIn, Seconds := 11.4}
+            director_line{Id := "nell_d2_intro", Player := NellD2Intro, Seconds := 9.1}
+            director_line{Id := "nell_d2_sendin", Player := NellD2SendIn, Seconds := 13.9}
+            director_line{Id := "nell_d3_intro", Player := NellD3Intro, Seconds := 6.3}
+            director_line{Id := "nell_d3_sendin", Player := NellD3SendIn, Seconds := 12.7}
 
     # Succeeds if the session should play Phase, given StartAt.
     Runs(Phase:game_phase)<transacts><decides>:void =

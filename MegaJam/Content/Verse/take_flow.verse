@@ -44,7 +44,7 @@ take_flow := class(creative_device):
     # game_director replaces Screen with the in-world screen.
     var Screen:debug_screen = stub_debug_screen{}
     Haze:haze_controller = haze_controller{}
-    Director:director_voice = stub_director_voice{}
+    var Director:director_voice = stub_director_voice{}
 
     # How long to wait for the player's last line, and for the client to finish a line.
     LastLineSeconds:float = 30.0

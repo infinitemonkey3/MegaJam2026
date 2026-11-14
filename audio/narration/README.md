@@ -18,11 +18,13 @@ movie-trailer voice."
 To add a line in the same voice, use the same endpoint, voice and base note. Chip's own recording
 can replace any of these later.
 
-## To record (2026-11-13)
+## The debugger flow (recorded 2026-11-14)
 
-The debugger flow: the director names the patient over her case file (ATTACH TO DREAMER), then
-sends the player in over their role (ENTER DREAM). Same voice, endpoint and base note. Verse
-plays them by id (`director_voice.PlayLine`).
+The director names the patient over her case file (ATTACH TO DREAMER), then sends the player in
+over their role (ENTER DREAM). Same voice, endpoint and base note, each with a short delivery
+note of its own. Files: `VO_Director_Tutorial_02.wav` (the boot line, replacing `_01`) and
+`VO_Director_<id>.wav`; in UEFN under `Content/DirectorVO/` (the boot line in
+`ColdOpen/Audio/`), wave volume 2.0. Verse plays them by id (`director_voice.PlayLine`).
 
 | Id | Line |
 |---|---|
