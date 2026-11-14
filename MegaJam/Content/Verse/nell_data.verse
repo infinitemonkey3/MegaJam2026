@@ -38,7 +38,7 @@ MakeNellDream1()<transacts>:dream =
             casting_role{Id := "role_teddy", Label := "Theodore \"Teddy\" Price / nephew", LogEdit := "You step in as Teddy, Walt's nephew, come to help open.", ContextLine := "The visitor is Teddy, Walt's nephew, a grown man now. You taught him to bake when he was nine, standing on a flour crate. He calls you Aunt Nell. Two years ago he asked you to reopen the shop, and you said no. This morning he's turned up at five to help you open anyway."}
         Want := "To open the shop at six, the way it's always opened."
         Obstacle := "The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in."
-        SendIn := "You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine, standing on a flour crate, and a woman who taught you can't refuse to show you how. That's your way in. Look over Teddy, and enter the dream when you're ready."
+        SendIn := "You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready."
         RoleFile := array:
             "AGE  34"
             "RELATION  Walt's nephew. You call her Aunt Nell."

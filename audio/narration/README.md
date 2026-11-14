@@ -28,7 +28,7 @@ plays them by id (`director_voice.PlayLine`).
 |---|---|
 | `tutorial` (replaces `VO_Director_Tutorial_01`) | "Got a looper in the chair. Sit down. Let's see where she's stuck." (Nell is a she; the old take says "he") |
 | `nell_d1_intro` | "Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you." |
-| `nell_d1_sendin` | "You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine, standing on a flour crate, and a woman who taught you can't refuse to show you how. That's your way in. Look over Teddy, and enter the dream when you're ready." |
+| `nell_d1_sendin` | "You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready." |
 | `nell_d2_intro` | "She let us down a layer. Her file's grown since you last read it. Learn the new parts, then attach." |
 | `nell_d2_sendin` | "This one's casting itself. You're Walt Price, twenty-seven, flour on his jacket, the night she made up her mind about him. She married him, so he got it right once. Look over Walt, and enter the dream when you're ready." |
 | `nell_d3_intro` | "Bottom of the well. Last look at her file. Attach when you're ready." |
