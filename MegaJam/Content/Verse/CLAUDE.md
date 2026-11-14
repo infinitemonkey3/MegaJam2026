@@ -32,7 +32,8 @@ play session yet.
 
 ### Cold open (`cold_open.verse`)
 - `title_card` (`title_card.verse`): the Wonderwell title card (`Content/TitleCard/T_TitleCard`,
-  from `art/style-test/mockup-title.jpg`) full screen with the prompt low under the recliner.
+  built by `art/tools/make_title_card.py`: a figure sat on the street, head in hands, the dream
+  rising from his head; no recliner) full screen with the prompt low under the recliner.
   The pre-roll shows it over the black overlay and `EndPreRoll` takes it down.
 - `cold_open`: `RunPreRoll` (the title card over a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
   ended by `input_router.AnyKeyEvent`; lifted under the sequence's own fade from black),
@@ -95,7 +96,11 @@ play session yet.
   Nell's dream 2 has `AsksForCake`: `DoGoodEnding` first calls `client_control.RequestCake`, a
   silent prompt that fills `birthday_cake.CakeWaltAskedFor` from the take. Dream 3 has
   `UsesCake`: `LoadDream` adds `CakeKnowledge(TheCake())` to the personality, and the case file
-  shows `CakeEntry` (`ORDER  1 birthday cake: ...`). `TheCake` falls back to `DefaultCake` (a
+  shows `CakeEntry` (`ORDER  1 birthday cake: ...`). `StartTake` also adds `CakeTakeLine` to the
+  take and `CakeOpeningCue` to her first line: from the personality alone she never named it.
+  The same prompt records `birthday_cake.SaturdayWaltPromised` (dream 2's Saturday answer); dream 3
+  gets it as `SaturdayTakeLine` in the take and `SaturdayEntry` (PROMISED) in the case file, so
+  the player can call back to it. `TheCake` falls back to `DefaultCake` (a
   lemon cake). `<localizes>` functions with parameters are `no_rollback`, so helpers that call
   them can't be `<transacts>`.
 - Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
@@ -113,11 +118,20 @@ play session yet.
   under it, and one CONTINUE before the next layer.
 - The dream debugger's take log shows only the newest line (the player reads at their own pace),
   pinned to the top of the log area (`LatestText`'s slot is top-aligned).
-- The take moves through the dream's `TakePhases` (Nell: dough time, bake time, opening time;
-  Des: his name is called, the spotlight, the catchphrase), spread evenly over `TakeSeconds`
-  before the last line (`take_flow.RunPhases`). Each phase goes in the log and nudges the client
-  on with `client_control.MoveScene`, which waits while she's talking; what the visitor changed
-  holds. Crisis beats from the writing aren't wired.
+- **Takes run on turns, not a clock** (Chip, 2026-11-14: the timer made her talk over the
+  player, and she stalled on a question). `take_flow.RunBeats`: her opening line, then per beat
+  `dream.TurnsPerBeat` player answers (`AwaitPlayerLine`, no timeout), each followed by her
+  reply (`AwaitSpeechEnd`); then the next of `dream.TakePhases` goes in the log and is told to
+  her with `client_control.MoveScene` (only after she's stopped speaking; she moves the scene on
+  and ends on something to answer). After the last beat's turns, the last line. The haze clock
+  rises a step per beat. Every take also tells her to take turns and not move the scene on by
+  herself. Nell's dream 2 is one answer per question (`TurnsPerBeat := 1`); the default is 2.
+  With `dream.ClientLeads` (Nell's dream 2, her list of questions) she moves the beats on in
+  her own replies and the flow only counts answers and logs each beat: a prompted question came
+  on top of the one her reply had already asked, so she asked it twice (play test, 2026-11-14).
+  `dream.LastLineCue`, if set, is told to her at the last line so she asks for it (dream 2: his
+  birthday cake); the player's answer is the last line.
+  Crisis beats from the writing aren't wired.
 - Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
   does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,

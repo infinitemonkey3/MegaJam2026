@@ -51,7 +51,7 @@ MURMUR  And he can stop that, for a start.
 LOG     She opens the order pad. Her questions are written down the first page.
 MURMUR  I've got questions. I'm not daft.
 LOG     She asks the first one. He opens his mouth to answer.
-MURMUR  Go on, then. Where would you take me?
+MURMUR  First one's easy. Cinnamon or lemon?
 LOG     The clock strikes nine. Mrs. Hollis turns the sign to CLOSED. He hasn't said a word.
 MURMUR  That's nine. Typical.
 LOG     The lights go out, and the dream starts over.
@@ -59,18 +59,25 @@ LOG     The lights go out, and the dream starts over.
 
 ## Take Phases
 
-Her questions, in order, a new one each phase. She asks the first in her opening line.
+The take runs on turns (`TurnsPerBeat := 1`): after each answer and her reply, the next thing on
+her pad. First three this-or-that guesses about her, which reward reading her file (Chip,
+2026-11-14), then the real questions.
 
-| Log | Context |
-|---|---|
-| `Next on her pad: what would our life be like?` | `Time's moving on. Ask the next question on your pad, in your own words: what would your life together be like? Where would you live, and what would a Sunday look like?` |
-| `Next on her pad: what about my baking?` | `Time's moving on. Ask the next question on your pad: you mean to have your own shop one day, the sweet side, your own rolls. What does he make of that? Would he stand for a wife with her own trade?` |
-| `Last on her pad: why me? The clock says five to nine.` | `Time's moving on: it's five to nine and Mrs. Hollis is jangling her keys. Ask the last question on your pad, the hard one: why you?` |
+| # | Log | Her answer / note |
+|---|---|---|
+| Opening line | `Cinnamon or lemon?` | Cinnamon, every time (`L-01`) |
+| 1 | `Guess two on her pad: rain or sunshine?` | Rain: rain sells bread (`L-02`) |
+| 2 | `Guess three on her pad: flowers, or a sack of good flour?` | The flour: flowers are for hospitals (`D-05`) |
+| 3 | `The guessing's done. First real question: how would we spend a Saturday?` | Free answer |
+| 4 | `Next on her pad: what about my baking?` | Would he mind her having a trade of her own? |
+| 5 | `Last on her pad: why me? The clock says five to nine.` | The hard one |
 
-Opening question (in her first line, set by the personality): where would he take her on a
-first date?
+A right guess pleases her more than she lets on; a wrong one she corrects, drily. "What would
+our life together be like" was cut to keep the take short (and less romance for moderation).
 
-Last line log: `The clock is about to strike nine. One more thing to say.`
+Last line log: `The clock is about to strike nine. One more thing to say.` Then she asks the last
+thing on her pad, his birthday cake (`LastLineCue`; play test 2026-11-14: left to her, she never
+asked). His answer is the last line, and a good ending carries the cake into dream 3.
 
 ## Directing Options
 

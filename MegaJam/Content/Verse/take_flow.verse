@@ -257,8 +257,7 @@ take_flow := class(creative_device):
             Control.StartTake(Dream, Setup, TakeNumber)
             race:
                 WatchScene(Control)
-                RunClock(Dream)
-                RunPhases(Dream, Control)
+                RunBeats(Dream, Control)
             take_phase.LastLine
         else:
             Logger.Print("[flow] no setup for the take; back to the menu", ?Level := log_level.Warning)
@@ -271,6 +270,11 @@ take_flow := class(creative_device):
         race:
             WatchScene(Control)
             block:
+                # A dream can make the last line her question (Nell's dream 2: his birthday cake,
+                # which a good ending carries into dream 3).
+                if (Dream.LastLineCue.Length > 0):
+                    Control.MoveScene(Dream.LastLineCue, SpeechSeconds)
+                    Control.AwaitSpeechEnd(SpeechSeconds)
                 Heard := Control.AwaitPlayerLine(LastLineSeconds)
                 if (Heard?):
                     Control.AwaitSpeechEnd(SpeechSeconds)
@@ -376,22 +380,26 @@ take_flow := class(creative_device):
             # Passed through untouched: model text is redacted as a string, so never branch on it.
             Screen.AppendLogLine(Update.LogLine)
 
-    # The take's phases (dough time, bake time, opening time...), spread evenly over the take
-    # before the last line: each goes in the log and moves the client's scene on. Never returns,
-    # so RunClock ends the race.
-    RunPhases(Dream:dream, Control:client_control)<suspends>:void =
-        Gap := Dream.TakeSeconds / (1.0 * (Dream.TakePhases.Length + 1))
-        for (Next : Dream.TakePhases):
-            Sleep(Gap)
-            Log(Next.LogLine)
-            Control.MoveScene(Next.Context, Gap / 2.0)
-        Sleep(Inf)
-
-    # The take's clock: the haze's clock input rises a step each quarter of the take, and the
-    # function returns when the take reaches the moment the loop always ends.
-    RunClock(Dream:dream)<suspends>:void =
-        Quarter := Dream.TakeSeconds / 4.0
-        for (Step := 1..3):
-            Sleep(Quarter)
-            Haze.SetClock(Step)
-        Sleep(Quarter)
+    # The take runs on turns, not a clock (Chip, 2026-11-14: the timer made her interrupt, and
+    # she stalled on a question). She opens; then each beat is TurnsPerBeat answers from the
+    # player, each followed by her reply; then the next of the dream's TakePhases is told to her
+    # once she has finished speaking, and she moves the scene on and hands it back. After the
+    # last beat's turns, the take goes to the last line. The player is never talked over: the
+    # flow only prompts her after she has stopped speaking and the player has answered.
+    RunBeats(Dream:dream, Control:client_control)<suspends>:void =
+        Control.AwaitSpeechEnd(SpeechSeconds)           # her opening line
+        Turns := Max(1, Dream.TurnsPerBeat)
+        var Beat:int = 0
+        loop:
+            for (Turn := 1..Turns):
+                Control.AwaitPlayerLine(Inf)
+                Control.AwaitSpeechEnd(SpeechSeconds)   # her reply
+            if (Next := Dream.TakePhases[Beat]):
+                set Beat += 1
+                Haze.SetClock(Min(3, Beat))
+                Log(Next.LogLine)
+                if (not Dream.ClientLeads?):
+                    Control.MoveScene(Next.Context, SpeechSeconds)
+                    Control.AwaitSpeechEnd(SpeechSeconds)
+            else:
+                break
