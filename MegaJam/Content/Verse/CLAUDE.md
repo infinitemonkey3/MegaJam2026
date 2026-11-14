@@ -99,8 +99,8 @@ play session yet.
   `PickItems` are unused until settings or more items come back.
 - Observe (the replay) is paced by the player: each loop beat goes in the log, the client tells
   it as her own memory (`client_control.NarrateBeat`, first person, past tense, using the beat's
-  murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (row 16 of the dream debugger,
-  a click or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
+  murmur), and `debug_screen.AwaitContinue` waits for CONTINUE (`ContinuePrompt`, appended under the
+  newest line in `LatestText`; a click anywhere on rows 6-16, or Space) before the next beat. `loop_beat.HoldSeconds` is no longer used.
 - Endings are told the same way: each `GoodEndingLog` / `BadEndingLog` line is narrated with
   CONTINUE; on a good ending the client then names what the player said or did that turned it
   around (`client_control.CreditLine`, from the take still in the session), says `FactRevealed`
@@ -180,6 +180,8 @@ play session yet.
   The brand font only exists as that image (see Fonts).
 - Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
   blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
+  The boot screen (`UW_DreamDebugger`) and the debugger (`UW_DebuggerText`) both use NotoSans
+  Black. Row 1 is blank: the [UNREGISTERED] tag is in the title bar image.
 - `haze_controller` (`haze_controller.verse`): `SetDistress`, `SetSetupRisk`, `SetClock`,
   `Reset`; level is the highest of the three. Devices hang off `ApplyLevel`.
 - `director_voice` / `stub_director_voice` (`director_voice.verse`): `PlayLine(LineId)`. Line

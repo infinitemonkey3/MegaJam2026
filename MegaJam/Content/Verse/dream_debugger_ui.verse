@@ -64,6 +64,9 @@ TakeTitle<localizes>(Title:message):message = "[ {Title} ]"
 # One invisible button over a row (or part of a row). Action: 0..2 tabs, 100+ dreams,
 # 200+ questions, 300+ take menu options, ContinueAction.
 ContinueAction:int = 400
+# CONTINUE sits right under the newest log line, inside LatestText (Chip, 2026-11-13: it was down
+# on row 16, far from what the client said).
+ContinuePrompt<localizes>:message = "\n\n> [ CONTINUE ]"
 
 debugger_hotspot := class:
     Row:int
@@ -118,7 +121,7 @@ dream_debugger_ui := class(debug_screen):
     var MenuTitle:message = EmptyText
     var MenuOptions:[]message = array{}
     var Vitals:int = 0
-    # True while the take flow waits on CONTINUE; row 16 shows it instead of the vitals.
+    # True while the take flow waits on CONTINUE; it shows under the newest log line.
     var ContinueShown:logic = false
     # Input mode All while there's something to click; None while the player talks, so Fortnite
     # gets the keyboard (and the talk key) back.
@@ -211,7 +214,8 @@ dream_debugger_ui := class(debug_screen):
                 for (I -> Option : MenuOptions, DebuggerBodyFirst + 1 + I <= DebuggerBodyLast):
                     AddHotspot(Root, DebuggerBodyFirst + 1 + I, 300 + I, 0.0, 1.0)
                 if (ContinueShown?):
-                    AddHotspot(Root, 16, ContinueAction, 0.0, 1.0)
+                    for (Row := DebuggerBodyFirst..16):
+                        AddHotspot(Root, Row, ContinueAction, 0.0, 1.0)
                 if (First := Hotspots[0], PlayerUI := MaybePlayerUI?):
                     PlayerUI.SetFocus(First.Button)
             else:
@@ -314,7 +318,7 @@ dream_debugger_ui := class(debug_screen):
         set View.BodyMessage = EmptyText
         set View.LatestMessage = EmptyText
         SetRow(0, "")    # row 0 is the title bar image (TitleBarImage in UW_DebuggerText)
-        SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
+        SetRow(1, "")
         SetRow(2, "PATIENT: {Client.Name}")
         SetRow(3, "")
         for (I -> Name : DebuggerTabNames):
@@ -339,7 +343,7 @@ dream_debugger_ui := class(debug_screen):
     # and the vitals on row 16.
     RenderTake():void =
         SetRow(0, "")    # row 0 is the title bar image (TitleBarImage in UW_DebuggerText)
-        SetRow(1, "UNREGISTERED COPY  //  LICENSE CHECK BYPASSED")
+        SetRow(1, "")
         SetRow(2, "PATIENT: {Client.Name}")
         SetRow(3, "")
         SetTabMessage(0, TakeTitle(Title))
@@ -364,15 +368,10 @@ dream_debugger_ui := class(debug_screen):
             for (Row := DebuggerBodyFirst..DebuggerBodyLast):
                 SetRow(Row, "")
             set View.BodyMessage = EmptyText
-            if (Newest := TakeLog[TakeLog.Length - 1]):
-                set View.LatestMessage = Newest
-            else:
-                set View.LatestMessage = EmptyText
+            Shown := if (Newest := TakeLog[TakeLog.Length - 1]) then Newest else EmptyText
+            set View.LatestMessage = if (ContinueShown?) then Join(array{Shown, ContinuePrompt}, EmptyText) else Shown
         Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
-        if (ContinueShown?):
-            SetRow(16, "> [ CONTINUE ]")
-        else:
-            SetRow(16, "VITALS  [{Bars}]")
+        SetRow(16, "VITALS  [{Bars}]")
         SetRow(17, "MOUSE click  /  SPACE select")
 
     SetRow(Index:int, Text:string):void =
@@ -485,7 +484,7 @@ dream_debugger_ui := class(debug_screen):
     AwaitPick<override>()<suspends>:int =
         PickEvent.Await()
 
-    # CONTINUE on row 16, under the log: a click, or Space on the focused prompt.
+    # CONTINUE under the newest log line: a click anywhere on the log, or Space.
     AwaitContinue<override>()<suspends>:void =
         SetClickable(true)
         set ContinueShown = true
