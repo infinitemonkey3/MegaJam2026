@@ -132,6 +132,10 @@ dream := class:
     BadEndingLog:[]string     # authored bad ending
     FactRevealed:string       # what a positive verdict gives up; joins the facts for later dreams
     TurnsPerBeat:int = 2      # player answers before the scene moves to the next beat; after the last beat, the last line
+    # The client moves the beats on herself (a list of questions she asks in turn); the flow only
+    # counts answers and logs each beat, and never prompts her (2026-11-14: a prompted question
+    # came on top of the one her reply had already asked, so she asked it twice).
+    ClientLeads:logic = false
 
 client := class:
     Id:string

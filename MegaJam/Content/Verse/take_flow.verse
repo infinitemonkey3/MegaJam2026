@@ -398,7 +398,8 @@ take_flow := class(creative_device):
                 set Beat += 1
                 Haze.SetClock(Min(3, Beat))
                 Log(Next.LogLine)
-                Control.MoveScene(Next.Context, SpeechSeconds)
-                Control.AwaitSpeechEnd(SpeechSeconds)
+                if (not Dream.ClientLeads?):
+                    Control.MoveScene(Next.Context, SpeechSeconds)
+                    Control.AwaitSpeechEnd(SpeechSeconds)
             else:
                 break

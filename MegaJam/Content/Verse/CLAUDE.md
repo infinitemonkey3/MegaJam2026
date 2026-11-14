@@ -95,7 +95,8 @@ play session yet.
   Nell's dream 2 has `AsksForCake`: `DoGoodEnding` first calls `client_control.RequestCake`, a
   silent prompt that fills `birthday_cake.CakeWaltAskedFor` from the take. Dream 3 has
   `UsesCake`: `LoadDream` adds `CakeKnowledge(TheCake())` to the personality, and the case file
-  shows `CakeEntry` (`ORDER  1 birthday cake: ...`). `TheCake` falls back to `DefaultCake` (a
+  shows `CakeEntry` (`ORDER  1 birthday cake: ...`). `StartTake` also adds `CakeTakeLine` to the
+  take and `CakeOpeningCue` to her first line: from the personality alone she never named it. `TheCake` falls back to `DefaultCake` (a
   lemon cake). `<localizes>` functions with parameters are `no_rollback`, so helpers that call
   them can't be `<transacts>`.
 - Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
@@ -121,6 +122,9 @@ play session yet.
   and ends on something to answer). After the last beat's turns, the last line. The haze clock
   rises a step per beat. Every take also tells her to take turns and not move the scene on by
   herself. Nell's dream 2 is one answer per question (`TurnsPerBeat := 1`); the default is 2.
+  With `dream.ClientLeads` (Nell's dream 2, her list of questions) she moves the beats on in
+  her own replies and the flow only counts answers and logs each beat: a prompted question came
+  on top of the one her reply had already asked, so she asked it twice (play test, 2026-11-14).
   `dream.LastLineCue`, if set, is told to her at the last line so she asks for it (dream 2: his
   birthday cake); the player's answer is the last line.
   Crisis beats from the writing aren't wired.
