@@ -90,7 +90,6 @@ Assigned: Walt Price (see Your Role).
 - `item_cinnamon_roll` (specific): `He's holding one of your cinnamon rolls. He's bought one every day this month. He never eats it in front of you.` (`L-01`; he's been courting her with her own baking)
 - `item_flour_sack` (specific): `There's a sack of flour from the mill on the counter, a gift. Good flour, the kind Mrs. Hollis won't pay for.` (`F0-02`; his trade, and it takes her work seriously)
 - `item_cinema_tickets` (near-miss): `He's got two tickets to the pictures in his hand. Saturday. He didn't ask what you'd like to see.` (a fine date, but nobody asked her)
-- `item_roses` (wrong): `He's brought a bunch of red roses. Flowers are for hospitals.` (`D-05`)
 
 ## The Cake Carries Forward
 

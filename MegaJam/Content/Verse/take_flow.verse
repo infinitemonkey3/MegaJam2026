@@ -164,8 +164,16 @@ take_flow := class(creative_device):
             if (TakeNumber = 0):
                 branch:
                     Director.PlayLine("{Dream.Id}_sendin")
-            Screen.ShowFile(ToMessage("YOUR ROLE"), array{}, RoleFile(Dream, Role), "ENTER DREAM")
-            set MaybeSetup = option{MakeTakeSetup(Role, array{}, array{})}
+            # The player brings one prop, their offer (Chip, 2026-11-14: "give someone a prop and
+            # that gives them a direction"). Picking it enters the dream.
+            if (Dream.Items.Length > 0):
+                Screen.ShowFile(ToMessage("YOUR ROLE"), array{}, RoleFile(Dream, Role), "CHOOSE WHAT YOU BRING")
+                PropIndex := PickOne("YOU BRING (picking one enters the dream)", for (Option : Dream.Items) { Option.Label })
+                Props := if (Prop := Dream.Items[PropIndex]) then array{Prop} else array{}
+                set MaybeSetup = option{MakeTakeSetup(Role, array{}, Props)}
+            else:
+                Screen.ShowFile(ToMessage("YOUR ROLE"), array{}, RoleFile(Dream, Role), "ENTER DREAM")
+                set MaybeSetup = option{MakeTakeSetup(Role, array{}, array{})}
             return take_phase.RunTake
         Director.PlayLine(DirectorLineBeforeTake)
         RoleIndex := PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })

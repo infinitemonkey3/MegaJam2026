@@ -88,8 +88,11 @@ play session yet.
   The file is gone once the player attaches: the client then recounts the loop (Observe).
 - A dream with exactly one role assigns it: `DoDirect` shows the role (`RoleFile`: YOU ARE,
   `dream.RoleFile`, SHE WANTS `dream.Want`, IN THE WAY `dream.Obstacle`) with ENTER DREAM, while
-  the director's `<dream id>_sendin` plays (first take only; `dream.SendIn` is its text). No
-  item pick then; the opening cue skips the item. `StartTake` tells the client her want and to
+  the director's `<dream id>_sendin` plays (first take only; `dream.SendIn` is its text). Then the player
+  picks **one prop** from `dream.Items` ("CHOOSE WHAT YOU BRING", then a menu; picking enters the
+  dream; Chip, 2026-11-14: a prop gives the player a direction without putting them on rails).
+  Nell's dreams have three props each, written as brought in by the visitor. A dream with no
+  items goes straight to ENTER DREAM. `StartTake` tells the client her want and to
   state it early, in offers, not questions. Nell's roles: Teddy, young Walt, Walt. Des still
   casts from three, with the item pick.
 - **The player's words can carry between dreams** as messages (they can't become strings).

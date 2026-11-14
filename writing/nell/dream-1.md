@@ -69,16 +69,25 @@ LOG     The lights go out. The dream starts over.
 
 ## Take Phases
 
-Concrete jobs, one at a time (Chip, 2026-11-14: "endless dough in the abstract" was hard to
-tackle). Each job has a move from Teddy's brief that works, and "yes, and" lets anything
-reasonable work too. Two of the player's answers per job (`TurnsPerBeat` 2), then the next job.
+Pressure, one trouble at a time, with no set solutions (Chip, 2026-11-14: too broad was hard to
+tackle, but a fixed answer per job would be on rails). The player brings **one prop**, chosen on
+the role screen, and that's their offer: "give someone a prop and that gives them a direction."
+Two of the player's answers per trouble (`TurnsPerBeat` 2).
 
-| # | Job | Hint in Teddy's brief | Also works |
-|---|---|---|---|
-| Opening line | The dough is climbing out of its bowl and over the bench | SHE ALWAYS SAID "Dough you fight, dough you lose. You fold it." | holding the bowl, flouring the bench |
-| 1 | Walt's oven door won't open for her | UNCLE WALT knocked twice and said "Morning, old girl." | family asking it kindly |
-| 2 | Order slips fall like snow: read them out while she says what each needs | THE ORDERS: Mrs. Okafor, Dunn, the Abbey Lane school run | sorting them, making up orders |
-| Last line | Six o'clock: should she let the faceless people in? (`LastLineCue`) | THE FRONT DOOR: the key is on a string round her neck | telling her they're her regulars |
+| # | Trouble | Things in Teddy's brief he could use |
+|---|---|---|
+| Opening line | The dough is climbing out of its bowl and over the bench | "Dough you fight, dough you lose. You fold it." |
+| 1 | Walt's oven door won't open for her | Walt knocked twice and said "Morning, old girl." |
+| 2 | Order slips fall like snow, the whole street's orders | The regulars' orders |
+| Last line | Six o'clock: should she let the faceless people in? (`LastLineCue`) | The key on a string round her neck |
+
+### Props (pick one)
+
+| Prop | Direction it suggests |
+|---|---|
+| The old flour crate | "Teach me again": he stood on it at nine while she taught him |
+| Walt's apron, off its hook | Stepping into Walt's place (risky, powerful) |
+| Walt's spare key to the shop | Opening the door to the helpers |
 
 ## Take Beats
 
