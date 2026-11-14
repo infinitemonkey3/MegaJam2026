@@ -128,17 +128,12 @@ game_director := class(creative_device):
         # The tutorial and the room between dreams come here (milestone 4).
 
         EnterPhase(game_phase.ClientPhase)
-        # The take runs on the dream debugger. It starts when the player invokes layer 1 on the
-        # DREAMS tab; the deeper layers are locked until it's solved.
+        # The take flow runs on the dream debugger from here: the case file and ATTACH TO
+        # DREAMER first (Chip, 2026-11-13: the debugger is just the case file now).
         set Takes.Screen = DebuggerUI
         # The persona's talk UI is the HUD Controller device's "Show LLM Conversations UI", set to
         # Show Element; its "Show HUD" is Do Not Override so it doesn't hide that too. The rest of
         # the HUD stays hidden by HideFortniteHUD (play test, 2026-11-13).
-        loop:
-            Invoked := DebuggerUI.InvokeEvent.Await()
-            if (Invoked = 0):
-                break
-            DebuggerUI.ShowNotice("LAYER LOCKED  //  CLEAR LAYER 1 FIRST")
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
             DebuggerUI.BeginTake()

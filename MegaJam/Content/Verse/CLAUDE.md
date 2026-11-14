@@ -81,12 +81,16 @@ play session yet.
   NPC's spawner. Phases (`take_phase`): CaseFile, Observe, Direct, RunTake, LastLine, Verdict,
   then GoodEnding (next dream), RetryEnding (back to Direct, "Take N+1"), or Finale after a
   positive verdict on the last dream (`DoFinale`, a stub for the scripted ending).
-- A dream with exactly one role assigns it (Chip, 2026-11-13): Direct skips casting, the
-  director's send-in (`dream.SendIn`, played as `<dream id>_sendin` and shown in the log as
-  "DIRECTOR: ...") then CONTINUE, then the item pick. The case file opens with the improv
-  prompt (`Briefing`: YOUR ROLE, SHE WANTS `dream.Want`, IN THE WAY `dream.Obstacle`), and
-  `StartTake` tells the client her want and to state it early, in offers, not questions. Nell's
-  roles: Teddy, young Walt, Walt. Des still casts from three.
+- **Each dream opens like a spy learning a target** (Chip, 2026-11-13). `DoCaseFile` shows the
+  patient's case file (`debug_screen.ShowFile`: case file, revealed facts, loop note, any cake
+  entry) with ATTACH TO DREAMER, while the director's `<dream id>_intro` plays (in a `branch`).
+  The file is gone once the player attaches: the client then recounts the loop (Observe).
+- A dream with exactly one role assigns it: `DoDirect` shows the role (`RoleFile`: YOU ARE,
+  `dream.RoleFile`, SHE WANTS `dream.Want`, IN THE WAY `dream.Obstacle`) with ENTER DREAM, while
+  the director's `<dream id>_sendin` plays (first take only; `dream.SendIn` is its text). No
+  item pick then; the opening cue skips the item. `StartTake` tells the client her want and to
+  state it early, in offers, not questions. Nell's roles: Teddy, young Walt, Walt. Des still
+  casts from three, with the item pick.
 - **The player's words can carry between dreams** as messages (they can't become strings).
   Nell's dream 2 has `AsksForCake`: `DoGoodEnding` first calls `client_control.RequestCake`, a
   silent prompt that fills `birthday_cake.CakeWaltAskedFor` from the take. Dream 3 has
@@ -161,9 +165,10 @@ play session yet.
   Two layers: the text is `UW_DebuggerText` (`Content/DreamDebugger/`), a UMG widget with 18
   NotoSans rows (`Row00Text`..`Row17Text`, row 4 is `Tab0Text`..`Tab2Text`) in a Scale Box;
   input is invisible Verse UI buttons over the selectable rows (mouse, arrow keys, D-pad), whose
-  highlight moves the `>` cursor. Tabs: CASE FILE (paged, `[ MORE ]` on row 15), DREAMS (INVOKE
-  lines) and ASSISTANT (face plus preset questions). Invoking and asking only log so far. Shown
-  with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
+  highlight moves the `>` cursor. No tabs (Chip, 2026-11-13): the take flow drives it from the
+  moment it shows. Views: the file (`ShowFile`: rows 6-14 paged, `[ MORE ]` on row 15, the
+  button on row 16), the scene log (newest line in `LatestText`, CONTINUE under it), and the
+  take's menus. Shown with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
   background (they get the camera's perspective).
 - Input on the debugger (play test, 2026-11-13): the UMG text widget must be Not Hit-Testable
   (Self & All Children) or its rows catch the mouse above the Verse buttons; "Self Hit-Test
@@ -227,7 +232,7 @@ play session yet.
   HUD" must stay Do Not Override: Hide Element hides everything, the talk UI included, and Verse
   `ShowElementsForPlayer` can't override the device. The player holds the talk key it shows.
   During a take the debugger also drops to input mode None so Fortnite gets the keyboard.
-- **The first take works end to end** (2026-11-13): INVOKE layer 1, the replay with Des's
+- **The first take works end to end** (2026-11-13, before the file view): INVOKE layer 1, the replay with Des's
   murmurs, directing by clicks, talking to Des by voice, his `scene_update` sentences in the
   log, the verdict and the retry.
 - **The player never has a body or a Fortnite HUD.** `game_director` hides every Fortnite HUD

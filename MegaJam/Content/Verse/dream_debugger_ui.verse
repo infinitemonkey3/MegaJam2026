@@ -6,8 +6,9 @@ using { /UnrealEngine.com/Temporary/SpatialMath }
 using { /UnrealEngine.com/Temporary/UI }
 
 # The interactive dream debugger (Chip, 2026-11-13): Wonderwell's dream debugger, a cracked
-# unregistered copy, naming the patient, with tabs for the case file, the dreams to invoke, and
-# the Wonderwell AI assistant (a flipbook character later; for now a face and preset questions).
+# unregistered copy, naming the patient. The take flow drives it: a file to learn with one button
+# under it (the patient's case file and ATTACH TO DREAMER, then the player's role and ENTER
+# DREAM), the scene log with CONTINUE, and the take's menus.
 #
 # Two layers over the monitor's glass hole, placed by monitor_projection:
 #  - the text: UW_DebuggerText (Content/DreamDebugger), a UMG widget with 18 rows of NotoSans
@@ -21,19 +22,12 @@ using { /UnrealEngine.com/Temporary/UI }
 # The dark fill behind is the world's glass and in-world screen, which get the camera's
 # perspective (a flat UI fill didn't match).
 #
-# Invoking a dream and asking a question only log for now; they get wired to the take flow and
-# the AI persona next. Shown with input mode All, so while it's up it has the mouse and focus.
+# Shown with input mode All, so while it's up it has the mouse and focus.
 
 DebuggerRowCount:int = 18
 DebuggerColumns:int = 72      # wrap width in characters (NotoSans 28 px on the 1300 px page)
-DebuggerBodyFirst:int = 6     # rows 6..15 are the tab's body
+DebuggerBodyFirst:int = 6     # rows 6..15 are the body
 DebuggerBodyLast:int = 15
-
-DebuggerTabNames:[]string = array{"CASE FILE", "DREAMS", "ASSISTANT"}
-DebuggerQuestions:[]string = array:
-    "What is this program?"
-    "Who is the patient?"
-    "How do I run a take?"
 
 # Word-wraps Text to lines of at most Width characters.
 WrapText(Text:string, Width:int)<transacts>:[]string =
@@ -61,9 +55,10 @@ TakeCursorOn<localizes>(Line:message):message = "> {Line}"
 TakeCursorOff<localizes>(Line:message):message = "  {Line}"
 TakeTitle<localizes>(Title:message):message = "[ {Title} ]"
 
-# One invisible button over a row (or part of a row). Action: 0..2 tabs, 100+ dreams,
-# 200+ questions, 300+ take menu options, ContinueAction.
+# One invisible button over a row. Action: MoreAction (next page of a file), 300+ take menu
+# options, ContinueAction, FileAction (the file's button).
 ContinueAction:int = 400
+FileAction:int = 500
 # CONTINUE sits right under the newest log line, inside LatestText (Chip, 2026-11-13: it was down
 # on row 16, far from what the client said).
 ContinuePrompt<localizes>:message = "\n\n> [ CONTINUE ]"
@@ -86,8 +81,8 @@ debugger_hotspot := class:
 dream_debugger_ui := class(debug_screen):
     Client:client
 
-    # INVOKE on the DREAMS tab: the dream's index. game_director starts the take.
-    InvokeEvent:event(int) = event(int){}
+    # The file view's button was pressed (ATTACH TO DREAMER, ENTER DREAM).
+    FileEvent:event() = event(){}
     # A take menu option clicked or selected: its index (debug_screen.AwaitPick).
     PickEvent:event(int) = event(int){}
     # The CONTINUE prompt was pressed (debug_screen.AwaitContinue).
@@ -108,14 +103,10 @@ dream_debugger_ui := class(debug_screen):
     var MaybeRoot:?canvas = false
     var Area:monitor_rect = monitor_rect{Left := 0.0, Top := 0.0, Width := 0.0, Height := 0.0}
     var Hotspots:[]debugger_hotspot = array{}
-    var Tab:int = 0
     var Cursor:int = 0
-    var Reply:string = ""
     var Page:int = 0
-    var Notice:string = ""
 
-    # The TAKE view: while the take flow runs, rows 6..15 are its scene log or its menu.
-    var InTake:logic = false
+    # The take view: rows 6..15 are the take flow's scene log or its menu.
     var Title:message = EmptyText
     var TakeLog:[]message = array{}
     var MenuTitle:message = EmptyText
@@ -123,6 +114,10 @@ dream_debugger_ui := class(debug_screen):
     var Vitals:int = 0
     # True while the take flow waits on CONTINUE; it shows under the newest log line.
     var ContinueShown:logic = false
+    # The file view (ShowFile): rows to read, paged, and one button under them.
+    var FileShown:logic = false
+    var FileRows:[]message = array{}
+    var FileButton:string = ""
     # Input mode All while there's something to click; None while the player talks, so Fortnite
     # gets the keyboard (and the talk key) back.
     var Clickable:logic = true
@@ -141,7 +136,7 @@ dream_debugger_ui := class(debug_screen):
             PlayerUI.AddWidget(Root, player_ui_slot{ZOrder := 800, InputMode := ui_input_mode.All})
             set MaybePlayerUI = option{PlayerUI}
             set MaybeRoot = option{Root}
-            OpenTab(0)
+            BeginTake()
             Logger.Print("[ui] dream debugger shown")
 
     # Re-adds the debugger with input mode All (menus) or None (talking in a take).
@@ -177,30 +172,15 @@ dream_debugger_ui := class(debug_screen):
 
     Activate(Action:int):void =
         if (Action = MoreAction):
-            # Next page of the case file, wrapping round.
-            set Page = if (Page + 1 < CasePageCount()) then Page + 1 else 0
+            # Next page of the file, wrapping round.
+            set Page = if (Page + 1 < FilePageCount()) then Page + 1 else 0
             Render()
-        else if (Action < 3):
-            OpenTab(Action)
-        else if (Action < 200):
-            Logger.Print("[ui] invoke dream {Action - 100}")
-            InvokeEvent.Signal(Action - 100)
+        else if (Action = FileAction):
+            FileEvent.Signal()
         else if (Action = ContinueAction):
             ContinueEvent.Signal()
         else if (Action >= 300):
             PickEvent.Signal(Action - 300)
-        else:
-            set Reply = "ASSISTANT> ...the answer will appear here."
-            Logger.Print("[ui] ask question {Action - 200} (not wired yet)")
-            Render()
-
-    OpenTab(Index:int):void =
-        set Tab = Index
-        set Cursor = Index
-        set Page = 0
-        set Reply = ""
-        RebuildHotspots()
-        Render()
 
     # ---- Buttons ----
 
@@ -209,24 +189,20 @@ dream_debugger_ui := class(debug_screen):
             for (Old : Hotspots):
                 Root.RemoveWidget(Old.Button)
             set Hotspots = array{}
-            if (InTake?):
+            if (FileShown?):
+                # The button first, so it has the focus and Space presses it.
+                AddHotspot(Root, 16, FileAction, 0.0, 1.0)
+                if (FilePageCount() > 1):
+                    AddHotspot(Root, 15, MoreAction, 0.0, 1.0)
+            else:
                 # Only the menu's options, from row 7 (row 6 is the menu's title).
                 for (I -> Option : MenuOptions, DebuggerBodyFirst + 1 + I <= DebuggerBodyLast):
                     AddHotspot(Root, DebuggerBodyFirst + 1 + I, 300 + I, 0.0, 1.0)
                 if (ContinueShown?):
                     for (Row := DebuggerBodyFirst..16):
                         AddHotspot(Root, Row, ContinueAction, 0.0, 1.0)
-                if (First := Hotspots[0], PlayerUI := MaybePlayerUI?):
-                    PlayerUI.SetFocus(First.Button)
-            else:
-                # The tabs share row 4, a third of the row each.
-                for (I -> Name : DebuggerTabNames):
-                    AddHotspot(Root, 4, I, (1.0 * I) / 3.0, (1.0 * (I + 1)) / 3.0)
-                for (I -> Action : BodyActions()):
-                    if (Action >= 0):
-                        AddHotspot(Root, DebuggerBodyFirst + I, Action, 0.0, 1.0)
-                if (First := Hotspots[Tab], PlayerUI := MaybePlayerUI?):
-                    PlayerUI.SetFocus(First.Button)
+            if (First := Hotspots[0], PlayerUI := MaybePlayerUI?):
+                PlayerUI.SetFocus(First.Button)
 
     AddHotspot(Root:canvas, Row:int, Action:int, X0:float, X1:float):void =
         # The button takes the size of its content, so the content is the row's full rectangle,
@@ -248,108 +224,51 @@ dream_debugger_ui := class(debug_screen):
         set Hotspots += array{Hotspot}
 
 
-    # ---- Case file pages ----
+    # ---- The file view ----
 
-    # Rows 6..14 show the case file; row 15 is the selectable "[ MORE ]" line.
-    CasePageRows:int = 9
+    # Rows 6..14 show the file; row 15 is "[ MORE ]" when it runs to more pages; row 16 is
+    # the button.
+    FilePageRows:int = 9
     MoreAction:int = 50
 
-    CaseFileLines()<transacts>:[]string =
-        var Lines:[]string = array{}
-        for (Entry : Client.CaseFile, Line : WrapText(Entry, DebuggerColumns - 4)):
-            set Lines += array{Line}
-        Lines
-
-    CasePageCount()<transacts>:int =
-        Count := CaseFileLines().Length
-        if (Pages := Quotient[Count + CasePageRows - 1, CasePageRows], Pages > 0) then Pages else 1
-
-    # ---- Text ----
-
-    # The body's lines for the open tab, and the action of each (-1: not selectable).
-    BodyLines()<transacts>:[]string =
-        case (Tab):
-            0 =>
-                All := CaseFileLines()
-                Start := Page * CasePageRows
-                Shown := for (I -> Line : All, I >= Start, I < Start + CasePageRows):
-                    Line
-                if (CasePageCount() > 1):
-                    Blank := for (I := Shown.Length..CasePageRows - 1):
-                        ""
-                    Shown + Blank + array{"[ MORE  {Page + 1}/{CasePageCount()} ]"}
-                else:
-                    Shown
-            1 =>
-                for (Dream : Client.Dreams):
-                    "INVOKE  {Dream.Title}"
-            _ =>
-                Face := array{"(o_o)  WONDERWELL ASSISTANT  //  listening", ""}
-                Asks := for (Question : DebuggerQuestions):
-                    Question
-                Tail := if (Reply.Length > 0) then array{"", Reply} else array{}
-                Face + Asks + Tail
-
-    BodyActions()<transacts>:[]int =
-        case (Tab):
-            0 =>
-                if (CasePageCount() > 1):
-                    Blank := for (I := 1..CasePageRows):
-                        -1
-                    Blank + array{MoreAction}
-                else:
-                    array{}
-            1 =>
-                for (I -> Dream : Client.Dreams):
-                    100 + I
-            2 =>
-                Asks := for (I -> Question : DebuggerQuestions):
-                    200 + I
-                array{-1, -1} + Asks
-            _ => array{}
+    FilePageCount()<transacts>:int =
+        if (Pages := Quotient[FileRows.Length + FilePageRows - 1, FilePageRows], Pages > 0) then Pages else 1
 
     Render():void =
-        if (InTake?):
-            RenderTake()
+        if (FileShown?):
+            RenderFile()
         else:
-            RenderTabs()
+            RenderTake()
 
-    RenderTabs():void =
-        set View.BodyMessage = EmptyText
-        set View.LatestMessage = EmptyText
+    Header():void =
         SetRow(0, "")    # row 0 is the title bar image (TitleBarImage in UW_DebuggerText)
-        SetRow(1, "")
-        SetRow(2, "PATIENT: {Client.Name}")
-        SetRow(3, "")
-        for (I -> Name : DebuggerTabNames):
-            Mark := if (Cursor = I) then "> " else "  "
-            Label := if (Tab = I) then "[{Name}]" else " {Name} "
-            SetTab(I, "{Mark}{Label}")
-        SetRow(5, "------------------------------------------------------------------------")
-        Lines := BodyLines()
-        Actions := BodyActions()
-        for (Row := DebuggerBodyFirst..DebuggerBodyLast):
-            I := Row - DebuggerBodyFirst
-            if (Line := Lines[I]):
-                Selectable := if (Action := Actions[I], Action >= 0) then true else false
-                Mark := if (Action := Actions[I], Action >= 0, Action = Cursor) then "> " else "  "
-                SetRow(Row, if (Selectable?) then "{Mark}{Line}" else "  {Line}")
-            else:
-                SetRow(Row, "")
-        SetRow(16, Notice)
-        SetRow(17, "MOUSE click  /  SPACE select")
-
-    # The TAKE view: the take's title on row 4, then its menu or the last lines of its scene log,
-    # and the vitals on row 16.
-    RenderTake():void =
-        SetRow(0, "")    # row 0 is the title bar image (TitleBarImage in UW_DebuggerText)
-        SetRow(1, "")
+        SetRow(1, "")    # the [UNREGISTERED] tag is in the title bar image
         SetRow(2, "PATIENT: {Client.Name}")
         SetRow(3, "")
         SetTabMessage(0, TakeTitle(Title))
         SetTab(1, "")
         SetTab(2, "")
         SetRow(5, "------------------------------------------------------------------------")
+        SetRow(17, "MOUSE click  /  SPACE select")
+
+    RenderFile():void =
+        Header()
+        set View.BodyMessage = EmptyText
+        set View.LatestMessage = EmptyText
+        Start := Page * FilePageRows
+        for (Row := DebuggerBodyFirst..DebuggerBodyFirst + FilePageRows - 1):
+            if (Line := FileRows[Start + Row - DebuggerBodyFirst]):
+                SetRowMessage(Row, Line)
+            else:
+                SetRow(Row, "")
+        Mark := if (Cursor = MoreAction) then "> " else "  "
+        SetRow(15, if (FilePageCount() > 1) then "{Mark}[ MORE  {Page + 1}/{FilePageCount()} ]" else "")
+        SetRow(16, "> [ {FileButton} ]")
+
+    # The TAKE view: the take's title on row 4, then its menu or the last lines of its scene log,
+    # and the vitals on row 16.
+    RenderTake():void =
+        Header()
         BodyRows := DebuggerBodyLast - DebuggerBodyFirst + 1
         if (MenuOptions.Length > 0):
             set View.BodyMessage = EmptyText
@@ -372,7 +291,6 @@ dream_debugger_ui := class(debug_screen):
             set View.LatestMessage = if (ContinueShown?) then Join(array{Shown, ContinuePrompt}, EmptyText) else Shown
         Bars := if (Vitals >= 3) then "#####" else if (Vitals = 2) then "####." else if (Vitals = 1) then "##..." else "#...."
         SetRow(16, "VITALS  [{Bars}]")
-        SetRow(17, "MOUSE click  /  SPACE select")
 
     SetRow(Index:int, Text:string):void =
         SetRowMessage(Index, ToMessage(Text))
@@ -411,25 +329,38 @@ dream_debugger_ui := class(debug_screen):
 
     # ---- The take (debug_screen, driven by take_flow) ----
 
-    # Switches to the TAKE view; the take flow fills it.
+    # Clears the view for the take flow, which fills it.
     BeginTake():void =
-        set InTake = true
         set TakeLog = array{}
         set MenuOptions = array{}
         set Vitals = 0
-        set Notice = ""
         RebuildHotspots()
         Render()
 
-    # Back to the tabs once the client's run is over.
+    # Once the client's run is over: the mouse back, the last screen left up.
     EndTake():void =
-        set InTake = false
         SetClickable(true)
-        OpenTab(1)
 
-    # A line on row 16 of the tabs view, such as a locked layer.
-    ShowNotice(Text:string):void =
-        set Notice = Text
+    # A file to learn with one button under it (Chip, 2026-11-13): the case file and ATTACH TO
+    # DREAMER, then the player's role and ENTER DREAM. Heading rows first (they can carry model
+    # text), then the authored lines, word-wrapped and paged. Returns when the button is pressed.
+    ShowFile<override>(InTitle:message, Heading:[]message, Lines:[]string, Button:string)<suspends>:void =
+        SetClickable(true)
+        set Title = InTitle
+        Wrapped := for (Entry : Lines, Line : WrapText(Entry, DebuggerColumns - 4)):
+            ToMessage(Line)
+        set FileRows = Heading + Wrapped
+        set FileButton = Button
+        set Page = 0
+        set Cursor = FileAction
+        set MenuOptions = array{}
+        set FileShown = true
+        RebuildHotspots()
+        Render()
+        FileEvent.Await()
+        set FileShown = false
+        set Page = 0
+        RebuildHotspots()
         Render()
 
     SetTitle<override>(InTitle:message):void =

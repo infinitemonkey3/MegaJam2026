@@ -116,7 +116,8 @@ dream := class:
     # Obstacle also go to the client, who states her want early.
     Want:string = ""
     Obstacle:string = ""
-    SendIn:string = ""        # the director's prerecorded send-in line ("<dream id>_sendin"), also shown in the log
+    SendIn:string = ""        # the director's prerecorded send-in line ("<dream id>_sendin"); the text is for the writing
+    RoleFile:[]string = array{} # what the player's role knows, shown before ENTER DREAM, to learn like the case file
     AsksForCake:logic = false # a good ending asks the session which birthday cake was named
     UsesCake:logic = false    # the client and the case file get that cake (a lemon cake if none was named)
     Settings:[]scene_setting

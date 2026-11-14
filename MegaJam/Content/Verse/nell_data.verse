@@ -38,7 +38,17 @@ MakeNellDream1()<transacts>:dream =
             casting_role{Id := "role_teddy", Label := "Theodore \"Teddy\" Price / nephew", LogEdit := "You step in as Teddy, Walt's nephew, come to help open.", ContextLine := "The visitor is Teddy, Walt's nephew, a grown man now. You taught him to bake when he was nine, standing on a flour crate. He calls you Aunt Nell. Two years ago he asked you to reopen the shop, and you said no. This morning he's turned up at five to help you open anyway."}
         Want := "To open the shop at six, the way it's always opened."
         Obstacle := "The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in."
-        SendIn := "You're Teddy. Her nephew. You're the one paying for this chair. She taught you to bake when you were nine, standing on a flour crate. It's a two-man shop and she's one woman, and the place has gone strange on her. There's help at the door. She won't open it. Yet."
+        SendIn := "You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine, standing on a flour crate, and a woman who taught you can't refuse to show you how. That's your way in. Look over Teddy, and enter the dream when you're ready."
+        RoleFile := array:
+            "AGE  34"
+            "RELATION  Walt's nephew. You call her Aunt Nell."
+            "WORK  Nights at the freight depot. You left baking at 19."
+            "HISTORY  She taught you to bake when you were nine. You stood on a flour crate to reach the bench."
+            "HISTORY  She threw you out of the shop once, for whistling."
+            "HISTORY  Two years ago you asked her to reopen the shop. She said no."
+            "HISTORY  You're paying for this session. You want her back in the shop."
+            "YOU KNOW  Uncle Walt did the bread. She did the sweet side: cinnamon rolls, buns, cakes."
+            "YOU KNOW  Her regulars: Mrs. Okafor, two seeded rolls. Dunn the night porter, a heel of rye."
         Settings := array:
             scene_setting{Id := "oven_patient", Element := "oven", Label := "OVEN / patient", LogEdit := "The pilot light is burning, waiting for someone to light the oven by hand.", ContextLine := "The pilot light is burning this time. The oven isn't lit. It will light if someone does it by hand."}
             scene_setting{Id := "oven_roaring", Element := "oven", Label := "OVEN / roaring", LogEdit := "The oven is already lit and running hot.", ContextLine := "The oven is already lit this time, and it's running hot. Too hot.", Risk := risk_level.Risky}
@@ -104,7 +114,14 @@ MakeNellDream2()<transacts>:dream =
             casting_role{Id := "role_young_walt", Label := "Walter \"Walt\" Price, 27 / here to make his case", LogEdit := "You step in as Walt Price, twenty-seven, flour on your jacket.", ContextLine := "The visitor is Walt Price, 27, who delivers flour for the mill and has bought one of your cinnamon rolls every day this month. You've agreed to hear his case tonight, off the questions on your order pad."}
         Want := "To find out if Walt Price is worth a yes, without letting on that she likes him already."
         Obstacle := "She has decided not to be charmed, and it's nearly nine. The tea room closes at nine."
-        SendIn := "Different reel. Forty-seven years back. You're Walt Price, twenty-seven, flour on your jacket. She's agreed to hear you out, and she's written her questions down. Answer them like you mean it."
+        SendIn := "This one's casting itself. You're Walt Price, twenty-seven, flour on his jacket, the night she made up her mind about him. She married him, so he got it right once. Look over Walt, and enter the dream when you're ready."
+        RoleFile := array:
+            "AGE  27"
+            "WORK  You deliver flour for the mill."
+            "HABIT  You whistle a tune you swear you wrote."
+            "COURTING  You've bought one of her cinnamon rolls every day for a month. You never eat it in front of her."
+            "TONIGHT  She's agreed to hear your case at closing. She's written her questions on her order pad."
+            "YOU'VE NOTICED  She means to have her own bakery one day. She can't stand flowers."
         Settings := array{}
         Items := array:
             inject_item{Id := "item_cinnamon_roll", Label := "One of her cinnamon rolls", LogEdit := "Walt is holding one of her cinnamon rolls.", ContextLine := "He's holding one of your cinnamon rolls. He's bought one every day this month. He never eats it in front of you."}
@@ -162,7 +179,15 @@ MakeNellDream3()<transacts>:dream =
             casting_role{Id := "role_walt", Label := "Walter \"Walt\" Price / husband", LogEdit := "You step in as Walt, here for his cake.", ContextLine := "The visitor is Walt, your husband, come in for his birthday cake. It's his birthday. You had words this morning, and he's here anyway."}
         Want := "Walt to come in for his cake, and for this morning to be over."
         Obstacle := "This morning she told him to pick it up himself. She can't say sorry first."
-        SendIn := "Last one. You're Walt again, forty-one years on. It's your birthday, and you've come for your cake. You had words this morning. She's been waiting six years for you to walk through that door. So walk in."
+        SendIn := "Last one. You're Walt again, forty-one years on. He's the only one who can walk through that door at five. Look him over, and enter the dream when you're ready."
+        RoleFile := array:
+            "AGE  68"
+            "MARRIED  41 years. Price's Bakery, Cutler Row, for 38 of them."
+            "WORK  You do the bread. Up at five, whistling at the bench."
+            "TODAY  March 3, your birthday. She forgot."
+            "THIS MORNING  You wrote your own order slip for your birthday cake, as a joke: Pick up 5 PM."
+            "THIS MORNING  You had words over it. She told you to pick it up yourself."
+            "NOW  It's nearly five. You've come for your cake."
         Settings := array{}
         Items := array:
             inject_item{Id := "item_order_slip", Label := "Order slip / W. Price", LogEdit := "The order slip lies on the counter in Walt's handwriting.", ContextLine := "Walt's order slip is on the counter: 1 birthday cake. W. Price. Pick up 5 PM. His handwriting. He wrote it as a joke."}

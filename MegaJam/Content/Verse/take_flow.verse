@@ -109,23 +109,22 @@ take_flow := class(creative_device):
             take_phase.Finale => DoFinale()
             take_phase.Done => take_phase.Done
 
-    # 1. Case file: load the dream into the client, show the file, the director's aside.
+    # 1. Case file: load the dream into the client and show her file with ATTACH TO DREAMER,
+    # while the director names her and says to learn it (Chip, 2026-11-13: like a spy learning
+    # the target; the file is gone once the player attaches).
     DoCaseFile(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         set TakeNumber = 0
         Control.LoadDream(Subject, Dream, Facts)
-        Top := for (Entry : Briefing(Dream)) { ToMessage(Entry) }
-        Rest := for (Entry : Subject.CaseFile + Facts + array{Dream.LoopNote}) { ToMessage(Entry) }
-        Screen.SetCaseFile(Top + Control.CakeEntries(Dream) + Rest)
-        Director.PlayLine("{Dream.Id}_intro")
+        branch:
+            Director.PlayLine("{Dream.Id}_intro")
+        Screen.ShowFile(ToMessage("CASE FILE"), Control.CakeEntries(Dream), Subject.CaseFile + Facts + array{Dream.LoopNote}, "ATTACH TO DREAMER")
+        Screen.SetTitle(ToMessage(Dream.Title))
         take_phase.Observe
 
-    # The improv prompt at the top of the case file: who the player plays, what she wants, what's
-    # in the way. Empty for a dream that still lets the player cast.
-    Briefing(Dream:dream)<transacts>:[]string =
-        if (Dream.Roles.Length = 1, Role := Dream.Roles[0]):
-            array{"-- YOUR ROLE --", "YOU ARE  {Role.Label}", "SHE WANTS  {Dream.Want}", "IN THE WAY  {Dream.Obstacle}"}
-        else:
-            array{}
+    # The player's role, to learn before ENTER DREAM: who they are, what the role knows, and the
+    # scene's improv prompt (what she wants, what's in the way).
+    RoleFile(Dream:dream, Role:casting_role)<transacts>:[]string =
+        array{"YOU ARE  {Role.Label}"} + Dream.RoleFile + array{"-- THIS DREAM --", "SHE WANTS  {Dream.Want}", "IN THE WAY  {Dream.Obstacle}"}
 
     # 2. Observe: replay the loop as a log, one beat at a time. The client tells each beat as
     # something that happened to her, and the player presses CONTINUE for the next (play test,
@@ -158,13 +157,18 @@ take_flow := class(creative_device):
     # A dream with one role assigns it (Chip, 2026-11-13: choosing who to be was the hardest
     # call and caused most bad takes): the director sends the player in as it, and they pick
     # only the item.
+    # With one role, the director sends the player in as it (on the first take) while they read
+    # the role, and ENTER DREAM starts the take (Chip, 2026-11-13). No item pick then.
     DoDirect(Dream:dream)<suspends>:take_phase =
-        RoleIndex := if (Dream.Roles.Length = 1):
-            SendIn(Dream)
-            0
-        else:
-            Director.PlayLine(DirectorLineBeforeTake)
-            PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
+        if (Dream.Roles.Length = 1, Role := Dream.Roles[0]):
+            if (TakeNumber = 0):
+                branch:
+                    Director.PlayLine("{Dream.Id}_sendin")
+            Screen.ShowFile(ToMessage("YOUR ROLE"), array{}, RoleFile(Dream, Role), "ENTER DREAM")
+            set MaybeSetup = option{MakeTakeSetup(Role, array{}, array{})}
+            return take_phase.RunTake
+        Director.PlayLine(DirectorLineBeforeTake)
+        RoleIndex := PickOne("CASTING", for (Option : Dream.Roles) { Option.Label })
         if (Role := Dream.Roles[RoleIndex]):
             ItemIndex := PickOne("INJECT ITEM", for (Option : Dream.Items) { Option.Label })
             Items := if (Item := Dream.Items[ItemIndex]) then array{Item} else array{}
@@ -173,13 +177,6 @@ take_flow := class(creative_device):
         else:
             Logger.Print("[flow] {Dream.Id} has no roles to cast", ?Level := log_level.Error)
             take_phase.Done
-
-    # The director's send-in: his line plays and shows in the log, then CONTINUE.
-    SendIn(Dream:dream)<suspends>:void =
-        if (Dream.SendIn.Length > 0):
-            Log("DIRECTOR: {Dream.SendIn}")
-        Director.PlayLine("{Dream.Id}_sendin")
-        Screen.AwaitContinue()
 
     # Shows one menu and returns the index the player chose: "next" moves the highlight and
     # "confirm" takes it, or the screen reports a direct pick (a click on the dream debugger).

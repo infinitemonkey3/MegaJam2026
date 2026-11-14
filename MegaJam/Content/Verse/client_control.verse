@@ -222,7 +222,8 @@ client_control := class:
         # The first line reacts to the casting and the item by name, so the take opens on what the
         # player chose (play test, 2026-11-13: a bare "say your first line" got a generic opening).
         ItemText := Join(for (Item : Setup.Items) { Item.ContextLine }, " ")
-        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} And react to this, which is new this time: {ItemText} {WantCue(Dream)}Don't open with the time of day or with the visitor being early.")
+        ItemCue := if (Setup.Items.Length > 0) then "And react to this, which is new this time: {ItemText} " else ""
+        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} {ItemCue}{WantCue(Dream)}Don't open with the time of day or with the visitor being early.")
         if (Persona.PromptToTalk[Context, VoiceChannel]):
             Logger.Print("[client] take {TakeNumber} of {Dream.Id} started with {Lines.Length} context lines")
             true

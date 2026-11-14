@@ -48,6 +48,11 @@ debug_screen := interface:
     # player presses it. The replay waits on it between beats.
     AwaitContinue()<suspends>:void
 
+    # A file to read with one button under it: the case file and ATTACH TO DREAMER, or the
+    # player's role and ENTER DREAM. Heading rows come first (they can carry model text), then
+    # the authored lines. Returns when the player presses the button.
+    ShowFile(Title:message, Heading:[]message, Lines:[]string, Button:string)<suspends>:void
+
 # Logs every call. Never presses "next" and presses "confirm" after a moment, so every menu
 # takes its first option and the flow runs unattended. Model-written text shows redacted here.
 stub_debug_screen := class(debug_screen):
@@ -97,3 +102,8 @@ stub_debug_screen := class(debug_screen):
     AwaitPick<override>()<suspends>:int =
         Sleep(Inf)
         0
+
+    ShowFile<override>(Title:message, Heading:[]message, Lines:[]string, Button:string)<suspends>:void =
+        Text := Localize(Title)
+        Logger.Print("[screen] FILE {Text}: {Heading.Length + Lines.Length} entries, [{Button}]")
+        Sleep(0.5)

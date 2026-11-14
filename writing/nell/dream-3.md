@@ -22,7 +22,8 @@ case file opens with it.
 - You are: Walt, her husband, come in for his birthday cake.
 - She wants: `Walt to come in for his cake, and for this morning to be over.`
 - In the way: `This morning she told him to pick it up himself. She can't say sorry first.`
-- Director, `nell_d3_sendin`: `Last one. You're Walt again, forty-one years on. It's your birthday, and you've come for your cake. You had words this morning. She's been waiting six years for you to walk through that door. So walk in.`
+- Director on the case file, `nell_d3_intro`: `Bottom of the well. Last look at her file. Attach when you're ready.`
+- Director on the role, `nell_d3_sendin`: `Last one. You're Walt again, forty-one years on. He's the only one who can walk through that door at five. Look him over, and enter the dream when you're ready.`
 - Approaches that should all work: Tease her about the slip, say sorry first, ask for your cake, tell her you'd have ordered it anyway, cut it and share it, stay till closing.
 
 ## The Cake
