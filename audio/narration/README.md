@@ -6,7 +6,7 @@ from a six-voice audition and the take for each line. WAV, as the model returned
 | File | Line | Delivery note (`style_instructions`) |
 |---|---|---|
 | `VO_Director_ColdOpen_01.wav` | "Everyone dreams now. If you can pay, someone makes your dream for you, and it's beautiful." | Base note |
-| `VO_Director_ColdOpen_02.wav` | "That's not me. And that's not how it always goes." | Base note |
+| `VO_Director_ColdOpen_02.wav` | "But that's not me. And that's not how it always goes." (redone 2026-11-14, was "That's not me"; old take in `takes/`) | Base note |
 | `VO_Director_ColdOpen_03.wav` | "Cheap implants break. People don't wake up. Somebody has to get them out." (6.4 s; redone 2026-11-13, was "People get stuck") | Base note, a little weight on "don't wake up", last sentence quiet and resigned |
 | `VO_Director_ColdOpen_04.wav` | "That's where you come in." (2.2 s; added 2026-11-13, on the HELP WANTED sign) | Base note, flat and matter-of-fact, as if handing over a job |
 | `VO_Director_Tutorial_01.wav` | "Got a looper in the chair. Sit down. Let's see where he's stuck." | Plain talk to the assistant, a little weary |
@@ -35,3 +35,13 @@ note of its own. Files: `VO_Director_Tutorial_02.wav` (the boot line, replacing 
 | `nell_d2_sendin` | "This time you'll be Walt Price, twenty-seven, flour on his jacket. This is the night she made up her mind about him. Look over Walt, and enter the dream when you're ready." |
 | `nell_d3_intro` | "Bottom of the well. Last look at her file. Attach when you're ready." |
 | `nell_d3_sendin` | "Last one. You're Walt again, forty-one years on. He's the only one who can walk through that door at five. Look him over, and enter the dream when you're ready." |
+
+## The finale (recorded 2026-11-14)
+
+Script and ids in `writing/nell/finale.md`. The director's six lines in `Orus` with the base
+note and a delivery note each; the AI's line in `Leda` (chosen from an audition with `Puck` and
+`Achird`, kept in `audition/`), told: "an artificial intelligence that has only just learned what
+it feels like to lose something; soft, polite and curious, childlike and a little too bright,
+with an uncanny evenness; hurt underneath, and quietly accusing." In UEFN under
+`Content/DirectorVO/`, wave volume 2.0, players `DIR finale_*`. The power cut is in
+`audio/sfx/` (ElevenLabs Sound Effects v3).

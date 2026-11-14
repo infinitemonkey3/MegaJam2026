@@ -97,7 +97,7 @@ never offers choices. The last line is one ask only.
 | # | Trouble | Her ask | Teddy's brief could feed it |
 |---|---|---|---|
 | Opening line | The dough is climbing out of its bowl and over the bench | Go out back and get something to get it back in. What've you got? | "Dough you fight, dough you lose. You fold it." |
-| 1 | Walt's oven door won't open for her | Try it, it might open for you. What's inside? | Walt knocked twice and said "Morning, old girl." |
+| 1 | Walt's oven door won't open for her | How are you getting it open? Then (its own follow-up, in place of "what are you doing with it?"): it swings open. What's inside? | Walt knocked twice and said "Morning, old girl." |
 | 2 | Order slips fall like snow, the whole street's orders | Catch one and read it out. Who's it for, and what do they want? | The regulars' orders |
 | Last line | Six o'clock: a faceless person knocks at the front door (`LastLineCue`) | Go and look. Who is it? Whoever he names, that's their face now. | The key on a string round her neck |
 
@@ -426,7 +426,7 @@ LOOP exit / LAYER 1 cleared
 
 Spoken by Nell after the positive verdict line. The dream's fact, in her voice.
 
-`March the third was Walt's birthday. I bake his cake every year, and nobody picks it up, because it's his. He whistled when he kneaded. I couldn't stand to hear anyone else do it.`
+`You know, it's Walt's birthday today. March the third. He's not here for it, but I'll bake his cake anyway. I do every year, and nobody picks it up, because it's his. He whistled when he kneaded. I couldn't stand to hear anyone else do it.`
 
 ### Good Ending Unlock
 

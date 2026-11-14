@@ -121,6 +121,8 @@ dream_debugger_ui := class(debug_screen):
     # Input mode All while there's something to click; None while the player talks, so Fortnite
     # gets the keyboard (and the talk key) back.
     var Clickable:logic = true
+    # Lumi, the Wonderwell assistant: disabled until the finale wakes it (SetAssistantAwake).
+    var LumiAwake:logic = false
     # The player's active input, for the controls hint on row 17 (WatchInputKind keeps it current).
     var Kind:input_kind = input_kind.KeyboardInput
 
@@ -261,12 +263,14 @@ dream_debugger_ui := class(debug_screen):
 
     Header():void =
         SetRow(0, "")    # row 0 is the title bar image (TitleBarImage in UW_DebuggerText)
-        SetRow(1, "")    # the [UNREGISTERED] tag is in the title bar image
-        SetRow(2, "PATIENT: {Client.Name}")
+        SetRow(1, "PATIENT: {Client.Name}")   # the [UNREGISTERED] tag is in the title bar image
+        SetRowMessage(2, TakeTitle(Title))
         SetRow(3, "")
-        SetTabMessage(0, TakeTitle(Title))
-        SetTab(1, "")
-        SetTab(2, "")
+        # The old tab row is Lumi's bar (Chip, 2026-11-14): Wonderwell's story guide, disabled in
+        # this cracked copy until the AI wakes in the finale.
+        SetTab(0, "LUMI")
+        SetTab(1, if (LumiAwake?) then "I'm here." else "story guide")  # longer text ran into the status
+        SetTab(2, if (LumiAwake?) then "* ONLINE" else "- DISABLED")
         SetRow(5, "------------------------------------------------------------------------")
         SetRow(17, ControlsHint())
 
@@ -419,6 +423,10 @@ dream_debugger_ui := class(debug_screen):
 
     SetVitals<override>(Level:int):void =
         set Vitals = Level
+        Render()
+
+    SetAssistantAwake<override>(Awake:logic):void =
+        set LumiAwake = Awake
         Render()
 
     SetClientState<override>(TakeNumber:int, Feeling:client_state):void =

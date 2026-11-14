@@ -117,6 +117,8 @@ overlay_screen := class(debug_screen):
     SetVitals<override>(Level:int):void =
         Logger.Print("[screen] VITALS level={Level}", ?Level := log_level.Verbose)
 
+    SetAssistantAwake<override>(Awake:logic):void = {}  # the overlay has no assistant spot
+
     SetClientState<override>(TakeNumber:int, Feeling:client_state):void =
         Logger.Print("[screen] STATE take={TakeNumber} trust={Feeling.Trust} fear={Feeling.Fear} hope={Feeling.Hope}")
 

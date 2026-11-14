@@ -69,13 +69,23 @@ LOG     The lights go out, and the dream starts over.
 
 ## Take Phases
 
-| Log | Context |
-|---|---|
-| `Twenty to five. The last customers of the afternoon.` | `Time's moving on: it's twenty to five, the end of the afternoon trade. The cake is still in the case.` |
-| `Ten to five. Time to cash up and wipe down the bench.` | `Time's moving on: it's ten to five. Time to cash up and wipe down the bench. Walt still isn't here.` |
-| `Nearly five. The cake is boxed and waiting by the till.` | `Time's moving on: it's nearly five. The cake is boxed and waiting by the till. He said he'd be in at five.` |
+Rewritten 2026-11-14 (Chip): a sad mirror of dream 2's order pad. She waits for him to come
+home; this time he does, but she knows in her heart he's gone. She feels the rows were her
+doing and fears he left angry. She leads, one question per answer, as in dream 2 (`ClientLeads`,
+`TurnsPerBeat` 1), reacting to each answer before the next. No timers anywhere. No prop menu.
 
-Last line log: `The clock is about to strike five. One more thing to say.`
+1. **Opening:** names the cake (dream 2's), says they never got enough Saturdays, not as many as
+   he promised, mostly her doing (Chip: it adds a lot to her), then: do you remember that first
+   one, long ago, our first date? (the Saturday the player promised as young Walt in dream 2). "Tell me the story
+   again." The player tells it; whatever he remembers is how it went.
+2. If we'd ever retired, how would we have spent a Saturday?
+3. Would you have minded if I'd given up the shop for you?
+4. After all the rows: why me, still?
+5. **Last line**, at five: she says she misses him and doesn't want him to go, then asks "Do
+   you still love me, Walt?"
+
+Good ending: he says he does. She puts the pad down, cuts two slices, and is at peace (her
+reveal). Then the finale (`finale.md`).
 
 ## Directing Options
 
