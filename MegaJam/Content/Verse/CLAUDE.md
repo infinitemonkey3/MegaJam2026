@@ -224,6 +224,11 @@ play session yet.
 - The pre-roll no longer has the design's mic check or the Talk/Preset-lines choice (Chip
   wanted a plain black start screen). `game_state.VoiceMode` stays `Mic` until that choice gets
   a new home.
+- **Space must not make the character jump** (the jump was audible). The `No Jump Movement
+  Settings` device (Player Movement Settings, outliner folder `Game`) has its
+  `MovementSettings_Jumping` component's Jump Velocity at 0, Add to Players on Start on. The
+  Jump input action still reaches Verse. Untested in a session whether a zero-velocity jump is
+  silent; if not, Verse's `fort_jump_component` can disable jumping, but it's `@experimental`.
 - Only one `take_flow` may run: it's started by `game_director`, so keep its `RunOnBegin` off
   whenever a director is placed.
 - Verse devices render as consoles in a play session too. Keep `Game Director` and `Take Flow`
