@@ -32,7 +32,8 @@ play session yet.
 
 ### Cold open (`cold_open.verse`)
 - `title_card` (`title_card.verse`): the Wonderwell title card (`Content/TitleCard/T_TitleCard`,
-  from `art/style-test/mockup-title.jpg`) full screen with the prompt low under the recliner.
+  built by `art/tools/make_title_card.py`: a figure sat on the street, head in hands, the dream
+  rising from his head; no recliner) full screen with the prompt low under the recliner.
   The pre-roll shows it over the black overlay and `EndPreRoll` takes it down.
 - `cold_open`: `RunPreRoll` (the title card over a full-screen black Verse UI overlay, "PRESS ANY KEY TO START",
   ended by `input_router.AnyKeyEvent`; lifted under the sequence's own fade from black),
