@@ -86,7 +86,7 @@ play session yet.
   "DIRECTOR: ...") then CONTINUE, then the item pick. The case file opens with the improv
   prompt (`Briefing`: YOUR ROLE, SHE WANTS `dream.Want`, IN THE WAY `dream.Obstacle`), and
   `StartTake` tells the client her want and to state it early, in offers, not questions. Nell's
-  roles: the new apprentice, Teddy, Walt. Des still casts from three.
+  roles: Teddy, young Walt, Walt. Des still casts from three.
 - Direct is one role and one item (play test, 2026-11-13); settings are skipped. The take's
   opening prompt names both, so the client's first line reacts to them. `PickSettings` and
   `PickItems` are unused until settings or more items come back.

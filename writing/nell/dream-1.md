@@ -27,11 +27,11 @@ and caused most bad takes). The director sends them in with a prerecorded line, 
 only the item. Built as an improv prompt: who you are, what she wants, what's in the way. The
 case file opens with it.
 
-- You are: The new apprentice, first morning. Teddy found them and sent them; he pays their wages. She didn't ask for an apprentice.
+- You are: Teddy, Walt's nephew, 34. She taught you to bake at nine, on a flour crate. Two years ago you asked her to reopen and she said no. You pay for this session. This morning you've turned up at five to help her open anyway.
 - She wants: `To open the shop at six, the way it's always opened.`
 - In the way: `The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in.`
-- Director, `nell_d1_sendin`: `You're the new apprentice. First morning. Her nephew sent you, and she doesn't know you're coming. It's a two-man shop and she's one woman, and the place has gone strange on her. There's help at the door. She won't open it. Yet.`
-- Approaches that should all work: take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
+- Director, `nell_d1_sendin`: `You're Teddy. Her nephew. You're the one paying for this chair. She taught you to bake when you were nine, standing on a flour crate. It's a two-man shop and she's one woman, and the place has gone strange on her. There's help at the door. She won't open it. Yet.`
+- Approaches that should all work: remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
 
 ## Loop Beats
 
