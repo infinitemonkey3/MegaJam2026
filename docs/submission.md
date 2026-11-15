@@ -9,10 +9,8 @@ Fortnite Developer Rules (behind an Epic login). **Chip: skim both yourself befo
 
 ## Blockers, in order
 
-1. **Private version code.** Publishing a private version needs the Fortnite Developer Terms,
-   and enrollment includes a purchase that can take up to 24 hours to clear (devlog, Day 4). If
-   the code can't be made in time, ask in the jam's itch.io forum thread or the UEFN Discord
-   channel *now*, and say so in the submission.
+1. **Private version code.** Developer Terms enrollment cleared (2026-11-15, afternoon), so
+   the island can be published as a private version once the build is final.
 2. **Turn off the debug start** on the Game Director before making the version: `SkipToFinale`
    off, `StartAt` = `PreRollPhase`, `StartDream` = 0, `DevKeys` off. Then push and play once from
    the title.
@@ -25,7 +23,7 @@ Fortnite Developer Rules (behind an Epic login). **Chip: skim both yourself befo
 |---|---|
 | Island name | **Wonderwell** |
 | Team name, each member's name and Epic-account email | Team **Dream Team**. Chip fills in names and emails on the form (not stored in the repo) |
-| **Private version code** (not live, not playtest), created before the deadline, the final build to be judged | **Blocked**, see above |
+| **Private version code** (not live, not playtest), created before the deadline, the final build to be judged | Enrollment cleared; publish after the debug start is off |
 | Gameplay video link, 30 to 60 seconds | To record |
 | Dev log link (optional; required for Glass Box) | Ready: https://github.com/infinitemonkey3/MegaJam2026/blob/main/docs/devlog.md (after the merge) |
 | Tools used (optional; needed for partner prizes) | Draft below |
