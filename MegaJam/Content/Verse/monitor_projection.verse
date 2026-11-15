@@ -9,10 +9,10 @@ using { /Verse.org/SpatialMath }
 #
 # ProjectWorldToViewport answers in physical screen centimeters (1920 px at 96 per inch is
 # 50.8 cm wide), so the viewport's size in those units changes with the display. Each call
-# works it out from one projected point and the camera's known eye, angle and horizontal field
-# of view (the desk camera: (-140, -287, 134), looking down -X, 5 degrees down, 90 degrees).
-# Measured in the first session: those fit the projection exactly. The eye that
-# DeprojectViewportToWorld returns does not (it made the screen 12% too small), so it isn't used.
+# measures it by projecting a point far down the desk camera's axis (eye (-140, -287, 134),
+# looking down -X, 5 degrees down), which lands in the screen's centre at any aspect ratio. The
+# eye that DeprojectViewportToWorld returns is off (it made the screen 12% too small), so it
+# isn't used.
 
 # Room_Monitor: an 80 cm plane at (-235, -243, 119), facing the camera (yaw -90). Moved up from
 # Z 115 (Chip, 2026-11-13); Room_MonitorGlass and the DreamDebuggerScreen entity moved with it.
@@ -31,6 +31,8 @@ monitor_rect := struct:
     Top:float
     Width:float
     Height:float
+    # The viewport's width over its height, to turn the fractions into a shape.
+    ViewAspect:float = 16.0 / 9.0
 
 world_panel := class:
     # Centre in engine coordinates (cm), half width and height, and the in-plane horizontal
@@ -44,12 +46,11 @@ world_panel := class:
     AxisY:float
 
     # The camera's fixed orientation in engine coordinates (yaw 180, pitch -5): forward and up.
-    # Right is (0, -1, 0). TanHalfFov is tan(90 / 2).
+    # Right is (0, -1, 0).
     FwdX:float = -0.99619
     FwdZ:float = -0.08716
     UpX:float = -0.08716
     UpZ:float = 0.99619
-    TanHalfFov:float = 1.0
     # The camera's eye in engine coordinates (CO Desk Camera).
     EyeX:float = -140.0
     EyeY:float = -287.0
@@ -67,25 +68,20 @@ world_panel := class:
         R := Max(Max(A.Left, B.Left), Max(C.Left, D.Left)) / Size.Left
         T := Min(Min(-A.Up, -B.Up), Min(-C.Up, -D.Up)) / Size.Up
         Bt := Max(Max(-A.Up, -B.Up), Max(-C.Up, -D.Up)) / Size.Up
-        monitor_rect{Left := L, Top := T, Width := R - L, Height := Bt - T}
+        monitor_rect{Left := L, Top := T, Width := R - L, Height := Bt - T, ViewAspect := Size.Left / Size.Up}
 
-    # The viewport's width (Left) and height (Up) in the projection's units, from the panel's
-    # centre: projected at X across and Y down, while the pinhole model puts it at
-    # X = W/2 (1 + u / TanHalfFov) and Y = H/2 - (W/2) v / TanHalfFov.
+    # The viewport's width (Left) and height (Up) in the projection's units: twice where a point
+    # far down the camera's axis lands, since that point is always the screen's centre. No field
+    # of view or aspect ratio comes into it, and at 100 m a few cm of error in the eye don't
+    # matter. (Two earlier versions solved it from the eye and the FOV: the first assumed 90
+    # degrees across, wrong outside 16:9 since Fortnite keeps the vertical FOV; the second fitted
+    # the FOV from two points near the eye, and still landed the debugger short of the glass to
+    # the right and below, play test 2026-11-14.)
     ViewportSize(Player:player)<transacts><decides>:vector3 =
-        # Panel centre relative to the eye, in engine axes.
-        DX := CentreX - EyeX
-        DY := CentreY - EyeY
-        DZ := CentreZ - EyeZ
-        Depth := DX * FwdX + DZ * FwdZ
-        Depth > 1.0
-        U := -DY / Depth
-        V := (DX * UpX + DZ * UpZ) / Depth
-        P := Player.ProjectWorldToViewport[vector3{Forward := CentreX, Left := -CentreY, Up := CentreZ}]
-        Denominator := 1.0 + U / TanHalfFov
-        Denominator > 0.01
-        W := 2.0 * P.Left / Denominator
-        H := 2.0 * (-P.Up) + W * V / TanHalfFov
+        Far := 10000.0
+        P := Player.ProjectWorldToViewport[vector3{Forward := EyeX + Far * FwdX, Left := -EyeY, Up := EyeZ + Far * FwdZ}]
+        W := 2.0 * P.Left
+        H := 2.0 * (-P.Up)
         W > 0.0
         H > 0.0
         vector3{Left := W, Up := H}

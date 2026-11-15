@@ -50,10 +50,10 @@ CakeKnowledge<localizes>(Cake:message):message = "The cake: the night you said y
 # For the take itself (2026-11-14: knowing the cake from the personality, she never named it).
 CakeTakeLine<localizes>(Cake:message):message = "The cake in the case is his birthday cake: {Cake}. It's what he asked for the night you said yes to him, and you've baked it every March 3 since. Call it by what it is when you talk about it."
 CakeOpeningCue<localizes>(Cake:message):message = "Name the cake in your first line: {Cake}."
-CakeEntry<localizes>(Cake:message):message = "ORDER  1 birthday cake: {Cake}. W. Price. Pick up 5 PM."
+CakeEntry<localizes>(Cake:message):message = "The birthday cake Walt asked for: {Cake}. The order slip says W. Price, pick up 5 PM."
 CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like, and how the two of them would spend a Saturday afternoon. Give the cake he asked for in a few plain words, like \"a lemon cake\" or \"a chocolate cake with walnuts\"; if he never said, give \"a lemon cake\". Then give the Saturday he described, in one short plain sentence in his own terms, like \"a walk by the river, then the pictures\"; if he never said, give \"a walk, and tea somewhere\"."
 SaturdayTakeLine<localizes>(Plan:message):message = "The night you said yes to him, forty-one years ago, he promised you a Saturday: {Plan}. That Saturday was your first date. You got a few more Saturdays like it over the years, but not as many as he promised, and you think that was mostly your doing. When you ask him if he remembers that first one, name it in his own words, and ask him to tell you the story of it again."
-SaturdayEntry<localizes>(Plan:message):message = "PROMISED  First Saturday out: {Plan}"
+SaturdayEntry<localizes>(Plan:message):message = "What Walt promised her, the night she said yes: {Plan}"
 
 LastN(Input:[]t, Count:int where t:type)<transacts>:[]t =
     if (Tail := Input.Slice[Input.Length - Count]):
@@ -234,7 +234,8 @@ client_control := class:
         var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
         # Turn-taking: she always waits for the visitor. Unless she leads the beats herself, she
         # also leaves moving the scene on to the dream (RunBeats prompts her).
-        TurnRule := if (Dream.ClientLeads?) then "Take turns with the visitor: say your piece, then stop and wait for their answer. Never ask the same thing twice in a row." else "Take turns with the visitor: say your piece, then stop and wait for their answer. Answer what they said, and don't move the scene on to something new by yourself; the dream will move it on when it's time."
+        # With Asks the flow owns every question: her replies only react (Chip, 2026-11-14).
+        TurnRule := if (Dream.Asks.Length > 0) then "Take turns with the visitor. When they answer, react to what they said in one or two short sentences, \"yes, and\", and then stop. Never ask them a question of your own, and don't move the scene on: the dream tells you when to ask something and what to ask, one question at a time, and you ask exactly that." else if (Dream.ClientLeads?) then "Take turns with the visitor: say your piece, then stop and wait for their answer. Never ask the same thing twice in a row." else "Take turns with the visitor: say your piece, then stop and wait for their answer. Answer what they said, and don't move the scene on to something new by yourself; the dream will move it on when it's time."
         set Lines += array{ToMessage(TurnRule)}
         if (Dream.Want.Length > 0):
             set Lines += array{ToMessage("What you want in this scene: {Dream.Want} What's in the way: {Dream.Obstacle} Say what you want early, as something the visitor can work with. Make statements and offers. Never ask the visitor what to do or what they think; when you ask, ask for one concrete thing they can answer in a few words.")}
@@ -262,7 +263,10 @@ client_control := class:
         ItemText := Join(for (Item : Setup.Items) { Item.ContextLine }, " ")
         ItemCue := if (Setup.Items.Length > 0) then "And react to this, which is new this time: {ItemText} " else ""
         Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} {ItemCue}{WantCue(Dream)}Don't open with the time of day or with the visitor being early.")
-        Opening := if (Dream.UsesCake?) then Join(array{Context, CakeOpeningCue(TheCake())}, MessageSpace) else Context
+        WithCake := if (Dream.UsesCake?) then Join(array{Context, CakeOpeningCue(TheCake())}, MessageSpace) else Context
+        # The dream's first ask goes last, so it's the last thing she says (play test, 2026-11-14:
+        # left to the personality, dream 3's opening question got crowded out by the cake).
+        Opening := if (First := Dream.Asks[0]) then Join(array{WithCake, ToMessage("You may use up to four short sentences for this first line. {First.Cue} End your first line on this question, asked in your own words: \"{First.Ask}\" Stop after the question and wait for the answer.")}, MessageSpace) else WithCake
         if (Persona.PromptToTalk[Opening, VoiceChannel]):
             Logger.Print("[client] take {TakeNumber} of {Dream.Id} started with {Lines.Length} context lines")
             true
@@ -306,6 +310,20 @@ client_control := class:
                 break
             if (Waited >= TimeoutSeconds):
                 Logger.Print("[client] scene move skipped (persona busy)", ?Level := log_level.Warning)
+                break
+            Sleep(0.5)
+            set Waited += 0.5
+
+    # The next question in a dream's call and response (dream_ask), once she has finished
+    # reacting to the last answer: what happens first, then the question, which she ends on.
+    AskNext(Next:dream_ask, TimeoutSeconds:float)<suspends>:void =
+        Instructions := ToMessage("{Next.Cue} Now ask the visitor this, in your own words, as one short question: \"{Next.Ask}\" Say it all in one to three short sentences, end on the question, then stop and wait for the answer. Don't repeat what you just said. Anything the visitor has already changed stays changed.")
+        var Waited:float = 0.0
+        loop:
+            if (Persona.PromptToTalk[Instructions, VoiceChannel]):
+                break
+            if (Waited >= TimeoutSeconds):
+                Logger.Print("[client] ask skipped (persona busy)", ?Level := log_level.Warning)
                 break
             Sleep(0.5)
             set Waited += 0.5
@@ -357,9 +375,14 @@ client_control := class:
     TheCake()<transacts>:message =
         if (Cake := MaybeCake?) then Cake else DefaultCake
 
-    # Case-file entries that carry model text: the cake order, for a dream with UsesCake.
-    CakeEntries(Dream:dream):[]message =
-        if (Dream.UsesCake?) then array{CakeEntry(TheCake())} + SaturdayLines(SaturdayEntry) else array{}
+    # Case-file entries that carry model text, for a dream with UsesCake: THE CAKE (and FIRST
+    # SATURDAY), tagged for the debugger.
+    CakeEntries(Dream:dream):[]file_heading =
+        if (not Dream.UsesCake?):
+            return array{}
+        Cake := CakeEntry(TheCake())
+        Saturday := SaturdayLines(SaturdayEntry)
+        array{file_heading{Tag := "THE CAKE", Text := Cake}} + (for (Line : Saturday) { file_heading{Tag := "FIRST SATURDAY", Text := Line} })
 
     # The Saturday line, if one was recorded, built with Line.
     SaturdayLines(Line:type{_(:message):message}):[]message =

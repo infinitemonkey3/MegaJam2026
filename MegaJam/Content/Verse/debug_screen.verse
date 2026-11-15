@@ -10,6 +10,17 @@ using { /Verse.org/Simulation }
 # Everything is a `message`, never a `string`: text written by the model is redacted when it
 # is turned into a string, so it can only be passed through to UI.
 EmptyText<localizes>:message = ""
+HeadingSeparator<localizes>:message = "  "
+
+# A tagged entry at the top of a file whose text may be model-written ("ORDER" and the cake he
+# named): the tag stays a string so the debugger can show it as a tag (a message can't be split).
+file_heading := struct:
+    Tag:string
+    Text:message
+
+# The heading as one line, "ORDER  1 birthday cake...", for screens without tags.
+HeadingLine(Heading:file_heading):message =
+    Join(array{ToMessage(Heading.Tag), Heading.Text}, HeadingSeparator)
 
 debug_screen := interface:
     # The screen's title line: "DREAM DEBUGGER", "TAKE 2", the client's name.
@@ -55,7 +66,17 @@ debug_screen := interface:
     # A file to read with one button under it: the case file and ATTACH TO DREAMER, or the
     # player's role and ENTER DREAM. Heading rows come first (they can carry model text), then
     # the authored lines. Returns when the player presses the button.
-    ShowFile(Title:message, Heading:[]message, Lines:[]string, Button:string)<suspends>:void
+    ShowFile(Title:message, Heading:[]file_heading, Lines:[]string, Button:string)<suspends>:void
+
+    # The dream being worked on, for the debugger's SESSION panel: its number (1-based, which is
+    # also its layer), its id and its title. Screens without a session panel ignore it.
+    SetDream(Number:int, Id:string, Title:string):void = {}
+
+    # "Your turn to speak" (Chip, 2026-11-14): shown while the take waits for the player's line,
+    # so the player knows it's on them. Not a button: the player talks, with the talk key. Ask is
+    # the question she just asked (a dream_ask), shown in the cue; empty for a generic prompt.
+    ShowSpeakCue(Ask:string):void = {}
+    HideSpeakCue():void = {}
 
 # Logs every call. Never presses "next" and presses "confirm" after a moment, so every menu
 # takes its first option and the flow runs unattended. Model-written text shows redacted here.
@@ -110,7 +131,7 @@ stub_debug_screen := class(debug_screen):
         Sleep(Inf)
         0
 
-    ShowFile<override>(Title:message, Heading:[]message, Lines:[]string, Button:string)<suspends>:void =
+    ShowFile<override>(Title:message, Heading:[]file_heading, Lines:[]string, Button:string)<suspends>:void =
         Text := Localize(Title)
         Logger.Print("[screen] FILE {Text}: {Heading.Length + Lines.Length} entries, [{Button}]")
         Sleep(0.5)

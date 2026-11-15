@@ -238,6 +238,9 @@ du = (u % HT_STEP) - HT_STEP / 2
 dv = (v % HT_STEP) - HT_STEP / 2
 radius = strength * HT_STEP * 0.72
 dots = np.clip(radius - np.sqrt(du * du + dv * dv) + 0.5, 0.0, 1.0)   # anti-aliased dot edge
+# The half-pixel edge left a faint dot in every cell even where the radius is 0, which
+# speckled the whole screen: no dots outside the panel, and the smallest dots fade in.
+dots *= np.clip(radius * 2.0, 0.0, 1.0)
 halftone = Image.new('RGBA', (W, H), (255, 255, 255, 0))
 halftone.putalpha(Image.fromarray((dots * HT_ALPHA * 255).astype(np.uint8)))
 canvas.alpha_composite(halftone)

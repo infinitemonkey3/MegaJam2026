@@ -28,6 +28,18 @@ def feather_mask(size, inset, blur):
     return mask.filter(ImageFilter.GaussianBlur(blur))
 
 
+def tone_down_lipstick(cell):
+    """The "oo" edit came back with glossy pink lips; pull strongly red-pink pixels most of the
+    way to the grey of the same brightness, warmed to her lips' usual muted tone."""
+    a = np.asarray(cell).astype(float)
+    r, g, b = a[..., 0], a[..., 1], a[..., 2]
+    pink = np.clip((r - (g + b) / 2 - 30) / 50, 0, 1)[..., None]
+    lum = (0.3 * r + 0.59 * g + 0.11 * b)[..., None]
+    muted = np.concatenate([lum * 1.08, lum * 0.92, lum * 0.88], axis=2)
+    out = a * (1 - 0.8 * pink) + muted * 0.8 * pink
+    return Image.fromarray(np.clip(out, 0, 255).astype("uint8"))
+
+
 def recliner_transform():
     """Raw -> final mapping used for T_Room_ReclinerClient_*_Key (shared trim box)."""
     boxes = []
@@ -68,6 +80,25 @@ def main():
         atlas.paste(cell, (256 * i, 0))
     atlas.save("final/T_Client_Mouth_Atlas.png")
     print("mouth cell on recliner texture:", to_final(MOUTH_BOX, tf))
+
+    # Eight shapes (Chip, 2026-11-14: "more shapes and timings"): the three above plus ee, oo,
+    # f/v and m (raw/Mouth*_s240x.png, same face crop and prompt style), and half again so
+    # half-open stays the most common pick. The oo came out badly and is left out (Chip,
+    # 2026-11-14), so half and open fill the last two cells. In order: closed, half, open, ee,
+    # f/v, m, half, open.
+    for name in ("raw/MouthEE_s2401.png", "raw/MouthOO_s2402.png", "raw/MouthFV_s2403.png", "raw/MouthMM_s2404.png"):
+        frame = base.copy()
+        frame.paste(Image.open(name).convert("RGB").resize((512, 512), R), FACE_BOX[:2])
+        cell = frame.crop(MOUTH_BOX)
+        if "OO" in name:
+            cell = tone_down_lipstick(cell)
+        cells.append(cell)
+    atlas8 = Image.new("RGBA", (2048, 256), (0, 0, 0, 0))
+    for i, idx in enumerate((0, 1, 2, 3, 5, 6, 1, 2)):
+        cell = cells[idx].resize((256, 256), R).convert("RGBA")
+        cell.putalpha(mask)
+        atlas8.paste(cell, (256 * i, 0))
+    atlas8.save("final/T_Client_Nell_Mouth_Atlas8.png")
 
     # Chest: one feathered piece; the engine scales it a little to breathe.
     chest = base.crop(CHEST_BOX).resize((512, 512), R).convert("RGBA")

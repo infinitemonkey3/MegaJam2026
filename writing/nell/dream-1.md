@@ -12,7 +12,7 @@ regulars, and take a job.
 
 - The dough won't stop rising: over the bench, across the floor, toward the door. Four hands to
   knead it; she has two.
-- The oven has grown a second door, Walt's. It won't open for her.
+- The oven won't light. The pilot catches and dies, catches and dies.
 - Order slips fall from the ceiling like snow, the whole street's orders.
 - Half the bench is his, thick with dust.
 
@@ -29,16 +29,16 @@ case file opens with it.
 
 - You are: Teddy, Walt's nephew, 34. She taught you to bake at nine, on a flour crate. Two years ago you asked her to reopen and she said no. You pay for this session. This morning you've turned up at five to help her open anyway.
 - She wants: `To open the shop at six, the way it's always opened.`
-- In the way: `The shop has gone strange and it's all work for two: dough that won't stop rising, Walt's oven door, orders falling like snow. The people outside could help, and she's afraid to let them in.`
+- In the way: `The shop has gone strange and it's all work for two: dough that won't stop rising, an oven that won't light, orders falling like snow. The people outside could help, and she's afraid to let them in.`
 - Director on the case file, `nell_d1_intro`: `Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you.`
 - Director on the role, `nell_d1_sendin`: `You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready.`
-- Approaches that should all work: the hints in Teddy's brief (fold the dough, knock twice and say "Morning, old girl", read out the regulars' orders, ask for the key), remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, try Walt's oven door together.
+- Approaches that should all work: the hints in Teddy's brief (fold the dough, knock twice and say "Morning, old girl", read out the regulars' orders, ask for the key), remind her she taught you and take a job, take one job so she can do another, ask her to teach you to knead the runaway dough, talk her into letting one person in, let them in yourself and give them jobs, ask who they are, read out the order slips and sort them, find something under the oven to get it lit.
 
 ## Loop Beats
 
 1. **05:00** Nell is alone in the shop with the lights on.
 2. **05:01** The dough won't stop rising. It spills onto the floor. It takes four hands.
-3. **05:02** The oven has grown a second door, Walt's. It won't open for her.
+3. **05:02** The oven won't light. The pilot catches and dies, catches and dies.
 4. **05:03** Order slips fall from the ceiling like snow.
 5. **05:04** Faceless people at the glass hold up floury hands, ready to work. The door is locked.
 6. **05:05** The dough reaches the door. More people. The glass creaks.
@@ -55,8 +55,8 @@ LOG     Five o'clock. Nell is alone in the bakery with the lights on.
 MURMUR  Five o'clock. Bread doesn't wait.
 LOG     The dough on the bench won't stop rising. It spills over the edge and onto the floor. It takes four hands to knead, and she has two.
 MURMUR  It won't stop. It needs four hands.
-LOG     The oven has grown a second door, Walt's. It won't open for her.
-MURMUR  That's his door. It doesn't answer to me.
+LOG     The oven won't light. The pilot catches and dies, catches and dies.
+MURMUR  That was his job. It never took for me.
 LOG     Order slips fall from the ceiling like snow, the whole street's orders, more than she could fill in a week.
 MURMUR  I can't do all these. Not on my own.
 LOG     People with no faces stand at the glass. They hold up floury hands, ready to work. The door is locked.
@@ -97,7 +97,7 @@ never offers choices. The last line is one ask only.
 | # | Trouble | Her ask | Teddy's brief could feed it |
 |---|---|---|---|
 | Opening line | The dough is climbing out of its bowl and over the bench | Go out back and get something to get it back in. What've you got? | "Dough you fight, dough you lose. You fold it." |
-| 1 | Walt's oven door won't open for her | How are you getting it open? Then (its own follow-up, in place of "what are you doing with it?"): it swings open. What's inside? | Walt knocked twice and said "Morning, old girl." |
+| 1 | The oven won't light (Chip, 2026-11-14: replaces Walt's locked door and "what's inside") | Feel about under the oven for something to get it lit: what have you found under there? Then: what are you doing with it? | Lighting it was Walt's job. He knocked twice and said "Morning, old girl." |
 | 2 | Order slips fall like snow, the whole street's orders | Catch one and read it out. Who's it for, and what do they want? | The regulars' orders |
 | Last line | Six o'clock: a faceless person knocks at the front door (`LastLineCue`) | Go and look. Who is it? Whoever he names, that's their face now. | The key on a string round her neck |
 
@@ -416,7 +416,7 @@ Nell whistles.
 The lights stay on.
 The door opens, and the people come in. Each one has a face as they step through.
 Many hands knead the dough down. The order slips get filled.
-Walt's oven door swings open.
+The oven lights first time.
 AUDIO whistle=present src=nell
 HEART rate=74
 LOOP exit / LAYER 1 cleared

@@ -75,7 +75,7 @@ dream_debugger_screen := class(debug_screen):
         0
 
     # The file as the log, and the confirm key for its button.
-    ShowFile<override>(FileTitle:message, Heading:[]message, FileLines:[]string, Button:string)<suspends>:void =
+    ShowFile<override>(FileTitle:message, Heading:[]file_heading, FileLines:[]string, Button:string)<suspends>:void =
         SetTitle(FileTitle)
-        SetCaseFile(Heading + (for (Line : FileLines) { ToMessage(Line) }) + array{ToMessage("[ {Button} ]")})
+        SetCaseFile((for (H : Heading) { HeadingLine(H) }) + (for (Line : FileLines) { ToMessage(Line) }) + array{ToMessage("[ {Button} ]")})
         Input.ConfirmEvent.Await()
