@@ -22,7 +22,7 @@ Fortnite Developer Rules (behind an Epic login). **Chip: skim both yourself befo
 | Requirement | Status |
 |---|---|
 | Island name | **Wonderwell** |
-| Team name, each member's name and Epic-account email | Team **Dream Team**. Chip fills in names and emails on the form (not stored in the repo) |
+| Team name, each member's name and Epic-account email | Team **Dream Team**, solo: Chip. Name and Epic email go on the form only (not stored in the repo) |
 | **Private version code** (not live, not playtest), created before the deadline, the final build to be judged | Enrollment cleared; publish after the debug start is off |
 | Gameplay video link, 30 to 60 seconds | To record |
 | Dev log link (optional; required for Glass Box) | Ready: https://github.com/infinitemonkey3/MegaJam2026/blob/main/docs/devlog.md (after the merge) |
@@ -39,7 +39,7 @@ Fortnite Developer Rules (behind an Epic login). **Chip: skim both yourself befo
 | **Best Overall, UEFN** | Every UEFN entry | The judging criteria below |
 | **Walkie-Talkie**: "best narrative-driven UEFN game featuring LLM-powered NPCs and characters built with conversations" | **Our strongest.** Nell is a persona NPC built with Fortnite's AI conversations, the player talks to her by voice, and the whole game is the conversation | Show her talking in the video, and say it plainly in the description |
 | **Glass Box**: "best dev log showing how you built your game" | Strong. The dev log covers every day, the dead ends, the play-test-driven prompt fixes, and the agent workflow | Dev log link on the form |
-| **Solo Driver** (solo) *or* **Best Team** (two or more) | Depends on who's on the team | Team size on the form |
+| **Solo Driver**: "best game built by a solo developer" | **Yes: Chip is solo.** (Best Team needs two or more, so it doesn't apply) | Enter as a team of one on the form |
 | **Render Royalty**: best visuals, stylized counts | Possible: a consistent painted 2D look | Nothing extra |
 | Pocket Powerhouse (mobile) | Unlikely: the game is played by voice | Skip |
 | Partner prizes: Hyper3D Rodin cash pool, Tripo, Meshy | We didn't use Rodin, Tripo or Meshy for the game | Nothing to claim |
