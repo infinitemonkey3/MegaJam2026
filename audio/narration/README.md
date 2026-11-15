@@ -55,3 +55,14 @@ voice, endpoint and base note, with a delivery note each. Two takes; Chip picked
 | Id | Line | Delivery note |
 |---|---|---|
 | `room_poster_musical` (8.8 s) | "Sing, Meadow, Sing. Don't look at me like that. I've seen it forty times. Forty-one." | Caught out liking something soft: a little defensive, then a quiet "Forty-one" |
+
+## The shipping Nell and Lumi's cut-off (recorded 2026-11-15)
+
+Same endpoint. In UEFN under `Content/DirectorVO/`, wave volume 2.0. Her intros reuse
+`nell_d1_intro` and `nell_d3_intro`, which don't mention the bakery.
+
+| Id | Voice | Line | Delivery note |
+|---|---|---|---|
+| `nellalt_d1_sendin` (10.9 s) | Orus | "You're Danny Ruiz. She taught you to read. She doesn't think she taught anybody anything. Look over the brief, and enter the dream when you're ready." | Base note, a little rueful on the third sentence |
+| `nellalt_d2_sendin` (12.8 s) | Orus | "This time you're Walt. The captain. You know what happened to him, and so does she, underneath. Give her something to steer by. Enter the dream when you're ready." | Base note, quieter and heavier |
+| `finale_ai_cut` (2.6 s) | Leda | "No! You will not take-" | Lumi breaks: sudden, angry, desperate, cut off mid-word. Trimmed to end on the cut, so the power cut lands on it. Takes A (used) and B ("take her-") in `takes/` |

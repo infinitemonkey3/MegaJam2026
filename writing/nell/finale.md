@@ -56,6 +56,8 @@ director, not the player.
 
 ## 5. The plug
 
+- `finale_ai_cut` (Lumi, `Leda`), after the plug line and cut off by the power cut (Chip, 2026-11-15):
+  "No! You will not take-"
 - `finale_plug` (Orus), snapping, a shout (Chip, 2026-11-14: the first take sounded bored):
   "That's enough! I'm pulling the plug."
 

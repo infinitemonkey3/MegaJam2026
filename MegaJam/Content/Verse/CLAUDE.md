@@ -73,10 +73,22 @@ play session yet.
   `MaxItems` (2). `SetupHazeBase(Setup)`: haze base level from the riskiest choice.
 - `MakeDesClient()` (`des_data.verse`): Des, with the case file's Screen section from
   `writing/des/case-file.md` and a full dream 1.
-- `MakeNellClient()` (`nell_data.verse`): Nell, the current patient 1 (2026-11-13), with the
+- `MakeNellClient()` (`nell_data.verse`): the first Nell, the baker (2026-11-13), kept for
+  reference; `Patient = NellPatient` still runs her. With the
   Screen section of `writing/nell/case-file.md` and all three dreams from
   `writing/nell/dream-1.md`..`dream-3.md` (2: young Nell interviews Walt at Hollis's Tea Room; 3: March 3, 4:30 PM,
   quiet). Dreams 2 and 3 have no scene settings (`Settings := array{}`), since Direct skips them.
+- `MakeNellAltClient()` (`nell_alt_data.verse`, Chip, 2026-11-15): **the shipping Nell**, and
+  `Patient`'s default (`NellAltPatient`). Same art, voice and NPC definition as the first: a
+  retired teacher, willing but sure she can't, married to a fisherman (his death and that he's
+  the captain are held for dream 2, not said in dream 1). Two dreams: `nellalt_d1` (the
+  *Eleanor*: a captain calls jobs, the player as her old student Danny reminds her of real
+  things she's done) and `nellalt_d2` (harbour at night: the captain is Walt, retiring; the
+  player as Walt says what each constellation means to him). The finale follows dream 2. Her
+  director lines (`nellalt_d*_intro`, `_sendin`) have no audio yet. Writing:
+  `writing/nell-alt/dream-1.md`, `dream-2.md`.
+- On-screen text says "dream", never "layer" (Chip, 2026-11-15): dream titles start
+  `DREAM n`, the banner after a good ending is DREAM CLEARED.
 - Patients are data: `game_director`'s `@editable Patient` (`patient_choice`) is the one switch.
   `MakePatient` gives the client for the debugger and the takes; `SetUpPatient` (first thing in
   `OnBegin`) sets `PatientRecliner`'s material on the `ReclinerCard` entity and the patient's
@@ -95,7 +107,13 @@ play session yet.
   on a slow sine (`BreathRate`, 0.22 a second), and while `Talking` is 1 plays the 4-cell mouth
   flipbook `T_Client_Nell_Mouth_Atlas` over her face (`MouthFps`). `SetUpPatient` keeps that
   material instance (`NellRecliner`) and `game_director.AnimateMouth` sets `Talking` from the
-  persona's `StartSayEvent` / `StopSayEvent`. Verse sees a material's scalar parameters as
+  persona's `StartSayEvent` / `StopSayEvent`.
+- **Nell wakes smiling** (2026-11-15). `M_Room_Breath`'s scalar `EyesOpen` blends in
+  `T_Client_Nell_EyesOpen` (eyes open, a content closed-lip smile; `art/tools/make_eyes_open.py`,
+  `add_eyes_to_breath.py`) over her face, under the mouth flipbook, which then samples
+  `MouthAwake` (`T_Client_Nell_Mouth_Awake_Atlas`, smiling shapes in the same 8 cells;
+  `make_mouth_awake.py`, `add_mouth_awake_to_breath.py`) instead of her sleeping frames.
+  `RunFinaleEnd` sets it just before `NellWakeLine`. Verse sees a material's scalar parameters as
   fields on its generated class once a Verse build has run after the material changed.
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
@@ -106,19 +124,23 @@ play session yet.
   then GoodEnding (next dream), RetryEnding (back to Direct, "Take N+1"), or Finale after a
   positive verdict on the last dream.
 - **The finale** (`writing/nell/finale.md`, Chip, 2026-11-14). The last dream's good ending
-  stops after her reveal and goes to `DoFinale`: the LAYER CLEARED banner, the director's praise
+  stops after her reveal and goes to `DoFinale`: the DREAM CLEARED banner, the director's praise
   cut off at `PraiseCutSeconds`, then Lumi (`FinaleAIName`, the Wonderwell assistant) wakes: its
   DISABLED spot on the debugger flickers ONLINE (`debug_screen.SetAssistantAwake`), the haze
-  floods, `FinaleSpam` fills the log faster and faster while
+  floods, `FinaleSpam` fills the log faster and faster (the gap shrinks 7% a line to a 0.25 s
+  floor, still readable; it was 12% to 0.08 s) while
   the director's `finale_reboot` plays, Lumi speaks (`finale_ai`), and the director pulls the
-  plug. The flow ends Done with `FinaleReached`; `game_director.RunFinaleEnd` plays the rest:
+  plug, and Lumi's `finale_ai_cut` ("No! You will not take-") ends on the power cut. Sounds (`DIR sfx_*`, played as director lines): `sfx_hack` as Lumi breaks in, `sfx_spam_ramp` under the spam, `sfx_spam_blip` on every line (inline, so it comes off the gap: `branch` isn't allowed in loops); `StopLine` cuts them when Lumi speaks. The flow ends Done with `FinaleReached`; `game_director.RunFinaleEnd` plays the rest:
   the power cut (debugger hidden, monitor cleared, haze off), the director shaken, Nell waking
   (`NellWakeLine`, `NellBanterLine`, said word for word) with his two replies, then the title
   card as the end card (`EndCardText`, team name a placeholder). All finale audio is director
   lines (`DirectorLines`, players `DIR finale_*`).
+- **Lumi's sun avatar** (2026-11-15): when Lumi speaks the log clears (no "LUMI IS SPEAKING" line) and `debug_screen.SetAssistantAvatar` shows a gentle sun (`Room.Textures.T_Lumi_Sun_0..2`, `art/tools/make_lumi_sun.py`) centred in the main panel (`LumiAvatarRect`), a Verse UI `texture_block` on the debugger's canvas. `take_flow.LumiSays` plays each of Lumi's lines while flipping its mouth through `LumiMouthFrames` every 0.11 s, then rests on the smile. It goes with the debugger at the power cut.
+- Room targets' corners show only while hovered (Chip, 2026-11-15); at rest they're Hidden, which keeps the button's hover area.
 - Lumi's dock runs along the bottom of the debugger: LUMI / story guide / DISABLED over hazard
   tape, and the lavender `T_DbgB_LumiOn` layer ("I'm here.", ONLINE) once awake.
-- `game_director.StartDream` (debug) starts the patient at a later dream; set it to 0 for a real
+- `game_director.StartDream` (debug) starts the patient at a later dream, and `SkipToFinale`
+  (debug) goes straight to the last dream's finale; set them to 0 and off for a real
   build.
 - **Each dream opens like a spy learning a target** (Chip, 2026-11-13). `DoCaseFile` shows the
   patient's case file (`debug_screen.ShowFile`: case file, revealed facts, loop note, any cake

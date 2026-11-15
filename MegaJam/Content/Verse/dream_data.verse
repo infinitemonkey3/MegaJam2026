@@ -302,11 +302,11 @@ MakeDesClient()<transacts>:client =
             "VITALS  HEART RATE CLIMBS FROM 08:41 / SPEECH FAULTS CLIMB WITH IT"
             "AUDIO  CROWD LAUGHTER / SOURCE NOT RENDERED"
             "CAST  1 PRINCIPAL / 120 EXTRAS, FACES NOT RENDERED"
-            "DEPTH  3 LAYERS DETECTED / LAYER 1 ACTIVE / LAYERS 2-3 LOCKED"
+            "DEPTH  3 DREAMS DETECTED / DREAM 1 ACTIVE / DREAMS 2-3 LOCKED"
         Dreams := array:
             MakeDesDream1()
-            MakePlaceholderDream("des_d2", "LAYER 2  [LOCKED]", "The implant chokes on the words his family gave him.")
-            MakePlaceholderDream("des_d3", "LAYER 3  [LOCKED]", "What he never faced is what he did to his mother at the gate.")
+            MakePlaceholderDream("des_d2", "DREAM 2  [LOCKED]", "The implant chokes on the words his family gave him.")
+            MakePlaceholderDream("des_d3", "DREAM 3  [LOCKED]", "What he never faced is what he did to his mother at the gate.")
         StartTrust := 1
         StartFear := 2
         StartHope := 1

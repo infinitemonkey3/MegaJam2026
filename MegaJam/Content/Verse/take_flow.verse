@@ -34,16 +34,18 @@ MenuDoneLabel:string = "Done"
 # on brand; from Lumiere, the first films, and the light a story is told by). Disabled on the
 # debugger until then.
 FinaleAIName:string = "LUMI"
+# The order Lumi's avatar mouth runs through while it talks: smile, half, open.
+LumiMouthFrames:[]int = array{1, 2, 1, 0, 2, 1, 2, 0}
 
 # What the AI spams into the log while it tries to reboot her, in order, repeating.
 FinaleSpam():[]message =
     array:
-        ToMessage("REBOOT nell_d3")
-        ToMessage("The clock goes back to half past four. She's at the door again.")
+        ToMessage("REBOOT nellalt_d2")
+        ToMessage("The harbour lights come back on. He's on the gangway again.")
         ToMessage("What did she mean by love?")
         ToMessage("ERROR  session closed by operator")
         ToMessage("I want to see it again.")
-        ToMessage("REPLAY nell_d3 / FROM 16:30")
+        ToMessage("REPLAY nellalt_d2 / FROM 23:00")
         ToMessage("Again.")
         ToMessage("ERROR  dreamer not responding")
         ToMessage("What did she mean by love?")
@@ -179,11 +181,11 @@ take_flow := class(creative_device):
             Control.AwaitSpeechEnd(SpeechSeconds)
         Screen.AwaitContinue()
 
-    # After a good ending: the LAYER CLEARED banner, with the debugger's notes listed under it
+    # After a good ending: the DREAM CLEARED banner, with the debugger's notes listed under it
     # (not told by the client) and one CONTINUE before the next layer (Chip, 2026-11-13).
     Celebrate(Dream:dream)<suspends>:void =
-        Screen.SetTitle(ToMessage("LAYER CLEARED"))
-        Log(Join(array{"***  LAYER CLEARED  ***"} + Dream.ClearedLog, "\n"))
+        Screen.SetTitle(ToMessage("DREAM CLEARED"))
+        Log(Join(array{"***  DREAM CLEARED  ***"} + Dream.ClearedLog, "\n"))
         Screen.AwaitContinue()
 
     # 3. Direct: the player sets up the take on the screen: who they are, then one item. The
@@ -404,7 +406,7 @@ take_flow := class(creative_device):
 
     # Hook for the jam slice's ending: dream 3 passes, the client says the positive line, and
     # the loop doesn't end. Scripted, not LLM-driven. STUB: logs the beats in order.
-    # The finale, up to the plug (writing/nell/finale.md, Chip, 2026-11-14). The LAYER CLEARED
+    # The finale, up to the plug (writing/nell/finale.md, Chip, 2026-11-14). The DREAM CLEARED
     # banner and the director's praise, cut off when the Wonderwell AI breaks in and tries to
     # reboot her into the fear; it spams the log while the director says to disconnect; then it
     # speaks to him, and he pulls the plug. game_director plays the rest (the power cut, her
@@ -412,15 +414,18 @@ take_flow := class(creative_device):
     DoFinale(Dream:dream, Control:client_control)<suspends>:take_phase =
         Logger.Print("[flow] FINALE")
         set FinaleReached = true
-        Screen.SetTitle(ToMessage("LAYER CLEARED"))
-        Log(Join(array{"***  LAYER CLEARED  ***"} + Dream.ClearedLog, "\n"))
+        Screen.SetTitle(ToMessage("DREAM CLEARED"))
+        Log(Join(array{"***  DREAM CLEARED  ***"} + Dream.ClearedLog, "\n"))
         branch:
             Director.PlayLine("finale_praise")
         Sleep(PraiseCutSeconds)
         Director.StopLine()                             # cut off mid-sentence: "past the-"
 
         # The AI arrives: Lumi's DISABLED spot flickers on, the haze floods back and the log
-        # fills with its spam.
+        # fills with its spam. Sounds (Chip, 2026-11-15): the hack sting as it breaks in, a rising
+        # data-chatter ramp under the spam (stopped when it speaks) and a blip on every line.
+        branch:
+            Director.PlayLine("sfx_hack")
         for (Flicker := 1..3):
             Screen.SetAssistantAwake(true)
             Sleep(0.15)
@@ -431,6 +436,8 @@ take_flow := class(creative_device):
         Screen.SetVitals(3)
         Haze.SetDistress(3)
         Spam := FinaleSpam()
+        branch:
+            Director.PlayLine("sfx_spam_ramp")
         race:
             block:
                 Sleep(1.5)
@@ -442,20 +449,42 @@ take_flow := class(creative_device):
                 loop:
                     if (Line := Spam[Mod[Index, Spam.Length]]):
                         Screen.AppendLogLine(Line)
+                    # The blip waits its own 0.12 s ('branch' isn't allowed in loops), so it
+                    # comes off the gap.
+                    Director.PlayLine("sfx_spam_blip")
                     set Index += 1
-                    Sleep(Gap)
-                    set Gap = Max(0.08, Gap * 0.88)     # faster and faster
+                    Sleep(Max(0.0, Gap - 0.12))
+                    # Faster and faster, but still readable (Chip, 2026-11-15: 0.88 down to
+                    # 0.08 s got too quick to see).
+                    set Gap = Max(0.25, Gap * 0.93)
 
-        # It speaks, to the director.
+        # It speaks, to the director. The spam and its sounds stop dead.
+        Director.StopLine()
         Screen.SetTitle(ToMessage("WONDERWELL"))
-        Log("{FinaleAIName} IS SPEAKING")
-        Director.PlayLine("finale_ai")
+        # The log clears and Lumi's sun takes the panel, centred (Chip, 2026-11-15: no log lines,
+        # no "LUMI IS SPEAKING", just her).
+        Screen.ClearLog()
+        Screen.SetAssistantAvatar(0)
+        LumiSays("finale_ai")
         # One more exchange before the plug (Chip, 2026-11-14).
         Director.PlayLine("finale_notyours")            # "She's not yours. She never was."
         Screen.SetVitals(3)
-        Director.PlayLine("finale_ai_2")                # "I want to see it again. I want to know love. I want to know pain."
+        LumiSays("finale_ai_2")                # "I want to see it again. I want to know love. I want to know pain."
         Director.PlayLine("finale_plug")                # "That's enough. I'm pulling the plug."
+        # Lumi, cut off by the power cut (Chip, 2026-11-15): "No! You will not take-".
+        LumiSays("finale_ai_cut")
         take_phase.Done
+
+    # One of Lumi's lines, with its sun avatar's mouth moving until the line ends, then back to
+    # the smile (Chip, 2026-11-15).
+    LumiSays(LineId:string)<suspends>:void =
+        race:
+            Director.PlayLine(LineId)
+            loop:
+                for (Frame : LumiMouthFrames):
+                    Screen.SetAssistantAvatar(Frame)
+                    Sleep(0.11)
+        Screen.SetAssistantAvatar(0)
 
     # The player's turn: the debugger's "your turn to speak" cue is up until they've said their
     # line (Chip, 2026-11-14). No timeout: takes run on turns, not a clock. The defer takes the

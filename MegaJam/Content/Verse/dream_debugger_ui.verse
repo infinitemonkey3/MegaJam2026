@@ -4,6 +4,7 @@ using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
 using { /UnrealEngine.com/Temporary/SpatialMath }
 using { /UnrealEngine.com/Temporary/UI }
+using { /Verse.org/Assets }
 
 # The interactive dream debugger (Chip, 2026-11-13): Wonderwell's dream debugger, a cracked
 # unregistered copy, naming the patient. The take flow drives it: a file to learn with one button
@@ -40,6 +41,16 @@ DebuggerMoreRect:debugger_rect = debugger_rect{X0 := 388.0, Y0 := 764.0, X1 := 6
 DebuggerFileButtonRect:debugger_rect = debugger_rect{X0 := 648.0, Y0 := 764.0, X1 := 1246.0, Y1 := 818.0}
 # CONTINUE takes a click anywhere on the main panel ("or click the log").
 DebuggerMainPanelRect:debugger_rect = debugger_rect{X0 := 368.0, Y0 := 149.0, X1 := 1266.0, Y1 := 842.0}
+# Lumi's sun avatar: a square centred in the main panel (x 368..1266, y 149..842), which the
+# log clears for.
+LumiAvatarRect:debugger_rect = debugger_rect{X0 := 627.0, Y0 := 305.0, X1 := 1007.0, Y1 := 685.0}
+
+# Lumi's avatar frames (art/tools/make_lumi_sun.py): 0 the smile, 1 half open, 2 open.
+LumiSunFrame(Frame:int)<transacts>:texture =
+    if (Frame = 1) then Room.Textures.T_Lumi_Sun_1
+    else if (Frame = 2) then Room.Textures.T_Lumi_Sun_2
+    else Room.Textures.T_Lumi_Sun_0
+
 DebuggerMenuCount:int = 5
 DebuggerMenuRect(Index:int):debugger_rect =
     Top := 245.0 + 80.0 * Index
@@ -148,14 +159,18 @@ room_target := class:
     OnHighlight(Message:widget_message):void =
         if (Corners := MaybeCorners?):
             Corners.SetTint(color{R := 0.3, G := 1.0, B := 0.92})
+            Corners.SetVisibility(widget_visibility.Visible)
         if (Text := MaybeLabel?):
             Text.SetVisibility(widget_visibility.Visible)
         if (Button := MaybeButton?):
             Owner.FocusButton(Button)
 
+    # The corners show only on hover (Chip, 2026-11-15: not always on the poster). Hidden, not
+    # Collapsed, so the button keeps its size and still catches the mouse.
     OnUnhighlight(Message:widget_message):void =
         if (Corners := MaybeCorners?):
             Corners.SetTint(RestTint())
+            Corners.SetVisibility(widget_visibility.Hidden)
         if (Text := MaybeLabel?):
             Text.SetVisibility(widget_visibility.Hidden)
 
@@ -238,6 +253,8 @@ dream_debugger_ui := class(debug_screen):
     var Clickable:logic = true
     # Lumi, the Wonderwell assistant: disabled until the finale wakes it (SetAssistantAwake).
     var LumiAwake:logic = false
+    # Lumi's sun avatar (SetAssistantAvatar), made the first time it's shown.
+    var MaybeAvatar:?texture_block = false
     # The player's active input, for the controls hint (WatchInputKind keeps it current).
     var Kind:input_kind = input_kind.KeyboardInput
 
@@ -315,6 +332,7 @@ dream_debugger_ui := class(debug_screen):
                 DefaultImage := Room.Textures.T_RoomTargetCorners
                 DefaultTint := Target.RestTint()
                 DefaultDesiredSize := vector2{X := R.Width * 1920.0, Y := R.Height * 1080.0}
+            Corners.SetVisibility(widget_visibility.Hidden)
             Button := button{Slot := button_slot{Widget := Corners, HorizontalAlignment := horizontal_alignment.Fill, VerticalAlignment := vertical_alignment.Fill}}
             Button.HighlightEvent().Subscribe(Target.OnHighlight)
             Button.UnhighlightEvent().Subscribe(Target.OnUnhighlight)
@@ -333,6 +351,7 @@ dream_debugger_ui := class(debug_screen):
         if (PlayerUI := MaybePlayerUI?, Root := MaybeRoot?):
             PlayerUI.RemoveWidget(Root)
         set MaybeRoot = false
+        set MaybeAvatar = false
 
     # Anchors for a part of the area, in fractions of it (0..1).
     AreaAnchors(X0:float, Y0:float, X1:float, Y1:float):anchors =
@@ -651,6 +670,20 @@ dream_debugger_ui := class(debug_screen):
     SetAssistantAwake<override>(Awake:logic):void =
         set LumiAwake = Awake
         Render()
+
+    SetAssistantAvatar<override>(Frame:int):void =
+        if (Frame < 0):
+            if (Avatar := MaybeAvatar?):
+                Avatar.SetVisibility(widget_visibility.Hidden)
+        else if (Root := MaybeRoot?):
+            Image := LumiSunFrame(Frame)
+            if (Avatar := MaybeAvatar?):
+                Avatar.SetImage(Image)
+                Avatar.SetVisibility(widget_visibility.Visible)
+            else:
+                Avatar := texture_block{DefaultImage := Image, DefaultDesiredSize := vector2{X := 380.0, Y := 380.0}}
+                Root.AddWidget(canvas_slot{Anchors := PageAnchors(LumiAvatarRect), Offsets := margin{}, SizeToContent := false, Widget := Avatar})
+                set MaybeAvatar = option{Avatar}
 
     SetRound<override>(Current:int, Total:int):void =
         set RoundCurrent = Current

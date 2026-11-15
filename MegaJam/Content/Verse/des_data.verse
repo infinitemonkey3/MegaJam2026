@@ -13,7 +13,7 @@ DesPersonality:string = "You are Dessen Varro, 13. Everyone calls you Des. You g
 MakeDesDream1()<transacts>:dream =
     dream:
         Id := "des_d1"
-        Title := "LAYER 1  Catchphrase  /  school_assembly 08:40"
+        Title := "DREAM 1  Catchphrase  /  school_assembly 08:40"
         LoopNote := "LOOP  SCENE school_assembly / START T 08:40 / END T 08:44 / END STATE lights=off. RUNS 11 NIGHTS / NO VARIATION."
         Personality := DesPersonality
         LoopBeats := array:
@@ -56,10 +56,10 @@ MakeDesDream1()<transacts>:dream =
             "He isn't alone on the stage."
             "His heart slows down."
         ClearedLog := array:
-            "The loop is broken. Layer 1 is clear."
+            "The loop is broken. Dream 1 is clear."
             "Recovered: his dad, Ansel Varro, says that line at the door every morning at 05:10."
             "Two anomalies explained: the catchphrase, and why he never stutters as the hero."
-            "A deeper layer opens: the kitchen at 18:40, the day the implant was fitted."
+            "A deeper dream opens: the kitchen at 18:40, the day the implant was fitted."
         BadEndingLog := array:
             "The whole hall is laughing."
             "He can't get a single word out. The implant takes over."

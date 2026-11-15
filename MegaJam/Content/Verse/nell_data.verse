@@ -19,7 +19,7 @@ NellPersonality:string = "You are Nell Price, 71, a baker. It is five in the mor
 MakeNellDream1()<transacts>:dream =
     dream:
         Id := "nell_d1"
-        Title := "LAYER 1  Five O'Clock  /  bakery_interior 05:00"
+        Title := "DREAM 1  Five O'Clock  /  bakery_interior 05:00"
         LoopNote := "LOOP  SCENE bakery_interior / START T 05:00 / END T 05:07 / END STATE lights=off. RUNS 19 NIGHTS / NO VARIATION."
         Personality := NellPersonality
         LoopBeats := array:
@@ -90,10 +90,10 @@ MakeNellDream1()<transacts>:dream =
             "Nell is whistling."
             "Her heart slows down."
         ClearedLog := array:
-            "The loop is broken. Layer 1 is clear."
+            "The loop is broken. Dream 1 is clear."
             "Recovered: Walter Price was born on March 3."
             "Two anomalies explained: the cake nobody collects, and the rule against whistling."
-            "A deeper layer opens: the bakery at five in the morning, on the day of the funeral."
+            "A deeper dream opens: the bakery at five in the morning, on the day of the funeral."
         BadEndingLog := array:
             "The icing runs off the bench and across the floor."
             "The cake slides off the bench and onto the floor."
@@ -112,7 +112,7 @@ MakeNellDream2()<transacts>:dream =
         Id := "nell_d2"
         AsksForCake := true
         LastLineCue := "It's nearly nine. Ask him the last thing on your pad, in your own words, half as a joke: what kind of birthday cake would he want? If he's won you over, let it show a little in how you ask. When he answers, say the cake back to him by name as you write it down, like \"A lemon cake. Noted.\""
-        Title := "LAYER 2  Twenty Questions  /  hollis_tea_room 20:50, 47 yr ago"
+        Title := "DREAM 2  Twenty Questions  /  hollis_tea_room 20:50, 47 yr ago"
         LoopNote := "LOOP  SCENE hollis_tea_room / DATE 47 yr ago / START T 20:50 / END T 21:00 / END STATE lights=off. ANSWERS recorded=0."
         Personality := NellDream2Personality
         LoopBeats := array:
@@ -175,10 +175,10 @@ MakeNellDream2()<transacts>:dream =
             "She lets him walk her home in the rain."
             "He's whistling. She doesn't tell him to stop."
         ClearedLog := array:
-            "The loop is broken. Layer 2 is clear."
+            "The loop is broken. Dream 2 is clear."
             "Recovered: the first order Nell took from Walter Price. One birthday cake."
             "Anomaly explained: the order slip from Hollis's Tea Room, kept in her purse for 47 years."
-            "The deepest layer opens: the bakery at half past four in the afternoon, March 3, six years ago."
+            "The deepest dream opens: the bakery at half past four in the afternoon, March 3, six years ago."
         BadEndingLog := array:
             "Nine o'clock. Mrs. Hollis turns the sign."
             "Nell puts the pad away. The answers are blank."
@@ -195,7 +195,7 @@ MakeNellDream3()<transacts>:dream =
     dream:
         Id := "nell_d3"
         UsesCake := true
-        Title := "LAYER 3  Pick Up 5 PM  /  bakery_interior 16:30, March 3"
+        Title := "DREAM 3  Pick Up 5 PM  /  bakery_interior 16:30, March 3"
         LoopNote := "LOOP  SCENE bakery_interior / DATE march_03, 6 yr ago / START T 16:30 / END T 17:00 / END STATE lights=off. DOOR opens=0."
         Personality := NellDream3Personality
         LoopBeats := array:
@@ -259,7 +259,7 @@ MakeNellDream3()<transacts>:dream =
             "She cuts two slices of his cake."
             "The shop stays warm. Her heart slows down."
         ClearedLog := array:
-            "Layer 3 is clear. The session fault is resolved."
+            "Dream 3 is clear. The session fault is resolved."
             "Recovered: the core fear. Not that he died. That he died angry with her."
             "The last anomaly is explained: the cake held every March 3, never collected."
             "The loop has ended. Nell can sleep."
