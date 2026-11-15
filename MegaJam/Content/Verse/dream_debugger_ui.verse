@@ -512,7 +512,9 @@ dream_debugger_ui := class(debug_screen):
     # The scene log: the newest line big, the two before it dim above (more while Lumi spams it).
     RenderLog():void =
         set View.PageIndex = 1
-        set View.MainTitleText = SceneLogTitle
+        # Lumi's ONLINE layer has WONDERWELL // LUMI painted in this tab, so the live title would
+        # print over it (Chip, 2026-11-15).
+        set View.MainTitleText = if (LumiAwake?) then EmptyText else SceneLogTitle
         SetBadge(if (RoundTotal > 0) then "ROUND {RoundCurrent} / {RoundTotal}" else if (TakeNumber > 0) then "TAKE {TakeNumber}" else "")
         Older := if (LumiAwake?) then 7 else 2
         Count := TakeLog.Length
