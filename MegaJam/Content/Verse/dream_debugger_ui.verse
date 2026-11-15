@@ -290,6 +290,11 @@ dream_debugger_ui := class(debug_screen):
             set MaybeRoot = option{Root}
             set Kind = ActiveInputKind(Player)
             spawn{WatchInputKind(Player)}
+            # Lumi's sun frames, drawn now at 2 x 2 px in the corner (their corners are
+            # transparent) so the textures are loaded before the finale: drawn cold, the sun
+            # showed solid white for a frame (Chip, 2026-11-15).
+            for (Frame := 0..2):
+                Root.AddWidget(canvas_slot{Anchors := AreaAnchors(0.0, 0.0, 0.0, 0.0), Offsets := margin{Right := 2.0, Bottom := 2.0}, SizeToContent := false, Widget := texture_block{DefaultImage := LumiSunFrame(Frame), DefaultDesiredSize := vector2{X := 2.0, Y := 2.0}}})
             BeginTake()
             Logger.Print("[ui] dream debugger shown: area left={Area.Left} top={Area.Top} width={Area.Width} height={Area.Height} view aspect={Area.ViewAspect}")
 
