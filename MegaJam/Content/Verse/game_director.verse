@@ -61,6 +61,7 @@ game_director := class(creative_device):
     @editable FinaleKettle:audio_player_device = audio_player_device{}
     # Room lines: the director on things in the room the player clicks (writing/director/room-lines.md).
     @editable RoomPosterMusical:audio_player_device = audio_player_device{}
+    @editable RoomFilmCamera:audio_player_device = audio_player_device{}
 
     # Debug starts. PreRoll is the real game; ColdOpen skips the pre-roll; Room or later skips
     # the whole opening and starts at the desk.
@@ -173,6 +174,8 @@ game_director := class(creative_device):
         # Clickable things in the room (Chip, 2026-11-15: the poster first, as the example).
         if (Poster := MakePosterPanel().ProjectRect[Player]):
             DebuggerUI.AddRoomTarget("room_poster_musical", "SING, MEADOW, SING", Poster)
+        if (Camera := MakeFilmCameraPanel().ProjectRect[Player]):
+            DebuggerUI.AddRoomTarget("room_film_camera", "FILM CAMERA", Camera)
         spawn{PlayRoomLines(DebuggerUI)}
 
         EnterPhase(game_phase.RoomPhase)
@@ -233,6 +236,7 @@ game_director := class(creative_device):
             director_line{Id := "sfx_spam_ramp", Player := SfxSpamRamp, Seconds := 11.0}
             director_line{Id := "sfx_spam_blip", Player := SfxSpamBlip, Seconds := 0.12}
             director_line{Id := "room_poster_musical", Player := RoomPosterMusical, Seconds := 8.8}
+            director_line{Id := "room_film_camera", Player := RoomFilmCamera, Seconds := 8.4}
             director_line{Id := "finale_power_cut", Player := FinalePowerCut, Seconds := 3.6}
             director_line{Id := "finale_after", Player := FinaleAfter, Seconds := 6.9}
             director_line{Id := "finale_resting", Player := FinaleResting, Seconds := 2.9}

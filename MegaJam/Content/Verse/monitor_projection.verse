@@ -39,6 +39,19 @@ MakePosterPanel()<transacts>:world_panel =
         AxisX := 0.0
         AxisY := 1.0
 
+# The old film camera on the middle shelf of Room_ShelfRight (a 250 cm card at x -470, centred
+# y 55, z 144, facing the desk): the camera covers about 0.48..0.82 across and 0.28..0.59 down
+# the texture. A clickable room target (Chip, 2026-11-15).
+MakeFilmCameraPanel()<transacts>:world_panel =
+    world_panel:
+        CentreX := -468.0
+        CentreY := 92.0
+        CentreZ := 160.0
+        HalfWidth := 42.0
+        HalfHeight := 39.0
+        AxisX := 0.0
+        AxisY := 1.0
+
 monitor_rect := struct:
     Left:float
     Top:float

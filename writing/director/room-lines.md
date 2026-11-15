@@ -31,7 +31,7 @@ wall.** One line only. **Built 2026-11-15** as the first clickable target: `Room
 
 ## Suggested objects
 
-**The old film camera on the shelf (left)**. An antique by now, a museum piece, and he loves it
+**The old film camera on the shelf (right shelf, middle)**. **Built 2026-11-15** as a clickable target (`MakeFilmCameraPanel`, line `room_film_camera`, take B): option 4, "Back when you shot on film, you got one take. Maybe two. Made you careful. Made you mean it." An antique by now, a museum piece, and he loves it
 (Chip, 2026-11-14: show his fandom of this ancient form).
 1. "Thirty-five millimetre. Older than my father. Real film runs through it, and the light gets
    in and stays there. Nothing in this building stays."

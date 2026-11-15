@@ -277,7 +277,8 @@ dream_debugger_ui := class(debug_screen):
     Show(Player:player, Monitor:monitor_rect):void =
         if (not MaybeRoot?, PlayerUI := GetPlayerUI[Player]):
             set Area = monitor_rect:
-                Left := Monitor.Left + Monitor.Width * HoleLeft
+                # Nudged 10 px right at 1080p (Chip, 2026-11-15).
+                Left := Monitor.Left + Monitor.Width * HoleLeft + 10.0 / 1920.0
                 Top := Monitor.Top + Monitor.Height * HoleTop
                 Width := Monitor.Width * (HoleRight - HoleLeft)
                 Height := Monitor.Height * (HoleBottom - HoleTop)
@@ -328,10 +329,10 @@ dream_debugger_ui := class(debug_screen):
 
     ShowRoomTargets(Root:canvas):void =
         for (Target : RoomTargets):
-            # A little room round the object, so the corners frame it rather than sit on it
-            # (Chip, 2026-11-15): about 18 px each side at 1080p.
-            PadX := 18.0 / 1920.0
-            PadY := 18.0 / 1080.0
+            # No padding: the corners sit right on the object (Chip, 2026-11-15; it was 18 px a side,
+            # which looked loose round the poster).
+            PadX := 0.0
+            PadY := 0.0
             R := monitor_rect{Left := Target.Rect.Left - PadX, Top := Target.Rect.Top - PadY, Width := Target.Rect.Width + 2.0 * PadX, Height := Target.Rect.Height + 2.0 * PadY}
             Corners := texture_block:
                 DefaultImage := Room.Textures.T_RoomTargetCorners
