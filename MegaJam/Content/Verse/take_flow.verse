@@ -142,6 +142,7 @@ take_flow := class(creative_device):
     # the target; the file is gone once the player attaches).
     DoCaseFile(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
         set TakeNumber = 0
+        Screen.SetDream(DreamIndex + 1, Dream.Id, Dream.Title)
         Control.LoadDream(Subject, Dream, Facts)
         branch:
             Director.PlayLine("{Dream.Id}_intro")
@@ -322,7 +323,7 @@ take_flow := class(creative_device):
                 # Waits for the answer, like every other turn (play test, 2026-11-14: a 30 s
                 # timeout ended dream 3 while the player was still answering "do you still love
                 # me", and turned the talk prompt off).
-                Heard := Control.AwaitPlayerLine(Inf)
+                Heard := AwaitPlayerTurn(Control, Dream.LastLineAsk)
                 if (Heard?):
                     Control.AwaitSpeechEnd(SpeechSeconds)
                 else:
@@ -457,6 +458,34 @@ take_flow := class(creative_device):
         Director.PlayLine("finale_plug")                # "That's enough. I'm pulling the plug."
         take_phase.Done
 
+    # The player's turn: the debugger's "your turn to speak" cue is up until they've said their
+    # line (Chip, 2026-11-14). No timeout: takes run on turns, not a clock. The defer takes the
+    # cue down even when a race cancels the wait.
+    AwaitPlayerTurn(Control:client_control, Ask:string)<suspends>:logic =
+        Screen.ShowSpeakCue(Ask)
+        defer:
+            Screen.HideSpeakCue()
+        Control.AwaitPlayerLine(Inf)
+
+    # Strict call and response (Chip, 2026-11-14): her opening line ends on the first ask
+    # (client_control.StartTake); then, for each ask, the player answers with its question on the
+    # speak cue, she reacts (her reply asks nothing: StartTake's turn rule), and the flow has her
+    # ask the next one. The speak cue only ever shows after a question the flow made her ask.
+    RunAsks(Dream:dream, Control:client_control)<suspends>:void =
+        for (Index -> Ask : Dream.Asks):
+            if (Index > 0):
+                Control.AskNext(Ask, SpeechSeconds)
+            Haze.SetClock(Min(3, Index))
+            Control.AwaitSpeechEnd(SpeechSeconds)       # the question
+            # Logged once she's done, so it's the newest line while the player answers (play
+            # test, 2026-11-14: her own scene update came in after it and buried the question).
+            LogAsk(Ask)
+            AwaitPlayerTurn(Control, Ask.Ask)
+            Control.AwaitSpeechEnd(SpeechSeconds)       # her reaction
+
+    LogAsk(Ask:dream_ask):void =
+        Log(if (Ask.LogLine.Length > 0) then "{Ask.LogLine} She asks: {Ask.Ask}" else "She asks: {Ask.Ask}")
+
     IsLastDream(Subject:client)<transacts><decides>:void =
         DreamIndex + 1 >= Subject.Dreams.Length
 
@@ -478,6 +507,9 @@ take_flow := class(creative_device):
     # last beat's turns, the take goes to the last line. The player is never talked over: the
     # flow only prompts her after she has stopped speaking and the player has answered.
     RunBeats(Dream:dream, Control:client_control)<suspends>:void =
+        if (Dream.Asks.Length > 0):
+            RunAsks(Dream, Control)
+            return
         if (Dream.OpeningLog.Length > 0):
             Log(Dream.OpeningLog)
         Control.AwaitSpeechEnd(SpeechSeconds)           # her opening line
@@ -488,7 +520,7 @@ take_flow := class(creative_device):
         var FollowUpLog:string = Dream.FollowUpLog
         loop:
             for (Turn := 1..Turns):
-                Control.AwaitPlayerLine(Inf)
+                AwaitPlayerTurn(Control, "")
                 Control.AwaitSpeechEnd(SpeechSeconds)   # her reply
                 # The follow-up question, cued by the flow so it always comes (see FollowUpCue).
                 if (Turn < Turns, FollowUpCue.Length > 0, not Dream.ClientLeads?):

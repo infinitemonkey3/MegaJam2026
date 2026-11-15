@@ -149,10 +149,25 @@ dream := class:
     FollowUpCue:string = ""
     FollowUpLog:string = ""
     OpeningLog:string = ""    # logged with her opening line: the take's first question, on screen
+    # Strict call and response (Chip, 2026-11-14: "pretty rigid about this structure across all
+    # dreams"). When a dream has Asks, the flow owns every question: her first line ends on
+    # Asks[0], the player answers (the debugger's speak cue shows that ask), she reacts and asks
+    # nothing, then the flow has her ask the next one, and so on; then the last line, which asks
+    # LastLineAsk. TakePhases, TurnsPerBeat, FollowUpCue and ClientLeads are the older loop, still
+    # used by dreams without Asks (Des).
+    Asks:[]dream_ask = array{}
+    LastLineAsk:string = ""   # the last line's question, for the speak cue (LastLineCue has her ask it)
+
+# One question in a dream's call and response.
+dream_ask := class:
+    Ask:string                # the question, short (the speak cue shows it): "What have you found under there?"
+    Cue:string = ""           # what happens in the scene first, told to her before she asks
+    LogLine:string = ""       # the debugger's log line; "She asks: <Ask>" if empty
 
 client := class:
     Id:string
-    Name:string
+    Name:string               # "SURNAME, GIVEN  AKA \"NICK\"": the debugger splits it at "  AKA "
+    Tagline:string = ""       # under the name on the debugger: "71  /  BAKER"
     CaseFile:[]string         # entries shown on the screen
     Dreams:[]dream            # in play order
     StartTrust:int = 1

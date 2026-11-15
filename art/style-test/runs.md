@@ -473,3 +473,20 @@ come up.
 | Title crop for the cold-open fade-in | "MAKE DREAMS HAPPEN" gets about 0.85 texels per screen pixel at 1080p in the opening crop, so it is very slightly soft | Crop the title from `raw/Wonderwell_A_fixed_s4101.png` (4K) into its own 2048-wide texture, laid over the poster's top half | Free, local |
 | Wonderwell poster option B | Still has the turned-up corner with the W drawn over it | Same edit as option A (round 4); only needed if B is used | About $0.14 |
 | Credit lines on two posters | `T_Poster_SciFi` and `T_Poster_Musical` have tiny, partly readable made-up credits (invented names, and "Lorem ipsum" on the musical) | Crop or paint over the bottom strip locally; only needed if a close-up shows them | Free, local |
+
+# Round 9: four more mouth shapes for Nell (2026-11-14)
+
+Chip asked for more mouth shapes and timings once the 4-cell flipbook was working ("Yes,
+generate", about $0.20 quoted). 4 calls on `google/nano-banana-2.1/edit`, 1K 1:1, input
+`refs/client-face-crop.png`, no system prompt, each "Change only the old woman's mouth: she is
+mid-word saying ... Keep everything else exactly the same ...". About $0.18 (4 x $0.044).
+
+| Shape | Seed | Output file | Kept? |
+|---|---|---|---|
+| ee, wide and flat, teeth showing | 2401 | raw/MouthEE_s2401.png | **yes** |
+| oo, small round O | 2402 | raw/MouthOO_s2402.png | no: glossy pink lips; toned down it still read badly (Chip), dropped from the atlas |
+| f, teeth on lower lip | 2403 | raw/MouthFV_s2403.png | **yes** |
+| m, lips pressed | 2404 | raw/MouthMM_s2404.png | **yes** |
+
+`client_parts.py` now also writes `final/T_Client_Nell_Mouth_Atlas8.png` (2048 x 256: closed,
+half, open, ee, f/v, m, half, open), imported over `Room/Textures/T_Client_Nell_Mouth_Atlas`.

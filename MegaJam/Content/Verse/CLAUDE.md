@@ -29,7 +29,7 @@ play session yet.
 - Prompts name the player's active input (`input_router.ActiveInputKind`, from
   `player_input.PreferredInputMethod`, polled every `InputKindPollSeconds` since it has no
   change event): the title card says PRESS SPACE / PRESS A / PRESS JUMP TO START
-  (`cold_open.StartPrompt`), and the debugger's row 17 hint changes to match
+  (`cold_open.StartPrompt`), and the debugger's footer hint changes to match
   (`dream_debugger_ui.ControlsHint`). A gamepad can't be told Xbox from PlayStation; it says "A".
 - Debug starts: `@editable StartAt:game_phase` (`PreRollPhase` is the real game;
   `ColdOpenPhase` skips the pre-roll; `RoomPhase` or later starts at the desk) and `@editable DevKeys` (Sprint skips the current
@@ -89,6 +89,14 @@ play session yet.
   from Verse, and "Hidden in Game" doesn't hide one in a session. `SM_RoomCard` is our own copy
   of the engine plane (`art/meshes/SM_RoomCard.obj`; UEFN won't duplicate `/Engine` assets);
   each patient's recliner art is the empty recliner with them painted in, one texture.
+- **Nell breathes and talks** (2026-11-14). `MI_Room_Recliner_Nell`'s parent is `M_Room_Breath`
+  (`Room/Materials`, built by `art/tools/build_breath_material.py` and
+  `add_mouth_to_breath.py`): it crossfades her recliner texture with a torso-only second frame
+  on a slow sine (`BreathRate`, 0.22 a second), and while `Talking` is 1 plays the 4-cell mouth
+  flipbook `T_Client_Nell_Mouth_Atlas` over her face (`MouthFps`). `SetUpPatient` keeps that
+  material instance (`NellRecliner`) and `game_director.AnimateMouth` sets `Talking` from the
+  persona's `StartSayEvent` / `StopSayEvent`. Verse sees a material's scalar parameters as
+  fields on its generated class once a Verse build has run after the material changed.
 - `MakePlaceholderClient()`: Nell, from the paper demo, with the same placeholder dream three
   times (only the id, title and revealed fact differ). Replace with the text from `writing/`.
 
@@ -108,8 +116,8 @@ play session yet.
   (`NellWakeLine`, `NellBanterLine`, said word for word) with his two replies, then the title
   card as the end card (`EndCardText`, team name a placeholder). All finale audio is director
   lines (`DirectorLines`, players `DIR finale_*`).
-- The debugger's old tab row is Lumi's bar: LUMI / "your Wonderwell story guide" / DISABLED,
-  "I'm here." / ONLINE once awake. The patient is on row 1 and the dream's title on row 2.
+- Lumi's dock runs along the bottom of the debugger: LUMI / story guide / DISABLED over hazard
+  tape, and the lavender `T_DbgB_LumiOn` layer ("I'm here.", ONLINE) once awake.
 - `game_director.StartDream` (debug) starts the patient at a later dream; set it to 0 for a real
   build.
 - **Each dream opens like a spy learning a target** (Chip, 2026-11-13). `DoCaseFile` shows the
@@ -167,12 +175,22 @@ play session yet.
   on top of the one her reply had already asked, so she asked it twice (play test, 2026-11-14).
   `dream.FollowUpCue`, if set (Nell's dream 1: "what are you doing with it?"), is told to her
   after every answer but a beat's last, with `FollowUpLog` in the log (a `take_phase_beat` can
-  set its own, as dream 1's oven does: "how are you getting it open?", then "what's inside?"); left to her own reply
+  set its own; none does now: dream 1's oven became an errand like the dough, "what have you found under there?", 2026-11-14); left to her own reply
   she skipped it and the player froze (play test, 2026-11-14). `dream.OpeningLog` puts the
   take's first question in the log.
   `dream.LastLineCue`, if set, is told to her at the last line so she asks for it (dream 2: his
   birthday cake); the player's answer is the last line.
   Crisis beats from the writing aren't wired.
+- **Strict call and response** (Chip, 2026-11-14: "pretty rigid about this structure across
+  all dreams"). A dream with `Asks` (all of Nell's) runs `take_flow.RunAsks` instead of the
+  beats above: her first line ends on `Asks[0]` (the opening prompt in `StartTake` carries its
+  `Cue` and `Ask`), then per ask the player answers while the debugger's speak cue shows that
+  ask's question (`debug_screen.ShowSpeakCue(Ask)`), she reacts and asks nothing (the take's
+  turn rule), and `client_control.AskNext` has her ask the next one. The last line asks
+  `LastLineAsk` (`LastLineCue` still tells her how). So the speak cue only ever follows a
+  question the flow made her ask. Keep each `Ask` short (about 40 characters): the speak cue
+  has one line for it. Nell's personalities for dreams 2 and 3 no longer tell her to ask the
+  next question herself. Des still uses `TakePhases`.
 - Every take tells the client to play it like improv, "yes, and": whatever the visitor says or
   does ("I light the oven") is true, and she builds on it rather than refusing or arguing.
 - The directing menu logic (`PickOne`, `PickSettings`, `PickItems`): one list at a time,
@@ -214,21 +232,43 @@ play session yet.
 - `world_panel` / `monitor_rect` (`monitor_projection.verse`): projects a flat upright
   rectangle in the world onto the viewport as screen fractions (0..1), for canvas anchors, so
   screen-space UI can sit exactly over the monitor. `ProjectWorldToViewport` answers in physical
-  screen centimeters (1920 px is 50.8 cm), so it solves the viewport size from the desk
-  camera's known eye, angle (yaw 180, pitch -5) and 90 degree FOV. The eye that
+  screen centimeters (1920 px is 50.8 cm), so it measures the viewport by projecting a point
+  100 m down the desk camera's axis (eye and angle, yaw 180, pitch -5, are constants), which
+  lands in the screen's centre at any aspect ratio (2026-11-14: deriving it from a 90 degree FOV
+  put the debugger short of the glass outside 16:9). `monitor_rect.ViewAspect` carries the
+  viewport's shape to the debugger's hotspot maths. The eye that
   `DeprojectViewportToWorld` reports doesn't match the camera (it made the screen 12% small),
   so it isn't used; valid only while the desk camera is the view. Kept in its own file because
   `/Verse.org/SpatialMath` and the UI's `/UnrealEngine.com/Temporary/SpatialMath` clash.
 - `dream_debugger_ui` (`dream_debugger_ui.verse`): the interactive dream debugger, shown over
   the monitor's glass hole once the boot has played (placed by `MakeMonitorPanel().ProjectRect`).
-  Two layers: the text is `UW_DebuggerText` (`Content/DreamDebugger/`), a UMG widget with 18
-  NotoSans rows (`Row00Text`..`Row17Text`, row 4 is `Tab0Text`..`Tab2Text`) in a Scale Box;
-  input is invisible Verse UI buttons over the selectable rows (mouse, arrow keys, D-pad), whose
-  highlight moves the `>` cursor. No tabs (Chip, 2026-11-13): the take flow drives it from the
-  moment it shows. Views: the file (`ShowFile`: rows 6-14 paged, `[ MORE ]` on row 15, the
-  button on row 16), the scene log (newest line in `LatestText`, CONTINUE under it), and the
-  take's menus. Shown with input mode All. No flat UI fill or frame: the world's glass and in-world screen are the
-  background (they get the camera's perspective).
+  **Design B, "boxed terminal"** (Chip, 2026-11-14; `art/debugger_designs/README.md`). The look is
+  `UW_DebuggerB` (`Content/DreamDebugger/`), a 1200 x 908 page in a Scale Box: a sidebar
+  (PATIENT from `client.Name` split at "  AKA " plus `client.Tagline`; SESSION from
+  `debug_screen.SetDream` and the take number; the vitals), a main panel whose `Pages` switcher
+  shows the file (four tagged entries a page, MORE, the file's button), the scene log (two dim
+  older lines, the newest big, then CONTINUE or the speak cue) or a menu (up to five options),
+  and Lumi's dock. The chrome is textures baked by `art/tools/make_debugger_b.py` (which also
+  writes `art/debugger_b/layout.json`; the `Debugger*Rect` constants copy it), built by
+  `build_debugger_b.py` and `bind_debugger_b.sh`. Verse drives it through 51 fields: messages
+  for text, floats bound to RenderOpacity for every on/off state (focused button, Lumi awake,
+  vitals, badge), and `PageIndex`. Input is invisible Verse UI buttons over the page's
+  rectangles (`PageAnchors` allows for the Scale Box's letterboxing); hovering one focuses it.
+  Case-file lines become entries: "WALT  Her husband..." splits at the first double space, a
+  "-- LIKES --" line starts an entry the following plain lines join. `UW_DebuggerText` (the old
+  18-row design) is unused. Shown with input mode All. The monitor's world glass is the
+  background (the base texture is transparent there).
+- **"Your turn to speak"** (Chip, 2026-11-14): `take_flow.AwaitPlayerTurn` shows
+  `debug_screen.ShowSpeakCue` (the cyan AWAITING VOICE INPUT panel, "What do you have to say?")
+  while it waits for the player's line, and hides it with a `defer`. `SetDream`,
+  `ShowSpeakCue` and `HideSpeakCue` have empty default bodies on the interface, so only the
+  debugger implements them.
+- **Building a Verse-field widget:** the Verse can't name `UW_DebuggerB` until the widget and its
+  fields exist, and a project whose Verse doesn't compile won't open, so build the widget
+  before the Verse that uses it. Fields added with the MCP tools reach the digest only after
+  the widget is opened in its editor, compiled and saved (`AssetEditorSubsystem`
+  `open_editor_for_assets`, then compile and save). A field can't share a widget's name, and a
+  Border can't be a binding target (wrap it in an Overlay).
 - Input on the debugger (play test, 2026-11-13): the UMG text widget must be Not Hit-Testable
   (Self & All Children) or its rows catch the mouse above the Verse buttons; "Self Hit-Test
   Invisible" isn't enough. `input_router.FreeMouse` drops the weapon mapping before it shows.
@@ -237,11 +277,8 @@ play session yet.
   them.
 - The debugger's row 0 is a title bar image (`T_DebuggerTitleBar`, drawn by
   `art/tools/make_debugger_titlebar.py`: a cloud dissolving into binary, the WONDERWELL
-  wordmark, DREAM DEBUGGER v4.1.7 [UNREGISTERED], window buttons). In `UW_DebuggerText` it's
-  `RowBox00 > TitleBarLayers (Overlay) > TitleBarImage, Row00`; Verse leaves row 0's text blank.
-  `RowBox00` is 1.5 rows tall and the blank `RowBox03` half a row, so rows 4 on stay on the
-  even 1/18 grid the click areas assume. Keep those two summing to two rows.
-  The brand font only exists as that image (see Fonts).
+  wordmark, DREAM DEBUGGER v4.1.7 [UNREGISTERED], window buttons). Design B bakes it into
+  `T_DbgB_Base`. The brand font only exists as that image (see Fonts).
 - Fonts: Verse UI can't set one. UMG can, but UEFN refuses `.ttf`/`.otf` imports and validation
   blocks `/Engine` fonts (DroidSansMono), so only Fortnite's fonts (NotoSans, Burbank, ...) ship.
   The boot screen (`UW_DreamDebugger`) and the debugger (`UW_DebuggerText`) both use NotoSans
@@ -296,8 +333,11 @@ play session yet.
   `Content/DreamDebugger/`.
 - In-world widgets don't render in editor scene captures; check the debugger's size, facing and
   text in a play session. Nothing documents how widget pixels map to world size.
-- Nothing here uses `Content/Spikes/UW_SpikeScreen` any more; it and the spike screen entities
-  can go.
+- Nothing here uses `Content/Spikes/UW_SpikeScreen` any more. Its two placed entities were
+  deleted (2026-11-14: the big one stood between the desk camera and the wall and showed as a
+  dark bar); the asset can go too.
+- Room card textures clamp at their edges (`art/tools/clamp_room_cards.py`): wrapped, the desk
+  card's transparent top row filtered against its dark bottom row and drew a line across the wall.
 - **Talking to the client needs the persona's conversation UI** (play test, 2026-11-13). It's
   the HUD Controller device's "Show LLM Conversations UI" (Show Element). That device's "Show
   HUD" must stay Do Not Override: Hide Element hides everything, the talk UI included, and Verse

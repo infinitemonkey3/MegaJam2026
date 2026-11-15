@@ -64,6 +64,8 @@ game_director := class(creative_device):
     @editable Patient:patient_choice = patient_choice.NellPatient
     # The recliner: a Scene Graph entity with a Room.Meshes.SM_RoomCard mesh component.
     @editable ReclinerCard:entity = entity{}
+    # Nell's recliner material once SetUpPatient has put it on the card (AnimateMouth sets it).
+    var NellRecliner:?Room.Materials.MI_Room_Recliner_Nell = false
     # Each patient's NPC Character Definition. Only its voice matters: LoadDream replaces the
     # personality. Left empty, the spawner keeps the definition it was placed with.
     @editable NellDefinition:?npc_character_definition = false
@@ -170,6 +172,7 @@ game_director := class(creative_device):
         # the HUD stays hidden by HideFortniteHUD (play test, 2026-11-13).
         MaybeControl := AwaitClientControl()
         if (Control := MaybeControl?):
+            spawn{AnimateMouth(Control)}
             DebuggerUI.BeginTake()
             if (StartDream > 0):
                 Logger.Print("[game] debug start at dream {StartDream}")
@@ -286,12 +289,32 @@ game_director := class(creative_device):
                 return First
             Sleep(0.2)
 
+    # Nell's mouth moves while she speaks (Chip, 2026-11-14): her recliner material
+    # (M_Room_Breath) plays a 4-frame mouth flipbook over her face while Talking is 1. Driven by
+    # the persona's say events, so it covers takes, narration and the finale alike. Runs for good.
+    AnimateMouth(Control:client_control)<suspends>:void =
+        loop:
+            Control.Persona.StartSayEvent.Await()
+            SetTalking(1.0)
+            Control.Persona.StopSayEvent.Await()
+            SetTalking(0.0)
+
+    SetTalking(Value:float):void =
+        if (Nell := NellRecliner?):
+            set Nell.Talking = Value
+
     # Puts the chosen patient in the room: their art on the recliner card, and their NPC
     # definition on the client spawner. The NPC is respawned so the new voice takes; nothing
     # waits on it until the client phase.
     SetUpPatient():void =
         if (Card := ReclinerCard.GetComponent[Room.Meshes.SM_RoomCard]):
-            set Card.Card = PatientRecliner(Patient)
+            if (Patient = patient_choice.NellPatient):
+                # Kept, so AnimateMouth can set its Talking parameter.
+                Nell := Room.Materials.MI_Room_Recliner_Nell{}
+                set Card.Card = Nell
+                set NellRecliner = option{Nell}
+            else:
+                set Card.Card = PatientRecliner(Patient)
         else:
             Logger.Print("[game] ReclinerCard has no SM_RoomCard; the recliner keeps its placed art", ?Level := log_level.Warning)
         MaybeDefinition := case (Patient):
