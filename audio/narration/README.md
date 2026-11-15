@@ -66,3 +66,12 @@ Same endpoint. In UEFN under `Content/DirectorVO/`, wave volume 2.0. Her intros 
 | `nellalt_d1_sendin` (10.9 s) | Orus | "You're Danny Ruiz. She taught you to read. She doesn't think she taught anybody anything. Look over the brief, and enter the dream when you're ready." | Base note, a little rueful on the third sentence |
 | `nellalt_d2_sendin` (12.8 s) | Orus | "This time you're Walt. The captain. You know what happened to him, and so does she, underneath. Give her something to steer by. Enter the dream when you're ready." | Base note, quieter and heavier |
 | `finale_ai_cut` (2.6 s) | Leda | "No! You will not take-" | Lumi breaks: sudden, angry, desperate, cut off mid-word. Trimmed to end on the cut, so the power cut lands on it. Takes A (used) and B ("take her-") in `takes/` |
+
+## Loudness (2026-11-15)
+
+Every voice line plays at 4x: asset volume 2.0 x the cold-open sequence's track volume 2.0, or
+x an audio player's Volume 2.0. The WAVs themselves ranged from -11.8 to -25.3 dBFS of speech,
+so each line's asset volume is now set to bring its speech to the cold-open average, -19.4 dBFS
+(speech = 50 ms windows above -34 dBFS). The cold-open lines are the reference and stay at 2.0.
+Two lines that would peak above -1 dBFS (`nell_d1_intro`, `nell_d1_sendin`) are capped a little
+under. A new line needs the same treatment: asset volume = 2.0 x 10^((-19.4 - its dBFS) / 20).
