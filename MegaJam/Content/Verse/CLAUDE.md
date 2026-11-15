@@ -258,6 +258,15 @@ play session yet.
   "-- LIKES --" line starts an entry the following plain lines join. `UW_DebuggerText` (the old
   18-row design) is unused. Shown with input mode All. The monitor's world glass is the
   background (the base texture is transparent there).
+- **Room targets** (Chip, 2026-11-15; `writing/director/room-lines.md`): things in the room the
+  player can click while the debugger waits on them. `dream_debugger_ui.AddRoomTarget(Id, Label,
+  Rect)` draws faint teal viewfinder corners (`Room.Textures.T_RoomTargetCorners`, tinted;
+  bright with the label under it on hover, dim once seen) and an invisible button over the
+  object's projected rectangle; they show only while the debugger is clickable. A click signals
+  `RoomTargetEvent(Id)`, and `game_director.PlayRoomLines` plays the director line with that id
+  unless he's already speaking (`director_voice.Speaking`). The first: the Sing, Meadow, Sing
+  poster (`MakePosterPanel`, line `room_poster_musical`). A new target needs a world_panel, an
+  `AddRoomTarget` call, a player, an editable and a `DirectorLines` entry.
 - **"Your turn to speak"** (Chip, 2026-11-14): `take_flow.AwaitPlayerTurn` shows
   `debug_screen.ShowSpeakCue` (the cyan AWAITING VOICE INPUT panel, "What do you have to say?")
   while it waits for the player's line, and hides it with a `defer`. `SetDream`,

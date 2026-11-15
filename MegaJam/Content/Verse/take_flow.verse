@@ -323,6 +323,7 @@ take_flow := class(creative_device):
                 # Waits for the answer, like every other turn (play test, 2026-11-14: a 30 s
                 # timeout ended dream 3 while the player was still answering "do you still love
                 # me", and turned the talk prompt off).
+                Screen.SetRound(RoundCount(Dream), RoundCount(Dream))
                 Heard := AwaitPlayerTurn(Control, Dream.LastLineAsk)
                 if (Heard?):
                     Control.AwaitSpeechEnd(SpeechSeconds)
@@ -331,30 +332,28 @@ take_flow := class(creative_device):
         take_phase.Verdict
 
     # 6. Verdict: score the take, pull out what carries forward, then the client says the line.
+    # No failing (Chip, 2026-11-15): the take gets a grade out of 3, she says the dream's line for
+    # it, and the dream always goes on to its good ending. RetryEnding is no longer reached.
     DoVerdict(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
-        set MaybeScore = Control.RequestScore()
+        Screen.SetRound(0, 0)
+        Grade := Control.RequestGrade(Dream)
         Remembered := Control.RequestMemory()
-        if (not Remembered?, Score := MaybeScore?):
-            Control.NudgeFeeling(Score.Verdict)
+        if (not Remembered?):
+            Control.NudgeFeeling(if (Grade >= 3) then take_verdict.Positive else if (Grade = 2) then take_verdict.Mixed else take_verdict.Negative)
         if (Feeling := Control.Feeling?):
             Screen.SetClientState(TakeNumber, Feeling)
+        Logger.Print("[flow] grade {Grade}/3")
+        Log("SCORE  {Grade} / 3")
+        Speaking := Control.SpeakLine(Control.GradeLine(Dream, Grade))
+        if (Speaking?):
+            Control.AwaitSpeechEnd(SpeechSeconds)
+        Screen.AwaitContinue()
+        take_phase.GoodEnding                           # the last dream's good ending leads into the finale
 
-        if (Score := MaybeScore?):
-            Total := Score.BackstoryScore + Score.PersonalityScore + Score.EnvironmentScore + Score.SurpriseScore
-            Logger.Print("[flow] score backstory={Score.BackstoryScore} personality={Score.PersonalityScore} environment={Score.EnvironmentScore} surprise={Score.SurpriseScore} total={Total}")
-            Control.SpeakVerdict(Dream, Score)
-            Control.AwaitSpeechEnd(SpeechSeconds)
-            if (Score.Verdict = take_verdict.Positive):
-                take_phase.GoodEnding                   # the last dream's good ending leads into the finale
-            else:
-                take_phase.RetryEnding
-        else:
-            # No score came back. Treat the take as mixed so the player can go again; see the
-            # fallbacks on client_control.RequestScore.
-            Logger.Print("[flow] no verdict; treating the take as mixed", ?Level := log_level.Warning)
-            Control.SpeakLine(Dream.MixedLine)
-            Control.AwaitSpeechEnd(SpeechSeconds)
-            take_phase.RetryEnding
+    # The take's player turns, for the round counter: its asks, its alternating turns, and the
+    # last line.
+    RoundCount(Dream:dream)<transacts>:int =
+        Dream.Asks.Length + Dream.AlternateTurns + (if (Dream.LastLineAsk.Length > 0) then 1 else 0)
 
     # Good ending: the client tells how the loop resolves, says the dream's fact in her own
     # words, then the debugger's notes, each with CONTINUE; then the next dream begins.
@@ -480,8 +479,16 @@ take_flow := class(creative_device):
             # Logged once she's done, so it's the newest line while the player answers (play
             # test, 2026-11-14: her own scene update came in after it and buried the question).
             LogAsk(Ask)
+            Screen.SetRound(Index + 1, RoundCount(Dream))
             AwaitPlayerTurn(Control, Ask.Ask)
             Control.AwaitSpeechEnd(SpeechSeconds)       # her reaction
+        # Then plain back and forth, if the dream has it: no more questions from the flow.
+        if (FinalAsk := Dream.Asks[Dream.Asks.Length - 1]):
+            for (Turn := 1..Dream.AlternateTurns):
+                Haze.SetClock(Min(3, Dream.Asks.Length + Turn - 1))
+                Screen.SetRound(Dream.Asks.Length + Turn, RoundCount(Dream))
+                AwaitPlayerTurn(Control, FinalAsk.Ask)
+                Control.AwaitSpeechEnd(SpeechSeconds)   # she builds on it and adds her own
 
     LogAsk(Ask:dream_ask):void =
         Log(if (Ask.LogLine.Length > 0) then "{Ask.LogLine} She asks: {Ask.Ask}" else "She asks: {Ask.Ask}")

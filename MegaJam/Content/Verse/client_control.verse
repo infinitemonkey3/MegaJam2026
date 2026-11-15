@@ -43,15 +43,13 @@ VerdictInstructions<localizes>(Line:string, Hint:message):message = "Back in the
 # How many carried-forward memory items the client is told at take start (design: "the last 6").
 MaxMemories:int = 6
 
-# The cake carried from Nell's dream 2 into dream 3. It stays a message: model text can't
-# become a string, so it goes straight back into the personality and the case file.
-DefaultCake<localizes>:message = "a lemon cake"
+# The cake carried from Nell's dream 2 into dream 3: a pick (cake_kind), turned into words here.
 CakeKnowledge<localizes>(Cake:message):message = "The cake: the night you said yes to Walt, he told you the birthday cake he'd want: {Cake}. You've baked him that cake every March 3 since, and it's the cake in the case today. His order slip asks for it, in his handwriting."
 # For the take itself (2026-11-14: knowing the cake from the personality, she never named it).
 CakeTakeLine<localizes>(Cake:message):message = "The cake in the case is his birthday cake: {Cake}. It's what he asked for the night you said yes to him, and you've baked it every March 3 since. Call it by what it is when you talk about it."
 CakeOpeningCue<localizes>(Cake:message):message = "Name the cake in your first line: {Cake}."
 CakeEntry<localizes>(Cake:message):message = "The birthday cake Walt asked for: {Cake}. The order slip says W. Price, pick up 5 PM."
-CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like, and how the two of them would spend a Saturday afternoon. Give the cake he asked for in a few plain words, like \"a lemon cake\" or \"a chocolate cake with walnuts\"; if he never said, give \"a lemon cake\". Then give the Saturday he described, in one short plain sentence in his own terms, like \"a walk by the river, then the pictures\"; if he never said, give \"a walk, and tea somewhere\"."
+CakePromptText:string = "Step outside the story for a moment and answer as a neutral note. In the conversation just now, Nell asked Walt what kind of birthday cake he would like, and how the two of them would spend a Saturday afternoon. For the cake, pick the kind closest to what he said (Other if none fits, or if he never said). For the Saturday, pick the plan closest to what he promised (Other if none fits)."
 SaturdayTakeLine<localizes>(Plan:message):message = "The night you said yes to him, forty-one years ago, he promised you a Saturday: {Plan}. That Saturday was your first date. You got a few more Saturdays like it over the years, but not as many as he promised, and you think that was mostly your doing. When you ask him if he remembers that first one, name it in his own words, and ask him to tell you the story of it again."
 SaturdayEntry<localizes>(Plan:message):message = "What Walt promised her, the night she said yes: {Plan}"
 
@@ -170,8 +168,8 @@ client_control := class:
 
     # Carried forward between takes and dreams (design: "Continuity").
     var Memories:[]message = array{}        # oldest first, at most MaxMemories
-    var MaybeCake:?message = false          # the birthday cake named in a dream with AsksForCake
-    var MaybeSaturday:?message = false      # the Saturday Walt promised in that dream
+    var MaybeCake:?cake_kind = false        # the birthday cake named in a dream with AsksForCake
+    var MaybeSaturday:?saturday_plan = false # the Saturday Walt promised in that dream
     var Feeling:?client_state = false       # false until LoadDream sets the starting state
 
     var MaybeAction:?cancelable = false
@@ -225,19 +223,25 @@ client_control := class:
     # instead and prompt only "Say your first line".
     # Part of the opening cue: put the scene's want on the table in the first line.
     WantCue(Dream:dream)<transacts>:string =
-        if (Dream.Want.Length > 0) then "Then say what you need from the visitor now. " else ""
+        if (Dream.Want.Length > 0, Dream.Asks.Length = 0) then "Then say what you need from the visitor now. " else ""
 
     StartTake(Dream:dream, Setup:take_setup, TakeNumber:int):logic =
         # The persona system also passes on the player's own name or outfit, and the client used
         # it ("Sergeant") despite the personality's rule (play test, 2026-11-13), so every take
         # says it again next to the casting.
-        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it."), ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
+        var Lines:[]message = array{ToMessage("This time, the dream begins again from the top."), ToMessage(Setup.Role.ContextLine), ToMessage("Use only the visitor's name from these notes. The game may label the visitor with a made-up title, like Stealth Specialist, Siege Sergeant or Tactical Tracker. That is a game label, not a name or a rank: never say it or anything like it. Any other name or rank you have been told for them is wrong; never say it.")}
+        # The improv line, unless the dream has asks: their turn rule already says it.
+        if (Dream.Asks.Length = 0):
+            set Lines += array{ToMessage("Play this like improv: always \"yes, and\". Whatever the visitor says or does, like \"I light the oven\" or \"I hand you the apron\", is true in the dream. Accept it, react to it, and add something of your own that builds on it, so the scene goes where they lead. Never refuse, contradict or argue with what they set up.")}
         # Turn-taking: she always waits for the visitor. Unless she leads the beats herself, she
         # also leaves moving the scene on to the dream (RunBeats prompts her).
         # With Asks the flow owns every question: her replies only react (Chip, 2026-11-14).
-        TurnRule := if (Dream.Asks.Length > 0) then "Take turns with the visitor. When they answer, react to what they said in one or two short sentences, \"yes, and\", and then stop. Never ask them a question of your own, and don't move the scene on: the dream tells you when to ask something and what to ask, one question at a time, and you ask exactly that." else if (Dream.ClientLeads?) then "Take turns with the visitor: say your piece, then stop and wait for their answer. Never ask the same thing twice in a row." else "Take turns with the visitor: say your piece, then stop and wait for their answer. Answer what they said, and don't move the scene on to something new by yourself; the dream will move it on when it's time."
+        # Her reaction builds on the answer (play test, 2026-11-14: "react, then stop" got a
+        # polite baking line and nothing built on what the player said).
+        TurnRule := if (Dream.AlternateRule.Length > 0) then Dream.AlternateRule else if (Dream.Asks.Length > 0) then "Take turns with the visitor. When they answer, play it like improv, \"yes, and\": what they said is now true in the dream. Say what it changes, right here and now, and add one thing of your own that grows out of it: what it makes happen, a detail it reminds you of, or how it makes you feel. Make it about what they said, in their words, not about your own work. Two or three short sentences, then stop. Never ask them a question of your own: the dream tells you when to ask something and what to ask, one question at a time." else if (Dream.ClientLeads?) then "Take turns with the visitor: say your piece, then stop and wait for their answer. Never ask the same thing twice in a row." else "Take turns with the visitor: say your piece, then stop and wait for their answer. Answer what they said, and don't move the scene on to something new by yourself; the dream will move it on when it's time."
         set Lines += array{ToMessage(TurnRule)}
-        if (Dream.Want.Length > 0):
+        # Not with asks: they carry the scene (Chip, 2026-11-15: minimal prompts).
+        if (Dream.Want.Length > 0, Dream.Asks.Length = 0):
             set Lines += array{ToMessage("What you want in this scene: {Dream.Want} What's in the way: {Dream.Obstacle} Say what you want early, as something the visitor can work with. Make statements and offers. Never ask the visitor what to do or what they think; when you ask, ask for one concrete thing they can answer in a few words.")}
         for (Setting : Setup.Settings):
             set Lines += array{ToMessage(Setting.ContextLine)}
@@ -262,7 +266,8 @@ client_control := class:
         # player chose (play test, 2026-11-13: a bare "say your first line" got a generic opening).
         ItemText := Join(for (Item : Setup.Items) { Item.ContextLine }, " ")
         ItemCue := if (Setup.Items.Length > 0) then "And react to this, which is new this time: {ItemText} " else ""
-        Context := ToMessage("Say your first line of the dream now, one or two short sentences. Open by reacting to who the visitor is: {Setup.Role.ContextLine} {ItemCue}{WantCue(Dream)}Don't open with the time of day or with the visitor being early.")
+        Length := if (Dream.Asks.Length > 0) then "" else "one or two short sentences. "
+        Context := ToMessage("Say your first line of the dream now. {Length}Open by reacting to who the visitor is: {Setup.Role.ContextLine} {ItemCue}{WantCue(Dream)}Don't open with the time of day or with the visitor being early.")
         WithCake := if (Dream.UsesCake?) then Join(array{Context, CakeOpeningCue(TheCake())}, MessageSpace) else Context
         # The dream's first ask goes last, so it's the last thing she says (play test, 2026-11-14:
         # left to the personality, dream 3's opening question got crowded out by the cake).
@@ -317,7 +322,8 @@ client_control := class:
     # The next question in a dream's call and response (dream_ask), once she has finished
     # reacting to the last answer: what happens first, then the question, which she ends on.
     AskNext(Next:dream_ask, TimeoutSeconds:float)<suspends>:void =
-        Instructions := ToMessage("{Next.Cue} Now ask the visitor this, in your own words, as one short question: \"{Next.Ask}\" Say it all in one to three short sentences, end on the question, then stop and wait for the answer. Don't repeat what you just said. Anything the visitor has already changed stays changed.")
+        # The next question grows out of the last answer (play test, 2026-11-14).
+        Instructions := ToMessage("Start from what the visitor just said or did: it is still true and still here, so carry it into what happens next. {Next.Cue} Then ask the visitor this, in your own words, tied to what they just gave you if you can: \"{Next.Ask}\" Say it all in one to three short sentences, end on the question, then stop and wait for the answer. Don't repeat what you just said.")
         var Waited:float = 0.0
         loop:
             if (Persona.PromptToTalk[Instructions, VoiceChannel]):
@@ -368,12 +374,12 @@ client_control := class:
         if (Cake := Result.GetSuccess[]):
             set MaybeCake = option{Cake.CakeWaltAskedFor}
             set MaybeSaturday = option{Cake.SaturdayWaltPromised}
-            Logger.Print("[client] the birthday cake and the Saturday are recorded")
+            Logger.Print("[client] cake: {CakeName(Cake.CakeWaltAskedFor)}; Saturday: {SaturdayName(Cake.SaturdayWaltPromised)}")
         else:
             LogPromptError("cake", option{Result.GetError[]})
 
-    TheCake()<transacts>:message =
-        if (Cake := MaybeCake?) then Cake else DefaultCake
+    TheCake():message =
+        ToMessage(if (Cake := MaybeCake?) then CakeName(Cake) else CakeName(cake_kind.Lemon))
 
     # Case-file entries that carry model text, for a dream with UsesCake: THE CAKE (and FIRST
     # SATURDAY), tagged for the debugger.
@@ -386,7 +392,7 @@ client_control := class:
 
     # The Saturday line, if one was recorded, built with Line.
     SaturdayLines(Line:type{_(:message):message}):[]message =
-        if (Plan := MaybeSaturday?) then array{Line(Plan)} else array{}
+        if (Plan := MaybeSaturday?) then array{Line(ToMessage(SaturdayName(Plan)))} else array{}
 
     # Asks the session for what to carry forward, and stores it. Call right after RequestScore,
     # while the session still holds the take's conversation. Runs after good and bad takes alike.
@@ -428,6 +434,23 @@ client_control := class:
             Logger.Print("[client] {What} prompt failed: {Detail}", ?Level := log_level.Error)
         else:
             Logger.Print("[client] {What} prompt failed", ?Level := log_level.Error)
+
+    # The take's grade, 1 to 3, on the dream's GradeQuestion (or a general one). 2 if the prompt
+    # fails. Call while the session still holds the take.
+    RequestGrade(Dream:dream)<suspends>:int =
+        Question := if (Dream.GradeQuestion.Length > 0) then Dream.GradeQuestion else "How well did the visitor play the scene with the dreamer: did they listen, build on what she said, and give her something to work with?"
+        Prompt := ToMessage("Step outside the story for a moment and answer as a neutral note about the scene that just ended. {Question} Score 3 for yes, clearly; 2 for partly; 1 for not really.")
+        Result := Persona.GetAISession().Prompt(Prompt, take_grade)
+        if (Grade := Result.GetSuccess[]):
+            Clamp(Grade.Score, 1, 3)
+        else:
+            LogPromptError("grade", option{Result.GetError[]})
+            2
+
+    # Her line for a grade: the dream's GradeLines, or its Negative/Mixed/Positive lines.
+    GradeLine(Dream:dream, Grade:int)<transacts>:string =
+        Lines := if (Dream.GradeLines.Length = 3) then Dream.GradeLines else array{Dream.NegativeLine, Dream.MixedLine, Dream.PositiveLine}
+        if (Line := Lines[Grade - 1]) then Line else Dream.MixedLine
 
     # Has the client say the verdict line for this score, plus one sentence built from the hint.
     SpeakVerdict(Dream:dream, Score:take_score):logic =

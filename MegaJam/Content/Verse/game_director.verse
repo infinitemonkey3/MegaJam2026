@@ -50,6 +50,8 @@ game_director := class(creative_device):
     @editable FinaleAfter:audio_player_device = audio_player_device{}
     @editable FinaleResting:audio_player_device = audio_player_device{}
     @editable FinaleKettle:audio_player_device = audio_player_device{}
+    # Room lines: the director on things in the room the player clicks (writing/director/room-lines.md).
+    @editable RoomPosterMusical:audio_player_device = audio_player_device{}
 
     # Debug starts. PreRoll is the real game; ColdOpen skips the pre-roll; Room or later skips
     # the whole opening and starts at the desk.
@@ -157,6 +159,10 @@ game_director := class(creative_device):
             Debugger.Clear()
             Input.FreeMouse(Player)
             DebuggerUI.Show(Player, Monitor)
+            # Clickable things in the room (Chip, 2026-11-15: the poster first, as the example).
+            if (Poster := MakePosterPanel().ProjectRect[Player]):
+                DebuggerUI.AddRoomTarget("room_poster_musical", "SING, MEADOW, SING", Poster)
+            spawn{PlayRoomLines(DebuggerUI)}
         else:
             Logger.Print("[game] couldn't place the dream debugger over the monitor", ?Level := log_level.Warning)
 
@@ -202,6 +208,7 @@ game_director := class(creative_device):
             director_line{Id := "finale_notyours", Player := FinaleNotYours, Seconds := 4.3}
             director_line{Id := "finale_ai_2", Player := FinaleAI2, Seconds := 6.0}
             director_line{Id := "finale_plug", Player := FinalePlug, Seconds := 3.4}
+            director_line{Id := "room_poster_musical", Player := RoomPosterMusical, Seconds := 8.8}
             director_line{Id := "finale_power_cut", Player := FinalePowerCut, Seconds := 3.6}
             director_line{Id := "finale_after", Player := FinaleAfter, Seconds := 6.9}
             director_line{Id := "finale_resting", Player := FinaleResting, Seconds := 2.9}
@@ -289,6 +296,14 @@ game_director := class(creative_device):
                 return First
             Sleep(0.2)
 
+    # A clicked room target plays the director's line for it, unless he's already talking.
+    # Clicks during a line are ignored. Runs for good.
+    PlayRoomLines(UI:dream_debugger_ui)<suspends>:void =
+        loop:
+            Id := UI.RoomTargetEvent.Await()
+            if (not Takes.Director.Speaking[]):
+                Takes.Director.PlayLine(Id)
+
     # Nell's mouth moves while she speaks (Chip, 2026-11-14): her recliner material
     # (M_Room_Breath) plays a 4-frame mouth flipbook over her face while Talking is 1. Driven by
     # the persona's say events, so it covers takes, narration and the finale alike. Runs for good.
@@ -344,7 +359,7 @@ game_director := class(creative_device):
 NellWakeLine:string = "Hm? Oh. Did I drop off? I must have nodded off in front of the telly again."
 NellBanterLine:string = "Nell. Nobody calls me Mrs. Price but the bank. I had the loveliest dream. Walt was in it. Well, don't just stand there. Somebody put the kettle on."
 # PLACEHOLDER team name until it's chosen.
-EndCardText<localizes>:message = "THANK YOU FOR PLAYING   //   TEAM NAME"
+EndCardText<localizes>:message = "THANK YOU FOR PLAYING   //   DREAM TEAM"
 
 # The patients the game can run. Values carry a suffix so they can't clash with a content
 # folder's module name.

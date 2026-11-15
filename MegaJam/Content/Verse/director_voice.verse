@@ -9,6 +9,8 @@ director_voice := interface:
     PlayLine(LineId:string)<suspends>:void
     # Cuts off whatever line is playing (the player attached during the patient's intro).
     StopLine():void
+    # Succeeds while a line is playing, so a room line never talks over another.
+    Speaking()<transacts><decides>:void = false?
 
 # Line names take_flow uses. "{DreamId}_intro" and "{DreamId}_solved" are built per dream.
 DirectorLineBeforeTake:string = "before_take"
@@ -29,15 +31,23 @@ device_director_voice := class(director_voice):
     Lines:[]director_line
     Logger:log = log{Channel := dead_air_log}
 
+    var Playing:int = 0
+
+    Speaking<override>()<transacts><decides>:void = Playing > 0
+
     PlayLine<override>(LineId:string)<suspends>:void =
         if (Line := FindLine[LineId]):
             Logger.Print("[director] {LineId}")
+            set Playing += 1
+            defer:
+                set Playing = Max(0, Playing - 1)
             Line.Player.Play()
             Sleep(Line.Seconds)
         else:
             Logger.Print("[director] {LineId} (no audio)")
 
     StopLine<override>():void =
+        set Playing = 0
         for (Line : Lines):
             Line.Player.Stop()
 

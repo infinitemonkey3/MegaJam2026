@@ -128,6 +128,41 @@ SpeakAskText<localizes>:message = "What do you have to say?"
 ContinueAction:int = 400
 FileAction:int = 500
 
+# Something in the room the player can click while the debugger waits on them (room-lines.md,
+# Chip 2026-11-15): faint teal viewfinder corners over it (T_RoomTargetCorners), bright with its
+# name under it on hover, dim once seen. A click signals RoomTargetEvent with its id, a director
+# line. Shown only while the debugger is clickable, never during a take.
+room_target := class:
+    Id:string
+    Label:string
+    Rect:monitor_rect           # screen fractions, from a world_panel's ProjectRect
+    Owner:dream_debugger_ui
+    var Seen:logic = false
+    var MaybeButton:?button = false
+    var MaybeCorners:?texture_block = false
+    var MaybeLabel:?text_block = false
+
+    RestTint():color =
+        if (Seen?) then color{R := 0.03, G := 0.12, B := 0.11} else color{R := 0.06, G := 0.42, B := 0.38}
+
+    OnHighlight(Message:widget_message):void =
+        if (Corners := MaybeCorners?):
+            Corners.SetTint(color{R := 0.3, G := 1.0, B := 0.92})
+        if (Text := MaybeLabel?):
+            Text.SetVisibility(widget_visibility.Visible)
+        if (Button := MaybeButton?):
+            Owner.FocusButton(Button)
+
+    OnUnhighlight(Message:widget_message):void =
+        if (Corners := MaybeCorners?):
+            Corners.SetTint(RestTint())
+        if (Text := MaybeLabel?):
+            Text.SetVisibility(widget_visibility.Hidden)
+
+    OnClick(Message:widget_message):void =
+        set Seen = true
+        Owner.RoomTargetEvent.Signal(Id)
+
 debugger_hotspot := class:
     Action:int
     Owner:dream_debugger_ui
@@ -151,6 +186,9 @@ dream_debugger_ui := class(debug_screen):
     PickEvent:event(int) = event(int){}
     # The CONTINUE prompt was pressed (debug_screen.AwaitContinue).
     ContinueEvent:event() = event(){}
+    # A room target was clicked: its id (game_director plays the director's line for it).
+    RoomTargetEvent:event(string) = event(string){}
+    var RoomTargets:[]room_target = array{}
 
     Logger:log = log{Channel := dead_air_log}
 
@@ -186,6 +224,9 @@ dream_debugger_ui := class(debug_screen):
     # True while the take waits for the player to talk (ShowSpeakCue), and the question asked.
     var SpeakShown:logic = false
     var SpeakAsk:string = ""
+    # The take's round counter (SetRound), shown in the log's badge in place of TAKE n.
+    var RoundCurrent:int = 0
+    var RoundTotal:int = 0
     # The file view (ShowFile): entries, paged, and one button under them.
     var FileShown:logic = false
     var FileTitle:message = EmptyText
@@ -244,6 +285,49 @@ dream_debugger_ui := class(debug_screen):
             PlayerUI.AddWidget(Root, player_ui_slot{ZOrder := 800, InputMode := Mode})
             if (On?):
                 RebuildHotspots()
+            else:
+                HideRoomTargets()
+
+    # A clickable thing in the room (room_target), shown while the debugger is clickable.
+    AddRoomTarget(Id:string, Label:string, Rect:monitor_rect):void =
+        set RoomTargets += array{room_target{Id := Id, Label := Label, Rect := Rect, Owner := Self}}
+        if (Clickable?):
+            RebuildHotspots()
+
+    HideRoomTargets():void =
+        if (Root := MaybeRoot?):
+            for (Target : RoomTargets):
+                if (Button := Target.MaybeButton?):
+                    Root.RemoveWidget(Button)
+                if (Text := Target.MaybeLabel?):
+                    Root.RemoveWidget(Text)
+                set Target.MaybeButton = false
+                set Target.MaybeLabel = false
+
+    ShowRoomTargets(Root:canvas):void =
+        for (Target : RoomTargets):
+            # A little room round the object, so the corners frame it rather than sit on it
+            # (Chip, 2026-11-15): about 18 px each side at 1080p.
+            PadX := 18.0 / 1920.0
+            PadY := 18.0 / 1080.0
+            R := monitor_rect{Left := Target.Rect.Left - PadX, Top := Target.Rect.Top - PadY, Width := Target.Rect.Width + 2.0 * PadX, Height := Target.Rect.Height + 2.0 * PadY}
+            Corners := texture_block:
+                DefaultImage := Room.Textures.T_RoomTargetCorners
+                DefaultTint := Target.RestTint()
+                DefaultDesiredSize := vector2{X := R.Width * 1920.0, Y := R.Height * 1080.0}
+            Button := button{Slot := button_slot{Widget := Corners, HorizontalAlignment := horizontal_alignment.Fill, VerticalAlignment := vertical_alignment.Fill}}
+            Button.HighlightEvent().Subscribe(Target.OnHighlight)
+            Button.UnhighlightEvent().Subscribe(Target.OnUnhighlight)
+            Button.OnClick().Subscribe(Target.OnClick)
+            ButtonAnchors := anchors{Minimum := vector2{X := R.Left, Y := R.Top}, Maximum := vector2{X := R.Left + R.Width, Y := R.Top + R.Height}}
+            Root.AddWidget(canvas_slot{Anchors := ButtonAnchors, Offsets := margin{}, SizeToContent := false, Widget := Button})
+            Label := text_block{DefaultText := ToMessage(Target.Label), DefaultTextColor := color{R := 0.3, G := 1.0, B := 0.92}, DefaultTextSize := 14.0, DefaultJustification := text_justification.Center}
+            Label.SetVisibility(widget_visibility.Hidden)
+            LabelAnchors := anchors{Minimum := vector2{X := R.Left - 0.05, Y := R.Top + R.Height + 0.005}, Maximum := vector2{X := R.Left + R.Width + 0.05, Y := R.Top + R.Height + 0.035}}
+            Root.AddWidget(canvas_slot{Anchors := LabelAnchors, Offsets := margin{}, SizeToContent := false, Widget := Label})
+            set Target.MaybeButton = option{Button}
+            set Target.MaybeCorners = option{Corners}
+            set Target.MaybeLabel = option{Label}
 
     Hide():void =
         if (PlayerUI := MaybePlayerUI?, Root := MaybeRoot?):
@@ -308,6 +392,10 @@ dream_debugger_ui := class(debug_screen):
                     AddHotspot(Root, DebuggerMenuRect(I), 300 + I)
                 if (ContinueShown?):
                     AddHotspot(Root, DebuggerMainPanelRect, ContinueAction)
+            # The room's targets come after the debugger's, so the debugger's button keeps focus.
+            HideRoomTargets()
+            if (Clickable?):
+                ShowRoomTargets(Root)
             if (First := Hotspots[0], PlayerUI := MaybePlayerUI?):
                 PlayerUI.SetFocus(First.Button)
 
@@ -406,7 +494,7 @@ dream_debugger_ui := class(debug_screen):
     RenderLog():void =
         set View.PageIndex = 1
         set View.MainTitleText = SceneLogTitle
-        SetBadge(if (TakeNumber > 0) then "TAKE {TakeNumber}" else "")
+        SetBadge(if (RoundTotal > 0) then "ROUND {RoundCurrent} / {RoundTotal}" else if (TakeNumber > 0) then "TAKE {TakeNumber}" else "")
         Older := if (LumiAwake?) then 7 else 2
         Count := TakeLog.Length
         Prev := for (I := Max(0, Count - 1 - Older)..Count - 2, Line := TakeLog[I]) { Line }
@@ -414,7 +502,10 @@ dream_debugger_ui := class(debug_screen):
         set View.LogCurrentText = if (Newest := TakeLog[Count - 1]) then Newest else EmptyText
         set View.ContinueOpacity = Opacity(logic{ContinueShown?, not SpeakShown?})
         set View.SpeakOpacity = Opacity(SpeakShown)
-        set View.SpeakAskText = if (SpeakAsk.Length > 0) then ToMessage(SpeakAsk) else SpeakAskText
+        # The round goes beside the question, where the player is looking on their turn (Chip,
+        # 2026-11-15: the badge alone went unnoticed).
+        RoundSuffix := if (RoundTotal > 0) then "   {RoundCurrent} / {RoundTotal}" else ""
+        set View.SpeakAskText = if (SpeakAsk.Length > 0) then ToMessage(SpeakAsk + RoundSuffix) else if (RoundTotal > 0) then ToMessage("What do you have to say?" + RoundSuffix) else SpeakAskText
 
     RenderMenu():void =
         set View.PageIndex = 2
@@ -559,6 +650,11 @@ dream_debugger_ui := class(debug_screen):
 
     SetAssistantAwake<override>(Awake:logic):void =
         set LumiAwake = Awake
+        Render()
+
+    SetRound<override>(Current:int, Total:int):void =
+        set RoundCurrent = Current
+        set RoundTotal = Total
         Render()
 
     ShowSpeakCue<override>(Ask:string):void =

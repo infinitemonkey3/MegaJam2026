@@ -45,3 +45,13 @@ it feels like to lose something; soft, polite and curious, childlike and a littl
 with an uncanny evenness; hurt underneath, and quietly accusing." In UEFN under
 `Content/DirectorVO/`, wave volume 2.0, players `DIR finale_*`. The power cut is in
 `audio/sfx/` (ElevenLabs Sound Effects v3).
+
+## Room lines (recorded 2026-11-15)
+
+The director on things in the room the player clicks (`writing/director/room-lines.md`). Same
+voice, endpoint and base note, with a delivery note each. Two takes; Chip picked A. Takes in
+`takes/`; in UEFN under `Content/DirectorVO/`, wave volume 2.0, player `DIR room_poster_musical`.
+
+| Id | Line | Delivery note |
+|---|---|---|
+| `room_poster_musical` (8.8 s) | "Sing, Meadow, Sing. Don't look at me like that. I've seen it forty times. Forty-one." | Caught out liking something soft: a little defensive, then a quiet "Forty-one" |

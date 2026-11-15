@@ -44,9 +44,43 @@ client_state := struct:
 # Filled after a good ending of a dream with AsksForCake (Chip, 2026-11-13): what the player, as
 # Walt, said in Nell's dream 2. Dreams with UsesCake bake that cake, and remember the Saturday he
 # promised her (2026-11-14), so the player can call back to it.
+# Picks, not free text (play test, 2026-11-15: model text came back "redacted" wherever the game
+# used it). The model chooses the nearest; the game turns the pick into words (CakeName).
 birthday_cake := struct:
-    CakeWaltAskedFor:message        # a few words, like "a lemon cake"
-    SaturdayWaltPromised:message    # one short sentence, like "a walk by the river, then the pictures"
+    CakeWaltAskedFor:cake_kind
+    SaturdayWaltPromised:saturday_plan
+
+cake_kind := enum{Lemon, Chocolate, Carrot, Coffee, Victoria, Fruit, Ginger, Cinnamon, Cherry, Coconut, Other}
+saturday_plan := enum{Pictures, Dancing, RiverWalk, Picnic, Seaside, Fair, Football, Other}
+
+CakeName(Kind:cake_kind)<computes>:string =
+    case (Kind):
+        cake_kind.Lemon => "a lemon cake"
+        cake_kind.Chocolate => "a chocolate cake"
+        cake_kind.Carrot => "a carrot cake"
+        cake_kind.Coffee => "a coffee and walnut cake"
+        cake_kind.Victoria => "a Victoria sponge"
+        cake_kind.Fruit => "a fruit cake"
+        cake_kind.Ginger => "a ginger cake"
+        cake_kind.Cinnamon => "a cinnamon cake"
+        cake_kind.Cherry => "a cherry cake"
+        cake_kind.Coconut => "a coconut cake"
+        cake_kind.Other => "a lemon cake"
+
+SaturdayName(Plan:saturday_plan)<computes>:string =
+    case (Plan):
+        saturday_plan.Pictures => "the pictures, then supper"
+        saturday_plan.Dancing => "dancing at the town hall"
+        saturday_plan.RiverWalk => "a walk by the river"
+        saturday_plan.Picnic => "a picnic in the park"
+        saturday_plan.Seaside => "a day at the seaside"
+        saturday_plan.Fair => "the fair, and the big wheel"
+        saturday_plan.Football => "the football, then chips"
+        saturday_plan.Other => "a walk by the river"
+
+# The take's grade, out of 3 (Chip, 2026-11-15: no failing any more; every take goes on).
+take_grade := struct:
+    Score:int                 # 1, 2 or 3
 
 take_memory := struct:
     WhoTheVisitorWas:message        # the role as the client understood it
@@ -157,6 +191,17 @@ dream := class:
     # used by dreams without Asks (Des).
     Asks:[]dream_ask = array{}
     LastLineAsk:string = ""   # the last line's question, for the speak cue (LastLineCue has her ask it)
+    # After the asks, this many more turns of plain back and forth (Chip, 2026-11-15, dream 1:
+    # "just alternating ideas for decorating the cake"): the player adds something, she builds on
+    # it and adds something of her own, and it's the player's turn again; the flow asks nothing
+    # more. The speak cue shows the last ask the whole time. AlternateRule is her turn rule then.
+    AlternateTurns:int = 0
+    AlternateRule:string = ""
+    # The grade at the end of a take, out of 3 (Chip, 2026-11-15): what the take is judged on,
+    # and her line for each score (1, 2, 3). Empty: a general judgement, and the dream's
+    # Negative/Mixed/Positive lines.
+    GradeQuestion:string = ""
+    GradeLines:[]string = array{}
 
 # One question in a dream's call and response.
 dream_ask := class:
