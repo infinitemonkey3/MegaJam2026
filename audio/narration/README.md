@@ -28,7 +28,7 @@ note of its own. Files: `VO_Director_Tutorial_02.wav` (the boot line, replacing 
 
 | Id | Line |
 |---|---|
-| `tutorial` (replaces `VO_Director_Tutorial_01`) | "Got a looper in the chair. Sit down. Let's see where she's stuck." (Nell is a she; the old take says "he") |
+| `tutorial` (replaces `VO_Director_Tutorial_01`) | Redone 2026-11-15 (take A; B in `takes/`): "This is the dream debugger. It patches us straight into her head. Think of it as a set. I'm the director: I've pulled her dreams, picked the scenes, and I call the shots. You're my lead. I'll cast you in a role, and you play it to break her free of whatever she's afraid of. Places." (21.9 s). The first line, "Got a looper in the chair. Sit down. Let's see where she's stuck.", is `takes/VO_Director_Tutorial_02_looper.wav` |
 | `nell_d1_intro` | "Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you." |
 | `nell_d1_sendin` | "You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready." |
 | `nell_d2_intro` | "She let us down a layer. Her file's grown since you last read it. Learn the new parts, then attach." |

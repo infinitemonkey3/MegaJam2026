@@ -44,7 +44,7 @@ cold_open_rig := class:
     NoSignalSound:audio_player_device                   # AMB_No_Signal, looping
     RoomRain:audio_player_device                        # AMB_Rain_Window, looping
     BootChime:audio_player_device                       # SFX_Boot_Chime
-    TutorialLine:audio_player_device                    # VO_Director_Tutorial_02 ("where she's stuck")
+    TutorialLine:audio_player_device                    # VO_Director_Tutorial_02 (introduces the debugger, "Places.")
     TitleTheme:audio_player_device                      # MUS_TitleTheme, looping, under the title card
 
 cold_open := class:
@@ -65,8 +65,8 @@ cold_open := class:
     # When LS_ColdOpen is fully black: its fade out runs from frame 910 to 954 at 30 fps (31.8 s)
     # and it ends at 958. Change it with the sequence.
     ColdOpenBlackSeconds:float = 31.85
-    # VO_Director_Tutorial_02.wav is 5.32 s; audio_player_device has no finished event.
-    TutorialSeconds:float = 5.6
+    # VO_Director_Tutorial_02.wav is 21.92 s (2026-11-15: the debugger and casting intro); audio_player_device has no finished event.
+    TutorialSeconds:float = 22.2
 
     var OnDesk:logic = false
     # The Wonderwell title card over the start screen's black (not named TitleCard: that's the
