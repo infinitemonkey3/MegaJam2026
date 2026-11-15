@@ -12,6 +12,9 @@ Entry for the [2026 Epic AI MegaJam](https://itch.io/jam/2026-epic-ai-megajam), 
 
 ## Submission checklist (UEFN)
 
+The working plan, with status, prizes to aim at, a video shot list and draft form text, is
+[docs/submission.md](docs/submission.md).
+
 - [ ] **Private version code** of the final island, created before the deadline. Live and playtest codes are not accepted.
 - [ ] Island name: **Wonderwell**
 - [ ] Team name: **Dream Team**, plus each member's name and Epic-account email
