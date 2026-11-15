@@ -226,7 +226,7 @@ play session yet.
 - `client_npc_behavior`: the `npc_behavior` for the client's NPC Character Definition (which
   also needs the Persona modifier). Sets up the voice channel and exposes `MaybeControl`.
   Players aren't in her voice group (no voice panel, no talk prompt) and have no conversation target until
-  `take_flow.RunClient` starts and calls `client_control.SetTalkEnabled(true)`, which stays on
+  `take_flow.RunClient` starts and calls `client_control.SetTalkEnabled(true)`. Each dream's case file turns it off (the talk HUD showed there, Chip 2026-11-15) and the replay turns it back on; otherwise it stays on
   (Chip, 2026-11-14: the talk prompt showed from the title screen). Don't clear it after a
   take: without the target she can't speak to the player either, and her endings went silent.
 - `client_control`: `LoadDream` (SetPersonality), `RegisterSceneUpdate` and

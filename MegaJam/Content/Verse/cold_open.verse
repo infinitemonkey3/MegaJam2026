@@ -62,9 +62,12 @@ cold_open := class:
     # so lifting the black one tick after Play showed the world for a frame (play test,
     # 2026-11-14). The sequences open on their own fade from black, so the wait doesn't show.
     HandOffSeconds:float = 0.3
-    # When LS_ColdOpen is fully black: its fade out runs from frame 910 to 954 at 30 fps (31.8 s)
-    # and it ends at 958. Change it with the sequence.
-    ColdOpenBlackSeconds:float = 31.85
+    # When the black overlay goes up over LS_ColdOpen's end. Its fade out runs from frame 910 to
+    # 954 at 30 fps (30.3 to 31.8 s) and it ends at 958 (31.93 s). At 31.85 the client had only
+    # 0.08 s to show the overlay before the sequence let go of the view, and the room showed
+    # through (play test, 2026-11-15); now it goes up near the end of the fade, when the screen
+    # is nearly black anyway. Change it with the sequence.
+    ColdOpenBlackSeconds:float = 31.5
     # VO_Director_Tutorial_02.wav is 21.92 s (2026-11-15: the debugger and casting intro); audio_player_device has no finished event.
     TutorialSeconds:float = 22.2
 

@@ -11,9 +11,8 @@ Fortnite Developer Rules (behind an Epic login). **Chip: skim both yourself befo
 
 1. **Private version code.** Developer Terms enrollment cleared (2026-11-15, afternoon), so
    the island can be published as a private version once the build is final.
-2. **Turn off the debug start** on the Game Director before making the version: `SkipToFinale`
-   off, `StartAt` = `PreRollPhase`, `StartDream` = 0, `DevKeys` off. Then push and play once from
-   the title.
+2. **Debug start is off** (2026-11-15): every Game Director debug setting is at its default
+   (title start, no finale skip, dream 0, dev keys off). Play once from the title, then publish.
 3. **Record the 30 to 60 second video** (shot list below).
 4. **Merge PR #35** so `main` has the shipping Nell and the finished dev log, then submit.
 
