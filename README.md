@@ -13,8 +13,8 @@ Entry for the [2026 Epic AI MegaJam](https://itch.io/jam/2026-epic-ai-megajam), 
 ## Submission checklist (UEFN)
 
 - [ ] **Private version code** of the final island, created before the deadline. Live and playtest codes are not accepted.
-- [ ] Island name
-- [ ] Team name, plus each member's name and Epic-account email
+- [ ] Island name: **Wonderwell**
+- [ ] Team name: **Dream Team**, plus each member's name and Epic-account email
 - [ ] Gameplay video link, 30 to 60 seconds
 - [ ] Dev log link (optional; required for the Glass Box prize). See [docs/devlog.md](docs/devlog.md).
 - [ ] List of third-party assets and their licenses. See [docs/assets.md](docs/assets.md).

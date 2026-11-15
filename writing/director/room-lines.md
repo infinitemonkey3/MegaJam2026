@@ -18,7 +18,7 @@ CONTINUE), never during a take, and never over Nell or another director line.
 
 **SING, MEADOW, SING** (musical: a woman in a meadow, children dancing). His secret favourite
 (Chip, 2026-11-14): the one soft spot in a hard man. **Approved; this poster goes back on the
-wall.** One line only.
+wall.** One line only. **Built 2026-11-15** as the first clickable target: `Room_Poster_Musical` above Nell's recliner, line `room_poster_musical` (take A).
 1. "Sing, Meadow, Sing. Don't look at me like that. I've seen it forty times. Forty-one."
 
 **THE LAST PLANE OUT** (romance: a couple in a fog on an airfield)

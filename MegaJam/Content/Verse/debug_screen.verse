@@ -76,6 +76,14 @@ debug_screen := interface:
     # so the player knows it's on them. Not a button: the player talks, with the talk key. Ask is
     # the question she just asked (a dream_ask), shown in the cue; empty for a generic prompt.
     ShowSpeakCue(Ask:string):void = {}
+
+    # Lumi's avatar, a gentle sun, under "LUMI IS SPEAKING" (Chip, 2026-11-15). Frame 0 is the
+    # smile, 1 and 2 its mouth half and fully open; below 0 hides it.
+    SetAssistantAvatar(Frame:int):void = {}
+
+    # The take's round, for a counter on screen: round Current of Total (Chip, 2026-11-15: the
+    # take ends after a set number of turns, so show it). 0 of 0 hides it.
+    SetRound(Current:int, Total:int):void = {}
     HideSpeakCue():void = {}
 
 # Logs every call. Never presses "next" and presses "confirm" after a moment, so every menu

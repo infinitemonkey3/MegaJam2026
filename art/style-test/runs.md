@@ -490,3 +490,16 @@ mid-word saying ... Keep everything else exactly the same ...". About $0.18 (4 x
 
 `client_parts.py` now also writes `final/T_Client_Nell_Mouth_Atlas8.png` (2048 x 256: closed,
 half, open, ee, f/v, m, half, open), imported over `Room/Textures/T_Client_Nell_Mouth_Atlas`.
+
+# Round 10: SING, MEADOW, SING redone (2026-11-15)
+
+Chip: not the iconic musical scene, something pastoral with a woman, no children, darker to fit
+the room. 2 calls on `google/nano-banana-2.1/edit`, 1K 2:3, system prompt A, `refs/style-ref.png`.
+About $0.09.
+
+| Option | Seed | Output file | Kept? |
+|---|---|---|---|
+| A: a woman by a wind-bent tree in a dusk field, farmhouse on the hill, title across the top | 2501 | raw/PosterMusical_s2501.png | **yes**, now `final/T_Poster_Musical.png` |
+| B: a woman on a fence by a hay meadow at sunset, title across the bottom | 2502 | raw/PosterMusical_s2502.png | no |
+
+Placed in the room as `Room_Poster_Musical` (60 x 90 cm) above Nell's recliner.

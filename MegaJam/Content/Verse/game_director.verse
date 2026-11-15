@@ -39,17 +39,28 @@ game_director := class(creative_device):
     @editable NellD2SendIn:audio_player_device = audio_player_device{}
     @editable NellD3Intro:audio_player_device = audio_player_device{}
     @editable NellD3SendIn:audio_player_device = audio_player_device{}
+    # The shipping Nell's send-ins (2026-11-15). Her intros reuse NellD1Intro and NellD3Intro,
+    # which don't mention the bakery.
+    @editable NellAltD1SendIn:audio_player_device = audio_player_device{}
+    @editable NellAltD2SendIn:audio_player_device = audio_player_device{}
     # The finale (writing/nell/finale.md): the director's lines, the AI's line and the power cut.
     @editable FinalePraise:audio_player_device = audio_player_device{}
     @editable FinaleReboot:audio_player_device = audio_player_device{}
     @editable FinaleAI:audio_player_device = audio_player_device{}
     @editable FinaleNotYours:audio_player_device = audio_player_device{}
     @editable FinaleAI2:audio_player_device = audio_player_device{}
+    @editable FinaleAICut:audio_player_device = audio_player_device{}
+    # The hack's sounds (audio/sfx, players DIR sfx_*). The blip's player restarts on each play.
+    @editable SfxHack:audio_player_device = audio_player_device{}
+    @editable SfxSpamRamp:audio_player_device = audio_player_device{}
+    @editable SfxSpamBlip:audio_player_device = audio_player_device{}
     @editable FinalePlug:audio_player_device = audio_player_device{}
     @editable FinalePowerCut:audio_player_device = audio_player_device{}
     @editable FinaleAfter:audio_player_device = audio_player_device{}
     @editable FinaleResting:audio_player_device = audio_player_device{}
     @editable FinaleKettle:audio_player_device = audio_player_device{}
+    # Room lines: the director on things in the room the player clicks (writing/director/room-lines.md).
+    @editable RoomPosterMusical:audio_player_device = audio_player_device{}
 
     # Debug starts. PreRoll is the real game; ColdOpen skips the pre-roll; Room or later skips
     # the whole opening and starts at the desk.
@@ -59,9 +70,12 @@ game_director := class(creative_device):
     # Debug: the patient's dream to start at (0 is the first). 2 starts at Nell's dream 3, to test
     # it and the finale; the cake from dream 2 then falls back to a lemon cake.
     @editable StartDream:int = 0
+    # Debug: skip every dream and play the finale (Lumi, the plug, Nell waking, the end card).
+    # Off for a real build.
+    @editable SkipToFinale:logic = false
     # Which client is on the debugger, in the takes and in the recliner. SetUpPatient puts their
     # art on ReclinerCard and their NPC definition (the voice) on the take flow's ClientSpawner.
-    @editable Patient:patient_choice = patient_choice.NellPatient
+    @editable Patient:patient_choice = patient_choice.NellAltPatient
     # The recliner: a Scene Graph entity with a Room.Meshes.SM_RoomCard mesh component.
     @editable ReclinerCard:entity = entity{}
     # Nell's recliner material once SetUpPatient has put it on the card (AnimateMouth sets it).
@@ -157,6 +171,10 @@ game_director := class(creative_device):
             Debugger.Clear()
             Input.FreeMouse(Player)
             DebuggerUI.Show(Player, Monitor)
+            # Clickable things in the room (Chip, 2026-11-15: the poster first, as the example).
+            if (Poster := MakePosterPanel().ProjectRect[Player]):
+                DebuggerUI.AddRoomTarget("room_poster_musical", "SING, MEADOW, SING", Poster)
+            spawn{PlayRoomLines(DebuggerUI)}
         else:
             Logger.Print("[game] couldn't place the dream debugger over the monitor", ?Level := log_level.Warning)
 
@@ -177,6 +195,10 @@ game_director := class(creative_device):
             if (StartDream > 0):
                 Logger.Print("[game] debug start at dream {StartDream}")
                 set Takes.DreamIndex = StartDream
+            if (SkipToFinale?):
+                Logger.Print("[game] debug: straight to the finale")
+                set Takes.DreamIndex = Max(0, Client.Dreams.Length - 1)
+                set Takes.Phase = take_phase.Finale
             Takes.RunClient(Client, Control)
             DebuggerUI.EndTake()
             if (Takes.FinaleReached?):
@@ -196,12 +218,24 @@ game_director := class(creative_device):
             director_line{Id := "nell_d2_sendin", Player := NellD2SendIn, Seconds := 13.9}
             director_line{Id := "nell_d3_intro", Player := NellD3Intro, Seconds := 6.3}
             director_line{Id := "nell_d3_sendin", Player := NellD3SendIn, Seconds := 12.7}
+            # The shipping Nell: "Eleanor Price. Nell. Bargain implant..." and "Bottom of the
+            # well..." fit her too; the send-ins are her own.
+            director_line{Id := "nellalt_d1_intro", Player := NellD1Intro, Seconds := 13.2}
+            director_line{Id := "nellalt_d1_sendin", Player := NellAltD1SendIn, Seconds := 11.5}
+            director_line{Id := "nellalt_d2_intro", Player := NellD3Intro, Seconds := 6.3}
+            director_line{Id := "nellalt_d2_sendin", Player := NellAltD2SendIn, Seconds := 13.4}
             director_line{Id := "finale_praise", Player := FinalePraise, Seconds := 9.8}
             director_line{Id := "finale_reboot", Player := FinaleReboot, Seconds := 6.9}
             director_line{Id := "finale_ai", Player := FinaleAI, Seconds := 9.8}
             director_line{Id := "finale_notyours", Player := FinaleNotYours, Seconds := 4.3}
             director_line{Id := "finale_ai_2", Player := FinaleAI2, Seconds := 6.0}
             director_line{Id := "finale_plug", Player := FinalePlug, Seconds := 3.4}
+            # Lumi's "No! You will not take-", trimmed to end on the cut: no beat after it.
+            director_line{Id := "finale_ai_cut", Player := FinaleAICut, Seconds := 2.6}
+            director_line{Id := "sfx_hack", Player := SfxHack, Seconds := 5.0}
+            director_line{Id := "sfx_spam_ramp", Player := SfxSpamRamp, Seconds := 11.0}
+            director_line{Id := "sfx_spam_blip", Player := SfxSpamBlip, Seconds := 0.12}
+            director_line{Id := "room_poster_musical", Player := RoomPosterMusical, Seconds := 8.8}
             director_line{Id := "finale_power_cut", Player := FinalePowerCut, Seconds := 3.6}
             director_line{Id := "finale_after", Player := FinaleAfter, Seconds := 6.9}
             director_line{Id := "finale_resting", Player := FinaleResting, Seconds := 2.9}
@@ -230,6 +264,10 @@ game_director := class(creative_device):
         Sleep(5.0)                                      # the sound, then a beat of rain and dark
         Takes.Director.PlayLine("finale_after")         # "That thing talked..."
         Sleep(1.0)
+        # She wakes: her eyes open for her lines (Chip, 2026-11-15). EyesOpen is a scalar on
+        # M_Room_Breath (art/tools/add_eyes_to_breath.py).
+        if (Nell := NellRecliner?):
+            set Nell.EyesOpen = 1.0
         NellSays(Control, NellWakeLine)
         Takes.Director.PlayLine("finale_resting")       # "Just resting your eyes, Mrs. Price."
         NellSays(Control, NellBanterLine)
@@ -289,6 +327,14 @@ game_director := class(creative_device):
                 return First
             Sleep(0.2)
 
+    # A clicked room target plays the director's line for it, unless he's already talking.
+    # Clicks during a line are ignored. Runs for good.
+    PlayRoomLines(UI:dream_debugger_ui)<suspends>:void =
+        loop:
+            Id := UI.RoomTargetEvent.Await()
+            if (not Takes.Director.Speaking[]):
+                Takes.Director.PlayLine(Id)
+
     # Nell's mouth moves while she speaks (Chip, 2026-11-14): her recliner material
     # (M_Room_Breath) plays a 4-frame mouth flipbook over her face while Talking is 1. Driven by
     # the persona's say events, so it covers takes, narration and the finale alike. Runs for good.
@@ -308,7 +354,7 @@ game_director := class(creative_device):
     # waits on it until the client phase.
     SetUpPatient():void =
         if (Card := ReclinerCard.GetComponent[Room.Meshes.SM_RoomCard]):
-            if (Patient = patient_choice.NellPatient):
+            if (Patient = patient_choice.NellPatient or Patient = patient_choice.NellAltPatient):
                 # Kept, so AnimateMouth can set its Talking parameter.
                 Nell := Room.Materials.MI_Room_Recliner_Nell{}
                 set Card.Card = Nell
@@ -319,6 +365,7 @@ game_director := class(creative_device):
             Logger.Print("[game] ReclinerCard has no SM_RoomCard; the recliner keeps its placed art", ?Level := log_level.Warning)
         MaybeDefinition := case (Patient):
             patient_choice.NellPatient => NellDefinition
+            patient_choice.NellAltPatient => NellDefinition
             patient_choice.DesPatient => DesDefinition
         if (Definition := MaybeDefinition?, Takes.ClientSpawner.SetNPCCharacterDefinition[Definition]):
             Takes.ClientSpawner.DespawnAll(false)
@@ -342,23 +389,27 @@ game_director := class(creative_device):
 
 # Nell, awake in the recliner after the finale, as if she'd nodded off in front of the TV.
 NellWakeLine:string = "Hm? Oh. Did I drop off? I must have nodded off in front of the telly again."
-NellBanterLine:string = "Nell. Nobody calls me Mrs. Price but the bank. I had the loveliest dream. Walt was in it. Well, don't just stand there. Somebody put the kettle on."
+NellBanterLine:string = "Nell. Mrs. Price was for the classroom, and that was a long time ago. I had the loveliest dream. Walt was in it. Well, don't just stand there. Somebody put the kettle on."
 # PLACEHOLDER team name until it's chosen.
-EndCardText<localizes>:message = "THANK YOU FOR PLAYING   //   TEAM NAME"
+EndCardText<localizes>:message = "THANK YOU FOR PLAYING   //   DREAM TEAM"
 
 # The patients the game can run. Values carry a suffix so they can't clash with a content
 # folder's module name.
 patient_choice := enum:
     NellPatient
     DesPatient
+    # The shipping Nell (nell_alt_data.verse, Chip, 2026-11-15): her art and voice, a different woman.
+    NellAltPatient
 
 # The recliner art for each patient: the empty recliner with them in it, painted as one image.
 PatientRecliner(Choice:patient_choice)<transacts>:material =
     case (Choice):
         patient_choice.NellPatient => Room.Materials.MI_Room_Recliner_Nell{}
+        patient_choice.NellAltPatient => Room.Materials.MI_Room_Recliner_Nell{}
         patient_choice.DesPatient => Room.Materials.MI_Room_Recliner_Des{}
 
 MakePatient(Choice:patient_choice)<transacts>:client =
     case (Choice):
         patient_choice.NellPatient => MakeNellClient()
+        patient_choice.NellAltPatient => MakeNellAltClient()
         patient_choice.DesPatient => MakeDesClient()

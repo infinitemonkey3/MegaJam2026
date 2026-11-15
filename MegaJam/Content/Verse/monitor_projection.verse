@@ -14,15 +14,28 @@ using { /Verse.org/SpatialMath }
 # eye that DeprojectViewportToWorld returns is off (it made the screen 12% too small), so it
 # isn't used.
 
-# Room_Monitor: an 80 cm plane at (-235, -243, 119), facing the camera (yaw -90). Moved up from
+# Room_Monitor: an 80 cm plane at (-235, -259, 119), facing the camera (yaw -90); moved 16 cm left
+# on 2026-11-15 (Chip), glass, boot screen and monitor camera with it. Moved up from
 # Z 115 (Chip, 2026-11-13); Room_MonitorGlass and the DreamDebuggerScreen entity moved with it.
 MakeMonitorPanel()<transacts>:world_panel =
     world_panel:
         CentreX := -235.0
-        CentreY := -243.0
+        CentreY := -259.0
         CentreZ := 119.0
         HalfWidth := 40.0
         HalfHeight := 40.0
+        AxisX := 0.0
+        AxisY := 1.0
+
+# The Sing, Meadow, Sing poster (Room_Poster_Musical): 60 x 90 cm on the back wall, facing the
+# desk, 2 cm in front of it. A clickable room target (Chip, 2026-11-15).
+MakePosterPanel()<transacts>:world_panel =
+    world_panel:
+        CentreX := -558.0
+        CentreY := -472.0
+        CentreZ := 274.0
+        HalfWidth := 30.0
+        HalfHeight := 45.0
         AxisX := 0.0
         AxisY := 1.0
 
