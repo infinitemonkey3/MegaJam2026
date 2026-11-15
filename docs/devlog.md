@@ -239,3 +239,69 @@ used.
 - **Publish dry run.** The agent validated all 323 project assets, and checked every Verse API
   we use for experimental markers. Nothing blocks a publish. Max Players (16) needs to be 1, and
   only a real upload will prove the Scene Graph setting.
+
+### Day 3, afternoon and evening (Nov 14)
+
+- **Dream 1 on asks.** Open improv gave the player endless options and they froze. Dream 1 became
+  a set rhythm: an errand question ("what have you brought from out back?"), then "what are you
+  doing with it?", with the props coming out of the player's answers. The scoring traded common
+  sense for **Surprise**, because a zany answer she runs with is the fun.
+- **Faster to iterate.** Space became the one key: it starts the game, skips the cold open, skips
+  the room intro, and cuts the director short. Prompts name the player's active input (PRESS
+  SPACE or PRESS A). A one-second grace stops one press skipping two stages, and the black
+  overlay now covers every set change so no frame of the world flashes through.
+- **Dream 3 and the finale.** Dream 3 is a sad mirror of dream 2's order pad: Walt comes home
+  for his cake, she knows he's gone, and she asks "do you still love me, Walt?". Then the
+  finale: the director's praise is cut off when Wonderwell's own assistant wakes in the
+  debugger. After an AI naming pass (Echo is Amazon's) it's **Lumi**, gentle and sleep-coded.
+  Lumi spams the log trying to reboot her dream; the director pulls the plug; Nell wakes as if
+  in front of the TV and the end card plays. All of it was voiced in the same TTS voices (Orus
+  for the director, Leda for Lumi), with a synthesized CRT switch-off for the power cut.
+- **Music.** A looping title theme from the Wonderwell jingle (theme B, 1950s vibraphone), and
+  an ominous minor rendition for the end card (take D). Clouds drift across the title in two
+  layers at different speeds.
+- **Debugger redesign.** A subagent produced three designs (cards, boxed terminal, typographic)
+  as mockups. Chip picked **B, the boxed terminal**: a PATIENT/SESSION sidebar, a main panel,
+  and Lumi's dock along the bottom.
+
+## Day 4 (Nov 15)
+
+- **Design B built.** The widget's static chrome is baked to textures by a script, and the
+  widget (`UW_DebuggerB`, 51 Verse fields) is built and bound through UEFN's MCP tools. Lessons
+  that cost time:
+  - Publish validation refuses the Border, HorizontalBox and VerticalBox widgets.
+  - UMG font sizes are points, not pixels, so everything came out a third too big.
+  - Fortnite's NotoSans has only Regular, Bold and Italic faces.
+  - Fields added through the tools only reach Verse after the widget is opened in its editor and
+    saved.
+  - The debugger drifted on the glass at different aspect ratios until the projection measured
+    the screen by projecting a point 100 m down the camera's axis.
+- **Strict call and response.** Every question became the flow's: she asks, the player answers
+  while a cyan "your turn" cue shows the exact question, she reacts, and the flow asks the next.
+- **Simplifying Nell.** Play showed her reactions stayed on her own baking. Reading everything
+  she's told in one place (`writing/nell/dream-1-prompts.md`) found the same instructions given
+  several ways. Dream 1's personality went from about 5,800 characters to under 1,000, plus
+  Chip's improv prompt ("embrace conflict… mistakes are gold"). She is now a roasting
+  disciplinarian, and it's funny. Dream 1 became **one problem**: decorating Walt's cake as it
+  goes horribly wrong, played as alternating ideas over a set number of rounds.
+- **No failing.** Every take is graded 1 to 3 (dream 1: would Walt like the cake?) with a line
+  for each score, and the dream always goes on. A round counter shows in the debugger.
+- **Redacted text.** Words the player says come back from the AI as numbered redactions when the
+  game reuses them, so the cake from dream 2 is now a pick from a fixed list, and Nell repeats
+  the answer so the capture can read her words.
+- **The room comes alive.**
+  - Nell breathes (a torso-only crossfade of the style-test frames) and talks (an 8-cell mouth
+    flipbook with irregular timing). Three new mouth shapes were made with fal; the "oo" was
+    dropped.
+  - Rain falls on the window glass (a material, since UEFN ships no rain particles), and the
+    rain loop was turned up from almost silent.
+  - The monitor moved; a new, darker SING, MEADOW, SING poster went above the recliner and
+    became the **first clickable room target**: viewfinder corners, a label on hover, and the
+    director's "I've seen it forty times. Forty-one."
+  - Fixes: a line across the wall (card textures now clamp), and a leftover day-one test screen
+    in front of the wall.
+- **Submission build.** Max Players 1, start at the title, dev phase-skips off, the end card
+  says DREAM TEAM. Publishing a private version then turned out to need Epic's Fortnite
+  Developer Terms, and enrollment requires a purchase that can take up to 24 hours to clear,
+  right on the deadline. Chip contacted the organizers through the jam's forum and Discord
+  channels.
