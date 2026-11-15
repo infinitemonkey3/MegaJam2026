@@ -71,7 +71,10 @@ Same endpoint. In UEFN under `Content/DirectorVO/`, wave volume 2.0. Her intros 
 
 Every voice line plays at 4x: asset volume 2.0 x the cold-open sequence's track volume 2.0, or
 x an audio player's Volume 2.0. The WAVs themselves ranged from -11.8 to -25.3 dBFS of speech,
-so each line's asset volume is now set to bring its speech to the cold-open average, -19.4 dBFS
+so each line's asset volume was set to bring its speech to the cold-open average, -19.4 dBFS
 (speech = 50 ms windows above -34 dBFS). The cold-open lines are the reference and stay at 2.0.
 Two lines that would peak above -1 dBFS (`nell_d1_intro`, `nell_d1_sendin`) are capped a little
 under. A new line needs the same treatment: asset volume = 2.0 x 10^((-19.4 - its dBFS) / 20).
+
+Then all dialogue went up 20% (Chip, 2026-11-15): every voice asset volume, cold open included, x 1.2.
+The formula for a new line is now 2.4 x 10^((-19.4 - its dBFS) / 20).
