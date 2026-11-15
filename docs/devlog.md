@@ -305,3 +305,49 @@ used.
   Developer Terms, and enrollment requires a purchase that can take up to 24 hours to clear,
   right on the deadline. The jam lists no organizer email; its forum thread and UEFN Discord
   channel are the places to ask.
+
+### Day 4, afternoon (Nov 15): a different Nell
+
+- **An experiment that shipped.** Chip asked for an alternate Nell "just to see how it changes
+  things": same art and voice, a different woman. A retired teacher of forty years, willing but
+  sure she'll let everyone down, whose husband was the one who made her see her worth. The
+  baker stayed in the code behind a patient switch. Two dreams later she was clearly easier to
+  play with than the baker, because she *wants* to work with the player, and she became the
+  shipping Nell.
+- **Dream 1, *The Eleanor*.** Walt's boat at night. A captain nobody can see calls out jobs (mend
+  the net, take the wheel, settle the crew). The player is Danny, the boy she taught to read at
+  lunchtimes. Plain praise doesn't land; a real memory (the scarves she knitted, the nets she
+  mended, the fire drill that was a real fire) does. The lesson of the game in one dream: don't
+  tell her she can, show her when she already did.
+- **Dream 2, *Harbour Lights*.** The boat comes in; the crew make her captain; the old captain is
+  Walt. He can't stay. She asks what each constellation means to him, and the player, as Walt,
+  ties each one to their life.
+- **Directing the AI, and being directed by it.** Each play test turned into a prompt fix:
+  - Her opening line jumped ahead to everything at once (Walt's home, the boat, "stay"),
+    because the role description told her who he was before the dream did. The captain became
+    a voice in the dark until his face shows, and the scene went to one beat per turn.
+  - "Won't you stay with me?", "hold on to him" and "you love him" tripped the persona's
+    romance moderation. Reworded as a farewell between two people fifty years married, it
+    plays.
+  - She answered her own question about the Needle constellation ("that's my knitting"),
+    because her personality listed her memories. Now the stars are Walt's to explain.
+  - Fear in the voice: joy when she sees him, fright mid-sentence when she understands he's
+    going.
+- **Held back for the last dream.** Dream 1 never says Walt is dead or that he's the captain;
+  only dream 2 does.
+- **"Dream", not "layer".** All on-screen text now says dream.
+- **The finale grew teeth.** Lumi, the AI that hijacks the debugger:
+  - a hack sound that builds instead of bursting, a rising data-chatter ramp under the log
+    spam and a teletype clack per line (the first blip was one pure tone)
+  - the spam speeds up but stays readable
+  - Lumi gets a face: a gentle sun, generated once, with its talking mouth frames painted in
+    Python so they line up exactly
+  - "No! You will not take-", cut off by the power cut
+  - Nell wakes with her eyes open and a content smile. The first open-eyes edit kept her
+    sleeping frown, so she got a new face and new smiling mouth frames for her waking lines.
+- **Director lines** for the new dreams were generated in the same voice; the intros reuse two
+  old lines that never mentioned the bakery.
+- **Tools.** Claude Code drove UEFN through its MCP server all day: Verse edits and builds,
+  importing audio and textures, duplicating and wiring audio-player devices, editing a material
+  graph in Python, setting device properties, and pushing to the live session. A hold system
+  (agent-kit) kept the editor, build and protected files to one session at a time.

@@ -44,7 +44,7 @@ cold_open_rig := class:
     NoSignalSound:audio_player_device                   # AMB_No_Signal, looping
     RoomRain:audio_player_device                        # AMB_Rain_Window, looping
     BootChime:audio_player_device                       # SFX_Boot_Chime
-    TutorialLine:audio_player_device                    # VO_Director_Tutorial_02 ("where she's stuck")
+    TutorialLine:audio_player_device                    # VO_Director_Tutorial_02 (introduces the debugger, "Places.")
     TitleTheme:audio_player_device                      # MUS_TitleTheme, looping, under the title card
 
 cold_open := class:
@@ -62,11 +62,14 @@ cold_open := class:
     # so lifting the black one tick after Play showed the world for a frame (play test,
     # 2026-11-14). The sequences open on their own fade from black, so the wait doesn't show.
     HandOffSeconds:float = 0.3
-    # When LS_ColdOpen is fully black: its fade out runs from frame 910 to 954 at 30 fps (31.8 s)
-    # and it ends at 958. Change it with the sequence.
-    ColdOpenBlackSeconds:float = 31.85
-    # VO_Director_Tutorial_02.wav is 5.32 s; audio_player_device has no finished event.
-    TutorialSeconds:float = 5.6
+    # When the black overlay goes up over LS_ColdOpen's end. Its fade out runs from frame 910 to
+    # 954 at 30 fps (30.3 to 31.8 s) and it ends at 958 (31.93 s). At 31.85 the client had only
+    # 0.08 s to show the overlay before the sequence let go of the view, and the room showed
+    # through (play test, 2026-11-15); now it goes up near the end of the fade, when the screen
+    # is nearly black anyway. Change it with the sequence.
+    ColdOpenBlackSeconds:float = 31.5
+    # VO_Director_Tutorial_02.wav is 21.92 s (2026-11-15: the debugger and casting intro); audio_player_device has no finished event.
+    TutorialSeconds:float = 22.2
 
     var OnDesk:logic = false
     # The Wonderwell title card over the start screen's black (not named TitleCard: that's the

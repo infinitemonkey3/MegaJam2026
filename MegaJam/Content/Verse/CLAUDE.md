@@ -135,7 +135,7 @@ play session yet.
   (`NellWakeLine`, `NellBanterLine`, said word for word) with his two replies, then the title
   card as the end card (`EndCardText`, team name a placeholder). All finale audio is director
   lines (`DirectorLines`, players `DIR finale_*`).
-- **Lumi's sun avatar** (2026-11-15): when Lumi speaks the log clears (no "LUMI IS SPEAKING" line) and `debug_screen.SetAssistantAvatar` shows a gentle sun (`Room.Textures.T_Lumi_Sun_0..2`, `art/tools/make_lumi_sun.py`) centred in the main panel (`LumiAvatarRect`), a Verse UI `texture_block` on the debugger's canvas. `take_flow.LumiSays` plays each of Lumi's lines while flipping its mouth through `LumiMouthFrames` every 0.11 s, then rests on the smile. It goes with the debugger at the power cut.
+- **Lumi's sun avatar** (2026-11-15): when Lumi speaks the log clears (no "LUMI IS SPEAKING" line) and `debug_screen.SetAssistantAvatar` shows a gentle sun (`Room.Textures.T_Lumi_Sun_0..2`, `art/tools/make_lumi_sun.py`) centred in the main panel (`LumiAvatarRect`), a Verse UI `texture_block` on the debugger's canvas. `take_flow.LumiSays` plays each of Lumi's lines while flipping its mouth through `LumiMouthFrames` every 0.11 s, then rests on the smile. It goes with the debugger at the power cut. The three sun textures never stream, and `Show` draws each at 2 x 2 px in a corner (transparent there) so they're loaded before the finale: drawn cold, the sun flashed white for a frame.
 - Room targets' corners show only while hovered (Chip, 2026-11-15); at rest they're Hidden, which keeps the button's hover area.
 - Lumi's dock runs along the bottom of the debugger: LUMI / story guide / DISABLED over hazard
   tape, and the lavender `T_DbgB_LumiOn` layer ("I'm here.", ONLINE) once awake.
@@ -226,7 +226,7 @@ play session yet.
 - `client_npc_behavior`: the `npc_behavior` for the client's NPC Character Definition (which
   also needs the Persona modifier). Sets up the voice channel and exposes `MaybeControl`.
   Players aren't in her voice group (no voice panel, no talk prompt) and have no conversation target until
-  `take_flow.RunClient` starts and calls `client_control.SetTalkEnabled(true)`, which stays on
+  `take_flow.RunClient` starts and calls `client_control.SetTalkEnabled(true)`. Each dream's case file turns it off (the talk HUD showed there, Chip 2026-11-15) and the replay turns it back on; otherwise it stays on
   (Chip, 2026-11-14: the talk prompt showed from the title screen). Don't clear it after a
   take: without the target she can't speak to the player either, and her endings went silent.
 - `client_control`: `LoadDream` (SetPersonality), `RegisterSceneUpdate` and
@@ -263,7 +263,9 @@ play session yet.
   so it isn't used; valid only while the desk camera is the view. Kept in its own file because
   `/Verse.org/SpatialMath` and the UI's `/UnrealEngine.com/Temporary/SpatialMath` clash.
 - `dream_debugger_ui` (`dream_debugger_ui.verse`): the interactive dream debugger, shown over
-  the monitor's glass hole once the boot has played (placed by `MakeMonitorPanel().ProjectRect`).
+  the monitor's glass hole as the room intro reaches the desk, and the boot plays on it (2026-11-15:
+  `game_director` makes it before the opening, hands it to `cold_open` as its `Debugger`, and
+  `ShowDebugger` puts it up once; the in-world screen behind is just the dark fill). Before that it was shown once the boot had played (placed by `MakeMonitorPanel().ProjectRect`).
   **Design B, "boxed terminal"** (Chip, 2026-11-14; `art/debugger_designs/README.md`). The look is
   `UW_DebuggerB` (`Content/DreamDebugger/`), a 1200 x 908 page in a Scale Box: a sidebar
   (PATIENT from `client.Name` split at "  AKA " plus `client.Tagline`; SESSION from

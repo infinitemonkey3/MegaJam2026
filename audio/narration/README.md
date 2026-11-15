@@ -28,7 +28,7 @@ note of its own. Files: `VO_Director_Tutorial_02.wav` (the boot line, replacing 
 
 | Id | Line |
 |---|---|
-| `tutorial` (replaces `VO_Director_Tutorial_01`) | "Got a looper in the chair. Sit down. Let's see where she's stuck." (Nell is a she; the old take says "he") |
+| `tutorial` (replaces `VO_Director_Tutorial_01`) | Redone 2026-11-15 (take A; B in `takes/`): "This is the dream debugger. It patches us straight into her head. Think of it as a set. I'm the director: I've pulled her dreams, picked the scenes, and I call the shots. You're my lead. I'll cast you in a role, and you play it to break her free of whatever she's afraid of. Places." (21.9 s). The first line, "Got a looper in the chair. Sit down. Let's see where she's stuck.", is `takes/VO_Director_Tutorial_02_looper.wav` |
 | `nell_d1_intro` | "Eleanor Price. Nell. Bargain implant, three years past warranty. That's her file. Learn it. Once you're attached, you won't have it in front of you." |
 | `nell_d1_sendin` | "You'll be going in as Teddy. Her nephew. She taught him to bake when he was nine. Look over the brief, and enter the dream when you're ready." |
 | `nell_d2_intro` | "She let us down a layer. Her file's grown since you last read it. Learn the new parts, then attach." |
@@ -66,3 +66,15 @@ Same endpoint. In UEFN under `Content/DirectorVO/`, wave volume 2.0. Her intros 
 | `nellalt_d1_sendin` (10.9 s) | Orus | "You're Danny Ruiz. She taught you to read. She doesn't think she taught anybody anything. Look over the brief, and enter the dream when you're ready." | Base note, a little rueful on the third sentence |
 | `nellalt_d2_sendin` (12.8 s) | Orus | "This time you're Walt. The captain. You know what happened to him, and so does she, underneath. Give her something to steer by. Enter the dream when you're ready." | Base note, quieter and heavier |
 | `finale_ai_cut` (2.6 s) | Leda | "No! You will not take-" | Lumi breaks: sudden, angry, desperate, cut off mid-word. Trimmed to end on the cut, so the power cut lands on it. Takes A (used) and B ("take her-") in `takes/` |
+
+## Loudness (2026-11-15)
+
+Every voice line plays at 4x: asset volume 2.0 x the cold-open sequence's track volume 2.0, or
+x an audio player's Volume 2.0. The WAVs themselves ranged from -11.8 to -25.3 dBFS of speech,
+so each line's asset volume was set to bring its speech to the cold-open average, -19.4 dBFS
+(speech = 50 ms windows above -34 dBFS). The cold-open lines are the reference and stay at 2.0.
+Two lines that would peak above -1 dBFS (`nell_d1_intro`, `nell_d1_sendin`) are capped a little
+under. A new line needs the same treatment: asset volume = 2.0 x 10^((-19.4 - its dBFS) / 20).
+
+Then all dialogue went up 20% (Chip, 2026-11-15): every voice asset volume, cold open included, x 1.2.
+The formula for a new line is now 2.4 x 10^((-19.4 - its dBFS) / 20).

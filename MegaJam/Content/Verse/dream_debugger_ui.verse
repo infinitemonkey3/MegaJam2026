@@ -277,7 +277,8 @@ dream_debugger_ui := class(debug_screen):
     Show(Player:player, Monitor:monitor_rect):void =
         if (not MaybeRoot?, PlayerUI := GetPlayerUI[Player]):
             set Area = monitor_rect:
-                Left := Monitor.Left + Monitor.Width * HoleLeft
+                # Nudged 10 px right at 1080p (Chip, 2026-11-15).
+                Left := Monitor.Left + Monitor.Width * HoleLeft + 10.0 / 1920.0
                 Top := Monitor.Top + Monitor.Height * HoleTop
                 Width := Monitor.Width * (HoleRight - HoleLeft)
                 Height := Monitor.Height * (HoleBottom - HoleTop)
@@ -290,6 +291,11 @@ dream_debugger_ui := class(debug_screen):
             set MaybeRoot = option{Root}
             set Kind = ActiveInputKind(Player)
             spawn{WatchInputKind(Player)}
+            # Lumi's sun frames, drawn now at 2 x 2 px in the corner (their corners are
+            # transparent) so the textures are loaded before the finale: drawn cold, the sun
+            # showed solid white for a frame (Chip, 2026-11-15).
+            for (Frame := 0..2):
+                Root.AddWidget(canvas_slot{Anchors := AreaAnchors(0.0, 0.0, 0.0, 0.0), Offsets := margin{Right := 2.0, Bottom := 2.0}, SizeToContent := false, Widget := texture_block{DefaultImage := LumiSunFrame(Frame), DefaultDesiredSize := vector2{X := 2.0, Y := 2.0}}})
             BeginTake()
             Logger.Print("[ui] dream debugger shown: area left={Area.Left} top={Area.Top} width={Area.Width} height={Area.Height} view aspect={Area.ViewAspect}")
 
@@ -323,10 +329,10 @@ dream_debugger_ui := class(debug_screen):
 
     ShowRoomTargets(Root:canvas):void =
         for (Target : RoomTargets):
-            # A little room round the object, so the corners frame it rather than sit on it
-            # (Chip, 2026-11-15): about 18 px each side at 1080p.
-            PadX := 18.0 / 1920.0
-            PadY := 18.0 / 1080.0
+            # No padding: the corners sit right on the object (Chip, 2026-11-15; it was 18 px a side,
+            # which looked loose round the poster).
+            PadX := 0.0
+            PadY := 0.0
             R := monitor_rect{Left := Target.Rect.Left - PadX, Top := Target.Rect.Top - PadY, Width := Target.Rect.Width + 2.0 * PadX, Height := Target.Rect.Height + 2.0 * PadY}
             Corners := texture_block:
                 DefaultImage := Room.Textures.T_RoomTargetCorners
@@ -512,7 +518,9 @@ dream_debugger_ui := class(debug_screen):
     # The scene log: the newest line big, the two before it dim above (more while Lumi spams it).
     RenderLog():void =
         set View.PageIndex = 1
-        set View.MainTitleText = SceneLogTitle
+        # Lumi's ONLINE layer has WONDERWELL // LUMI painted in this tab, so the live title would
+        # print over it (Chip, 2026-11-15).
+        set View.MainTitleText = if (LumiAwake?) then EmptyText else SceneLogTitle
         SetBadge(if (RoundTotal > 0) then "ROUND {RoundCurrent} / {RoundTotal}" else if (TakeNumber > 0) then "TAKE {TakeNumber}" else "")
         Older := if (LumiAwake?) then 7 else 2
         Count := TakeLog.Length

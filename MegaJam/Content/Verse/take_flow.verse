@@ -143,6 +143,10 @@ take_flow := class(creative_device):
     # while the director names her and says to learn it (Chip, 2026-11-13: like a spy learning
     # the target; the file is gone once the player attaches).
     DoCaseFile(Subject:client, Dream:dream, Control:client_control)<suspends>:take_phase =
+        # No talk prompt on the case file: she never speaks here, and Fortnite shows the talk HUD
+        # whenever she's the player's conversation target (Chip, 2026-11-15). The replay turns
+        # it back on.
+        Control.SetTalkEnabled(false)
         set TakeNumber = 0
         Screen.SetDream(DreamIndex + 1, Dream.Id, Dream.Title)
         Control.LoadDream(Subject, Dream, Facts)
@@ -168,6 +172,7 @@ take_flow := class(creative_device):
     # something that happened to her, and the player presses CONTINUE for the next (play test,
     # 2026-11-13: the timed replay raced by and the gist got lost).
     DoObserve(Dream:dream, Control:client_control)<suspends>:take_phase =
+        Control.SetTalkEnabled(true)
         for (Beat : Dream.LoopBeats):
             Narrate(Control, Beat.LogLine, Beat.Murmur)
         take_phase.Direct

@@ -61,6 +61,7 @@ game_director := class(creative_device):
     @editable FinaleKettle:audio_player_device = audio_player_device{}
     # Room lines: the director on things in the room the player clicks (writing/director/room-lines.md).
     @editable RoomPosterMusical:audio_player_device = audio_player_device{}
+    @editable RoomFilmCamera:audio_player_device = audio_player_device{}
 
     # Debug starts. PreRoll is the real game; ColdOpen skips the pre-roll; Room or later skips
     # the whole opening and starts at the desk.
@@ -113,6 +114,11 @@ game_director := class(creative_device):
         set Takes.Screen = Debugger
         set Takes.Director = device_director_voice{Lines := DirectorLines()}
 
+        # The design B debugger is made up front so the boot can play on it (Chip, 2026-11-15:
+        # the boot should match the new debugger). It shows when the room intro reaches the desk.
+        Client := MakePatient(Patient)
+        DebuggerUI := dream_debugger_ui{Client := Client}
+
         Opening := cold_open:
             Rig := cold_open_rig:
                 MonitorCamera := MonitorCamera
@@ -126,7 +132,7 @@ game_director := class(creative_device):
                 TitleTheme := TitleTheme
             Input := Input
             Screen := Screen
-            Debugger := Debugger
+            Debugger := DebuggerUI
 
         if (Runs[game_phase.PreRollPhase]):
             EnterPhase(game_phase.PreRollPhase)
@@ -150,6 +156,7 @@ game_director := class(creative_device):
                 block:
                     Opening.RunRoomIntro(Player)
                     Opening.EndRoomIntro(Player)
+                    ShowDebugger(Player, Debugger, DebuggerUI)
                     Opening.RunBoot()
                 Input.SkipEvent.Await()
                 AwaitFreshConfirm()
@@ -158,25 +165,18 @@ game_director := class(creative_device):
         else:
             Opening.SkipToDesk(Player)
 
-        # The interactive dream debugger, over the monitor now that the camera is at rest and
-        # the boot has played on the in-world screen behind it.
-        Client := MakePatient(Patient)
-        DebuggerUI := dream_debugger_ui{Client := Client}
-        # Let the view settle on the desk camera first. After a skip the client is still at the
-        # room intro's start, 60 cm back, for a moment, and the debugger came out too small
+        # The interactive dream debugger, if the boot didn't already show it (a skip or a debug
+        # start). Let the view settle on the desk camera first: after a skip the client is still
+        # at the room intro's start, 60 cm back, for a moment, and the debugger came out too small
         # (play test, 2026-11-14): the projection reads the player's current view.
         Sleep(ViewSettleSeconds)
-        if (Monitor := MakeMonitorPanel().ProjectRect[Player]):
-            # The in-world screen stays as the dark fill behind; blank its boot text first.
-            Debugger.Clear()
-            Input.FreeMouse(Player)
-            DebuggerUI.Show(Player, Monitor)
-            # Clickable things in the room (Chip, 2026-11-15: the poster first, as the example).
-            if (Poster := MakePosterPanel().ProjectRect[Player]):
-                DebuggerUI.AddRoomTarget("room_poster_musical", "SING, MEADOW, SING", Poster)
-            spawn{PlayRoomLines(DebuggerUI)}
-        else:
-            Logger.Print("[game] couldn't place the dream debugger over the monitor", ?Level := log_level.Warning)
+        ShowDebugger(Player, Debugger, DebuggerUI)
+        # Clickable things in the room (Chip, 2026-11-15: the poster first, as the example).
+        if (Poster := MakePosterPanel().ProjectRect[Player]):
+            DebuggerUI.AddRoomTarget("room_poster_musical", "SING, MEADOW, SING", Poster)
+        if (Camera := MakeFilmCameraPanel().ProjectRect[Player]):
+            DebuggerUI.AddRoomTarget("room_film_camera", "FILM CAMERA", Camera)
+        spawn{PlayRoomLines(DebuggerUI)}
 
         EnterPhase(game_phase.RoomPhase)
         # The tutorial and the room between dreams come here (milestone 4).
@@ -236,6 +236,7 @@ game_director := class(creative_device):
             director_line{Id := "sfx_spam_ramp", Player := SfxSpamRamp, Seconds := 11.0}
             director_line{Id := "sfx_spam_blip", Player := SfxSpamBlip, Seconds := 0.12}
             director_line{Id := "room_poster_musical", Player := RoomPosterMusical, Seconds := 8.8}
+            director_line{Id := "room_film_camera", Player := RoomFilmCamera, Seconds := 8.4}
             director_line{Id := "finale_power_cut", Player := FinalePowerCut, Seconds := 3.6}
             director_line{Id := "finale_after", Player := FinaleAfter, Seconds := 6.9}
             director_line{Id := "finale_resting", Player := FinaleResting, Seconds := 2.9}
@@ -278,6 +279,16 @@ game_director := class(creative_device):
         EndTheme.Play()
         EndCard := title_card{}
         EndCard.Show(Player, EndCardText)
+
+    # Puts the design B debugger over the monitor's glass (once; later calls do nothing). The
+    # in-world screen behind stays as the dark fill, so its text is blanked.
+    ShowDebugger(Player:player, Debugger:dream_debugger_screen, DebuggerUI:dream_debugger_ui):void =
+        if (Monitor := MakeMonitorPanel().ProjectRect[Player]):
+            Debugger.Clear()
+            Input.FreeMouse(Player)
+            DebuggerUI.Show(Player, Monitor)
+        else:
+            Logger.Print("[game] couldn't place the dream debugger over the monitor", ?Level := log_level.Warning)
 
     # Nell says one line word for word, and this waits until she has finished.
     NellSays(Control:client_control, Line:string)<suspends>:void =
