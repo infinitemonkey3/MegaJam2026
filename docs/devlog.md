@@ -303,5 +303,5 @@ used.
 - **Submission build.** Max Players 1, start at the title, dev phase-skips off, the end card
   says DREAM TEAM. Publishing a private version then turned out to need Epic's Fortnite
   Developer Terms, and enrollment requires a purchase that can take up to 24 hours to clear,
-  right on the deadline. Chip contacted the organizers through the jam's forum and Discord
-  channels.
+  right on the deadline. The jam lists no organizer email; its forum thread and UEFN Discord
+  channel are the places to ask.
