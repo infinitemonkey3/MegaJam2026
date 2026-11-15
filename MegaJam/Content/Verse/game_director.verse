@@ -150,18 +150,21 @@ game_director := class(creative_device):
                 Input.SkipEvent.Await()
                 AwaitFreshConfirm()
             Opening.EndColdOpen(Player)
+            spawn{RehideHUD(Player)}            # the sequence restores the HUD when it stops
             # Space again skips the room intro and the boot together, straight to the debugger
             # (Chip, 2026-11-14, to iterate faster).
             race:
                 block:
                     Opening.RunRoomIntro(Player)
                     Opening.EndRoomIntro(Player)
+                    spawn{RehideHUD(Player)}
                     ShowDebugger(Player, Debugger, DebuggerUI)
                     Opening.RunBoot()
                 Input.SkipEvent.Await()
                 AwaitFreshConfirm()
             Opening.EndRoomIntro(Player)
             Opening.EndBoot()
+            spawn{RehideHUD(Player)}
         else:
             Opening.SkipToDesk(Player)
 
@@ -307,6 +310,11 @@ game_director := class(creative_device):
             Logger.Print("[game] {GamePhaseName(State.Phase)} -> {GamePhaseName(Next)}")
         set State.Phase = Next
         State.PhaseChangedEvent.Signal(Next)
+        # Hide the Fortnite HUD again at each phase: in the published version it came back after
+        # the hide at join (play test, 2026-11-15). Phases change only before the first take, so
+        # this never fights the persona's talk UI.
+        if (Player := State.MaybePlayer?):
+            HideFortniteHUD(Player)
 
     # Hides every Fortnite HUD element (health, minimap, prompts, sound visualizers) for this
     # player for the whole game. Our own Verse UI isn't part of it and still shows.
@@ -314,6 +322,17 @@ game_director := class(creative_device):
         Everything:[]hud_element_identifier = array{creative_hud_identifier_all{}, player_hud_identifier_all{}, hud_identifier_visual_sound_effect_all{}}
         GetPlayspace().GetHUDController().HideElementsForPlayer(Player, Everything)
         Logger.Print("[game] Fortnite HUD hidden")
+
+    # Cinematic sequences hide the HUD while they play and restore it when they stop, which undid
+    # our hide (published version, 2026-11-15: minimap, health and the weapon bar came back when
+    # the room started). The client restores it a few frames after the server's stop, so hide it
+    # again now and twice more over the next two seconds.
+    RehideHUD(Player:player)<suspends>:void =
+        HideFortniteHUD(Player)
+        Sleep(0.5)
+        HideFortniteHUD(Player)
+        Sleep(1.5)
+        HideFortniteHUD(Player)
 
     # Hides the player's character for the whole game. The character can take a moment to
     # exist after the player joins, so this retries briefly. Not put in stasis: stasis also
@@ -324,6 +343,8 @@ game_director := class(creative_device):
             if (Character := Player.GetFortCharacter[]):
                 Character.Hide()
                 Logger.Print("[game] player character hidden")
+                # Spawning can bring the HUD back (published version, 2026-11-15).
+                HideFortniteHUD(Player)
                 break
             if (Waited >= CharacterWaitSeconds):
                 Logger.Print("[game] no character to hide after {CharacterWaitSeconds}s", ?Level := log_level.Warning)
